@@ -18,7 +18,13 @@ from time import sleep, time
 from datetime import datetime
 import pygame
 import numpy as np
-from testsaber import drive
+
+# To import packages from different Directories
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/../../packages/')
+from pysaber import DriveEsc
+
+# Instantiating The Class Object
+motors = DriveEsc()
 
 # Initialize pygame and joysticks
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
@@ -48,6 +54,7 @@ actionList = ['motor1', 'motor2', 'arm2', 'arm3', 'joint1', 'joint4', 'joint5a',
               'joint5b', 'reserved1', 'ledMode']  # List in order of output values
 
 global roverActions
+
 def setRoverActions():
     global roverActions
     roverActions =  {
@@ -253,11 +260,10 @@ def main(*argv):
             print(outString)
 
             try:
-                drive(1, int(outVals[0]))
-                drive(2, int(outVals[1]))
+                motors.drive(1, int(outVals[0]))
+                motors.drive(2, int(outVals[1]))
             except:
                 print("Mobility-main-drive error")
 
 if __name__ == '__main__':
     main()
-
