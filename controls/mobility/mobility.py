@@ -79,7 +79,7 @@ def startUp(argv):
         print("Exceeded arguments")
         sys.exit()
     try:
-        configDir = os.getcwd() + '/txtConfig/' + filename
+        configDir = os.getcwd() + '/txtConfig/' + fileName
         controlString = open(configDir).read().replace('\n', '').replace('\r', '')
     except IOError:
         print ("Unable to open file " + configDir)
