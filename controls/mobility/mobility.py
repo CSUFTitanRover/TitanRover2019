@@ -18,9 +18,12 @@ from time import sleep, time
 from datetime import datetime
 import pygame
 import numpy as np
+import subprocess
+
 
 # To import packages from different Directories
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/../../packages/')
+rootDir = subprocess.check_output('locate TitanRover2019 | head -n 1', shell=True).strip()
+sys.path.insert(0, rootDir + '/packages')
 from pysaber import DriveEsc
 
 # Instantiating The Class Object
