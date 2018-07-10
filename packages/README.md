@@ -2,8 +2,8 @@
 
 ## Recuired code to be added to script
 
-'''
-import subprocess
+[
+    import subprocess
 
-subprocess.check_output('locate TitanRover2019 | head -n 1', shell=True)
-'''
+    subprocess.check_output('locate TitanRover2019 | head -n 1', shell=True)
+]
