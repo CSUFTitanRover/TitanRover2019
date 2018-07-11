@@ -2,7 +2,7 @@
 
 ## Python 3.7 install issues
 
-If sudo apt-get install python3.7 doesn't work due to missing then you must add the repo
+If sudo apt-get install python3.7 doesn't work with the following error "Unable to locate package Python3.7" then you must update your repo list with the following command:
 
 ```sh
 
