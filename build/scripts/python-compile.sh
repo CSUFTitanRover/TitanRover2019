@@ -19,3 +19,9 @@ if command -v python3 &>/dev/null; then
 else
     echo Python 3 is not installed
 fi
+
+echo " "
+cd ../../controls/mobility/
+python3.5 mobility.py
+
+echo $PWD
