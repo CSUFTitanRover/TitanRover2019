@@ -13,54 +13,50 @@ Description: PySaber class to write commands directly from TX2 / RPI  to ESC's.
 import time
 import serial
 
-
-global FORWARD_1
-global REVERSE_1
-global FORWARD_2
-global REVERSE_2
-global FORWARD_MIXED
-global REVERSE_MIXED
-global RIGHT_MIXED
-global LEFT_MIXED
-global RAMP
-global port
-global saber
-global address
-
-# Hex Addresses For Driving Dual Motors 
-FORWARD_1 = 0x00
-REVERSE_1 = 0x01
-FORWARD_2 = 0x04
-REVERSE_2 = 0x05
-FORWARD_MIXED = 0x08
-REVERSE_MIXED = 0x09
-RIGHT_MIXED = 0x0A
-LEFT_MIXED = 0x0B
-RAMP = 0x10
-
-# Serial instantiation for UART Logic
-port = '/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0'
-saber = serial.Serial(port, '38400')
-address = 128
-
 class DriveEsc:
+    def __init__(self, address, mode):      # Mode can be "mixed" and "notMixed"
+
+        # Hex Addresses For Driving Dual Motors 
+        self.FORWARD_1 = 0x00
+        self.REVERSE_1 = 0x01
+        self.FORWARD_2 = 0x04
+        self.REVERSE_2 = 0x05
+        self.FORWARD_MIXED = 0x08
+        self.REVERSE_MIXED = 0x09
+        self.RIGHT_MIXED = 0x0A
+        self.LEFT_MIXED = 0x0B
+        self.RAMP = 0x10
+
+        # To check which to operate in ("Mixed" or "NotMixed")
+        if mode == "mixed":
+            self.motor1 = self.FORWARD_MIXED
+            self.motor2 = self.RIGHT_MIXED
+        elif mode == "notMixed":
+            self.motor1 = self.FORWARD_1
+            self.motor2 = self.FORWARD_2
+
+        # Serial instantiation for UART Logic
+        self.port = '/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0'
+        self.saber = serial.Serial(self.port, '38400')
+        self.address = address
+
 
     def send(self, command, message):
         # Calculate checksum termination (page 23 of the documentation).
-        checksum = (address + command + message) & 127
+        checksum = (self.address + command + message) & 127
 
         # Write data packet.
-        msg = [address, command, message, checksum]
+        msg = [self.address, command, message, checksum]
         msg = bytes(bytearray(msg))
-        saber.write(msg)
+        self.saber.write(msg)
 
         # Flush UART.
-        saber.flush()
+        self.saber.flush()
 
     def drive(self, num, speed):
         """Drive 1 or 2 motor"""
         # reverse commands are equal to forward+1
-        cmds = [FORWARD_MIXED, RIGHT_MIXED]
+        cmds = [self.motor1, self.motor2]
 
         try:
             cmd = cmds[num-1]
