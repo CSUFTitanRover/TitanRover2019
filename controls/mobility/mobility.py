@@ -22,12 +22,14 @@ import subprocess
 
 
 # To import packages from different Directories
-rootDir = subprocess.check_output('locate TitanRover2019 | head -n 1', shell=True).strip()
+rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/packages')
 from pysaber import DriveEsc
 
 # Instantiating The Class Object
-motors = DriveEsc()
+wheels = DriveEsc(128, "mixed")
+armMix = DriveEsc(129, "mixed")
+armNotMix = DriveEsc(129, "notMixed")
 
 # Initialize pygame and joysticks
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
@@ -47,6 +49,10 @@ global modeNames  # List of set names (strings) from .txt file
 global actionTime  # Seconds needed to trigger pause / mode change
 global maxRotateSpeed
 global turnInPlace
+global armIndependent
+global armAttached
+armAttached = False
+armIndependent = True  # True means Mixed Mode for Linear Actuators
 paused = False
 modeNum = 0
 actionTime = 3
@@ -77,6 +83,7 @@ def setRoverActions():
     roverActions['throttle'] = {'direction': 1, 'value': 0.0}  # Throttle value for 'motor' rate multiplier (-1 to 1)
     roverActions['throttleStep'] = {'held': False, 'direction': 1, 'value': 0}  # Added to support button throttle
     roverActions['rotate'] = {'special': 'none', 'rate': 'none', 'direction': 1, 'value': 0}  # Added to support turn in place
+    roverActions['armMode'] = {'held': False, 'direction': 1, 'value': 0, 'set': 0} # Added to support Mixed and Single Mode for Linear Actuators
 
 setRoverActions()  # Initiate roverActions to enter loop
 
@@ -136,6 +143,18 @@ def computeSpeed(key):
     throttleValue = rateMultipliers[val['rate']]()  # Get current rate multiplier (-1 to +1), calls getRate or getOne accordingly
     calcThrot = np.interp(throttleValue, [-1 , 1], [0, 1])
     return int(specialMultipliers[val['special']] * calcThrot * val['direction'] * val['value'])
+
+def checkArmMode():
+    global armIndependent, roverActions
+    if (not roverActions['armMode']['held'] and roverActions['armMode']['value']):  # New button press
+        roverActions['armMode']['held'] = True
+        roverActions['armMode']['lastpress'] = datetime.now()
+    if (roverActions['armMode']['held'] and not roverActions['armMode']['value']):  # Button held, but now released
+        roverActions['armMode']['held'] = False
+    if (roverActions['armMode']['held'] and roverActions['armMode']['value'] and (
+        datetime.now() - roverActions['armMode']['lastpress']).seconds >= actionTime):  # Button held for required time
+        roverActions['armMode']['lastpress'] = datetime.now()  # Keep updating time as button may continue to be held
+        armIndependent = not armIndependent
 
 def checkPause():
     global paused, roverActions
@@ -220,6 +239,7 @@ def checkRotate():
     if roverActions['rotate']['value'] !=0:
         turnInPlace = roverActions['rotate']['direction']
 
+
 def turn(outVal):
     global turnInPlace
     if turnInPlace == 1:
@@ -232,6 +252,7 @@ def turn(outVal):
     return outVal
 
 def main(*argv):
+    global armIndependent
     startUp(argv)  # Load appropriate controller(s) config file
     joystick_count = pygame.joystick.get_count()
     for i in range(joystick_count):
@@ -253,6 +274,7 @@ def main(*argv):
             checkRotate()
             checkPause()
             checkModes()
+            checkArmMode()
 
             if paused:
                 outVals = list(map(getZero, actionList))
@@ -263,8 +285,23 @@ def main(*argv):
             print(outString)
 
             try:
-                motors.drive(1, int(outVals[0]))
-                motors.drive(2, int(outVals[1]))
+                wheels.drive(1, int(outVals[0]))
+                wheels.drive(2, int(outVals[1]))
+                if armAttached:
+                    if armIndependent:
+                        armMix.drive(1, int(outVals[2]))
+                        armMix.drive(2, int(outVals[3]))
+                    else:
+                        armNotMix.drive(1, int(outVals[2]))
+                        armNotMix.drive(2, int(outVals[3]))
+
+                '''
+                if armIndependent:
+                    # MIXED MODE
+                else:
+                    # SEPERATE MODE
+                '''
+                
             except:
                 print("Mobility-main-drive error")
 
