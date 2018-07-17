@@ -76,7 +76,7 @@ class DriveEsc:
         
         if speed2 in range(-15, 15):
             self.drive(1, speed1)
-            self.drive(2, speed1)
+            self.drive(2, 0)
         else:
             self.drive(1, speed1)
             self.drive(2, speed2)
