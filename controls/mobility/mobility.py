@@ -103,7 +103,7 @@ def startUp(argv):
         sys.exit()
     controls = eval(controlString)
     modeNames = list(sorted(controls.keys()))
-    mode = modeNames[modeNum]  # mode 0 = both, mode 1 = mobility, mode 2 = arm
+    mode = modeNames[modeNum]  # mode 0 = both, mode 1 = mobility, mode 2 = arm, mode 3 = arm Single(Not Mixed)
     roverActions['mode']['set'] = modeNum
     roverActions['ledMode']['value'] = controls[mode]['ledCode']
 
@@ -145,7 +145,7 @@ def computeSpeed(key):
     return int(specialMultipliers[val['special']] * calcThrot * val['direction'] * val['value'])
 
 def checkArmMode():
-    global armIndependent, roverActions
+    global armIndependent, roverActions, modeNum, mode
     if (not roverActions['armMode']['held'] and roverActions['armMode']['value']):  # New button press
         roverActions['armMode']['held'] = True
         roverActions['armMode']['lastpress'] = datetime.now()
@@ -155,6 +155,12 @@ def checkArmMode():
         datetime.now() - roverActions['armMode']['lastpress']).seconds >= actionTime):  # Button held for required time
         roverActions['armMode']['lastpress'] = datetime.now()  # Keep updating time as button may continue to be held
         armIndependent = not armIndependent
+        modeNum = 0 if armIndependent else 3
+        mode = modeNames[modeNum]
+        setRoverActions()  # Clear all inputs
+        roverActions['mode']['set'] = modeNum
+        roverActions['ledMode']['value'] = controls[mode]['ledCode']
+
 
 def checkPause():
     global paused, roverActions
@@ -285,23 +291,13 @@ def main(*argv):
             print(outString)
 
             try:
-                wheels.drive(1, int(outVals[0]))
-                wheels.drive(2, int(outVals[1]))
+                wheels.driveBoth(int(outVals[0]), int(outVals[1]))
+
                 if armAttached:
                     if armIndependent:
-                        armMix.drive(1, int(outVals[2]))
-                        armMix.drive(2, int(outVals[3]))
+                        armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
                     else:
-                        armNotMix.drive(1, int(outVals[2]))
-                        armNotMix.drive(2, int(outVals[3]))
-
-                '''
-                if armIndependent:
-                    # MIXED MODE
-                else:
-                    # SEPERATE MODE
-                '''
-                
+                        armNotMix.driveBoth(int(outVals[3]), int(outVals[3]))               
             except:
                 print("Mobility-main-drive error")
 
