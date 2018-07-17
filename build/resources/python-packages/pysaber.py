@@ -75,7 +75,8 @@ class DriveEsc:
     def driveBoth(self, speed1, speed2):
         
         if speed2 in range(-15, 15):
-            pass
+            self.drive(1, speed1)
+            self.drive(2, speed1)
         else:
             self.drive(1, speed1)
             self.drive(2, speed2)
