@@ -71,3 +71,11 @@ class DriveEsc:
             raise Exception('PySabertooth, invalid speed: {}'.format(speed))
 
         self.send(cmd, int(127*speed/100))
+
+    def driveBoth(self, speed1, speed2):
+        
+        if speed2 in range(-15, 15):
+            pass
+        else:
+            self.drive(1, speed1)
+            self.drive(2, speed2)
