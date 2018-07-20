@@ -14,11 +14,34 @@ import sys
 import os
 from socket import *
 from struct import *
-from time import sleep, time
+from time import sleep, time, clock
+import multiprocessing
 from datetime import datetime
 import pygame
 import numpy as np
 import subprocess
+import threading
+
+
+system = subprocess.check_output("uname -a", shell=True).strip().decode("utf-8")
+if "raspberrypi" in system:
+    import RPi.GPIO as GPIO                 # For Arm Movement
+
+    global armAction
+    armAction = { 0 : {'pwm' : 17, 'dir' : 27, 'enab' : 22}#,
+                  #1 : {'pwm' : 'xx', 'dir' : 'xx', 'enab' : 'xx'},
+                  #2 : {'pwm' : 'xx', 'dir' : 'xx', 'enab' : 'xx'},
+                  #3 : {'pwm' : 'xx', 'dir' : 'xx', 'enab' : 'xx'}
+                }
+
+    GPIO.setmode(GPIO.BCM)
+    for i in range(1):
+        GPIO.setup(armAction[i]['pwm'], GPIO.OUT)
+        GPIO.setup(armAction[i]['dir'], GPIO.OUT)
+        GPIO.setup(armAction[i]['enab'], GPIO.OUT)
+
+elif "tegra-ubuntu" in system:
+    pass
 
 
 # To import packages from different Directories
@@ -51,7 +74,7 @@ global maxRotateSpeed
 global turnInPlace
 global armIndependent
 global armAttached
-armAttached = False
+armAttached = True
 armIndependent = True  # True means Mixed Mode for Linear Actuators
 paused = False
 modeNum = 0
@@ -96,7 +119,7 @@ def startUp(argv):
         print("Exceeded arguments")
         sys.exit()
     try:
-        configDir = os.getcwd() + '/txtConfig/' + fileName
+        configDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8') + '/controls/mobility/txtConfig/' + fileName
         controlString = open(configDir).read().replace('\n', '').replace('\r', '')
     except IOError:
         print ("Unable to open file " + configDir)
@@ -120,7 +143,7 @@ def getOne(*arg):
 def getRate():
     return roverActions['throttle']['direction'] * roverActions['throttle']['value']  # If axis needs to be reversed
 
-specialMultipliers = {'motor': 127, 'none': 1}
+specialMultipliers = {'motor': 110, 'none': 1}
 rateMultipliers = {'motor': getRate, 'none': getOne}
 
 def throttleStep():
@@ -257,8 +280,35 @@ def turn(outVal):
     turnInPlace = None
     return outVal
 
+
+def runPwm():
+    global armAction
+    while True:
+        GPIO.output(armAction[0]['pwm'], 1)
+        sleep(.00038)
+        GPIO.output(armAction[0]['pwm'], 0)
+        sleep(.00003)
+
+
+def checkArmDirection(val):
+    if val == -1:
+        return '0' 
+    elif val == 1:
+        return '1'
+
+
+def moveJoints(data):
+    global armAction
+    for i in range(1):#len(data)):
+        if data[i] != 0:
+            GPIO.output(armAction[i]['enab'], 0)
+            GPIO.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
+        else:
+            GPIO.output(armAction[i]['enab'], 1)
+    
+
 def main(*argv):
-    global armIndependent
+    global armIndependent, armAction
     startUp(argv)  # Load appropriate controller(s) config file
     joystick_count = pygame.joystick.get_count()
     for i in range(joystick_count):
@@ -292,14 +342,25 @@ def main(*argv):
 
             try:
                 wheels.driveBoth(int(outVals[0]), int(outVals[1]))
-
                 if armAttached:
+                    moveJoints([int(outVals[4]), int(outVals[5]), int(outVals[6]), int(outVals[7])])
                     if armIndependent:
                         armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
                     else:
-                        armNotMix.driveBoth(int(outVals[3]), int(outVals[3]))               
+                        armNotMix.driveBoth(int(outVals[3]), int(outVals[3]))            
             except:
                 print("Mobility-main-drive error")
 
 if __name__ == '__main__':
-    main()
+
+    # Only start the threads if the arm is attached
+    try:
+        if armAttached:
+            p1 = multiprocessing.Process(target=runPwm)
+            p1.start()
+        main()
+    except (KeyboardInterrupt, SystemExit):
+        p1.terminate()
+        raise
+
+
