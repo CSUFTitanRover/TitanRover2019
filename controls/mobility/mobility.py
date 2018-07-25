@@ -51,8 +51,7 @@ from pysaber import DriveEsc
 
 # Instantiating The Class Object
 wheels = DriveEsc(128, "mixed")
-armMix = DriveEsc(129, "mixed")
-armNotMix = DriveEsc(129, "notMixed")
+armMix = DriveEsc(129, "notMixed")
 
 # Initialize pygame and joysticks
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
@@ -347,12 +346,13 @@ def main(*argv):
                     if armIndependent:
                         armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
                     else:
-                        armNotMix.driveBoth(int(outVals[3]), int(outVals[3]))            
+                        armMix.driveBoth(-(int(outVals[3])), int(outVals[3]))            
             except:
                 print("Mobility-main-drive error")
 
 if __name__ == '__main__':
 
+    
     # Only start the threads if the arm is attached
     try:
         if armAttached:
