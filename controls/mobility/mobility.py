@@ -21,7 +21,7 @@ import pygame
 import numpy as np
 import subprocess
 import threading
-
+#from leds import writeToBus
 
 system = subprocess.check_output("uname -a", shell=True).strip().decode("utf-8")
 if "raspberrypi" in system:
@@ -338,6 +338,7 @@ def main(*argv):
             outVals = list(map(str, outVals))
             outString = ','.join(outVals)
             print(outString)
+            #writeToBus(controls[mode]['ledCode'], controls[mode]['ledCode'])
 
             try:
                 wheels.driveBoth(int(outVals[0]), int(outVals[1]))
