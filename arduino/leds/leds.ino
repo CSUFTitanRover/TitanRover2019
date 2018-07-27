@@ -4,7 +4,8 @@
  *Email:       chary.vielma@csu.fullerton.edu
  *Description: Program receives 2 byte values via the i2c bus to indicate mode and frequency.
  *             LED strip on Rover will be lit according to these values (e.g. (1, 3) for
- *             green and purple).
+ *             green and purple). Must use with LED library found at:
+ *             https://github.com/pololu/pololu-led-strip-arduino
  */
  
 #include <Wire.h>
