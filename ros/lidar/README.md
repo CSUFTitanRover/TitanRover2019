@@ -3,7 +3,6 @@
 
 **_To Run Hector slam along with sick lidar you need to follow the below steps._**
 
-## Install the following packages
 
 1. Install the following packages for ros kinetic. If you have a different version of ros just replace kinetic with your _"distro"_. 
    **Ex.** ```ros-melodic-hector-slam, ros-lunar-hector-slam.```
@@ -49,6 +48,7 @@
 
 also at the top change this line ```<param name="/use_sim_time" value="true"/>``` so that it says ```<param name="/use_sim_time" value="false"/>```
 
+
 5. Now we need to change the mapping_default.launch file in hector_mapping:
 
 ```Shell
@@ -57,6 +57,7 @@ also at the top change this line ```<param name="/use_sim_time" value="true"/>``
     sudo nano mapping_default.launch
 
 ```
+
 
 6. Change the mapping_default.launch to use the following configuration instead of the default configuration.
 
@@ -67,6 +68,7 @@ also at the top change this line ```<param name="/use_sim_time" value="true"/>``
     <param name="odom_frame" value="base_link" />
 
 ```
+
 
 7. Finally go to the lidar directory in your catkin workspace and run the command. Make sure you have ```roscore``` already running in a seperate terminal:
 
