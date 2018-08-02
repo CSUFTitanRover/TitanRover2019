@@ -1,4 +1,4 @@
-#Mobility README
+# Mobility README
 
 ## Linux SysFS GPIO access via Python
 ==================================
@@ -16,7 +16,7 @@ This Document provides a guideline on how to access J21 GPIO Pins on TX2 in Pyth
 2. Follow the commands:
 
 ```shell
-    cd ~/python-sysfs-gpio
+    cd python-sysfs-gpio
     sudo python setup.py install
 ```
 
