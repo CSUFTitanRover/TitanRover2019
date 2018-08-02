@@ -1,6 +1,6 @@
 #Mobility README
 
-##Linux SysFS GPIO access via Python
+## Linux SysFS GPIO access via Python
 ==================================
 
 This Document provides a guideline on how to access J21 GPIO Pins on TX2 in Python.
