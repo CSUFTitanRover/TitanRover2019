@@ -29,4 +29,4 @@ fi
 
 echo copying is finished.
 cd .. #Goes back one level
-rm -r -f ros_copy #removes the temporary repo after finished.
+#rm -r -f ros_copy #removes the temporary repo after finished.
