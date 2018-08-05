@@ -16,11 +16,15 @@ git checkout development #Checkout again to populate with desired files
 if [ -d "ros" ]; then
 
 	cd .. #Go back one level
-	[ -d catkin_ws/src/ ] || mkdir -p catkin_ws/src #validate or create a directory
-	
-	#copy process
-	echo copying ros to catkin_ws/src/
-	cp -R ros_copy/ros ../$ROS_PACKAGE_PATH/ #Recursive copying of files to the desired location
+	if [[ -n $(find / -type d -name "catkin_ws" -ls -printf '%h\n') ]]
+	then
+		echo Found.
+		
+		#copy process
+		cd ros_copy #Goes into the temporary repo
+		echo copying ros to $ROS_PACKAGE_PATH/catkin_ws/src
+		cp -R ros_copy/ros $ROS_PACKAGE_PATH/catkin_ws/src #Recursive copying of files to the desired location
+	fi
 fi
 
 echo copying is finished.
