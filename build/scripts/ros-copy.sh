@@ -19,9 +19,8 @@ if [ -d "ros" ]; then
 	[ -d catkin_ws/src/ ] || mkdir -p catkin_ws/src #validate or create a directory
 	
 	#copy process
-	cd ros_copy #Goes into the temporary repo
 	echo copying ros to catkin_ws/src/
-	cp -R ros ../catkin_ws/src/ #Recursive copying of files to the desired location
+	cp -R ros_copy/ros ../$ROS_PACKAGE_PATH/ #Recursive copying of files to the desired location
 fi
 
 echo copying is finished.
