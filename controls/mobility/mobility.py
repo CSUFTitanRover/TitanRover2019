@@ -1,7 +1,7 @@
 '''
 File:        mobility.py
-Author:      Chary Vielma
-Email:       chary.vielma@csu.fullerton.edu
+Authors:      Chary Vielma / Shripal Rawal
+Emails:       chary.vielma@csu.fullerton.edu / rawalshreepal000@gmail.com
 Description: Mobility script reads in a text file with configuration for various controllers. User actions
              are interpreted by pygame and mapped to rover Actions for wheel and arm control. Communicating 
              these values is handled by a separate classes.
@@ -23,25 +23,51 @@ import subprocess
 import threading
 #from leds import writeToBus
 
+global system
+global armAction
 system = subprocess.check_output("uname -a", shell=True).strip().decode("utf-8")
 if "raspberrypi" in system:
+    system = "pi"
     import RPi.GPIO as GPIO                 # For Arm Movement
 
-    global armAction
-    armAction = { 0 : {'pwm' : 17, 'dir' : 27, 'enab' : 22}#,
-                  #1 : {'pwm' : 'xx', 'dir' : 'xx', 'enab' : 'xx'},
-                  #2 : {'pwm' : 'xx', 'dir' : 'xx', 'enab' : 'xx'},
-                  #3 : {'pwm' : 'xx', 'dir' : 'xx', 'enab' : 'xx'}
+    armAction = { 0 : {'pwm' : 17, 'dir' : 27, 'enab' : 22},
+                  1 : {'pwm' : 16, 'dir' : 20, 'enab' : 21},
+                  2 : {'pwm' : 18, 'dir' : 23, 'enab' : 24},
+                  3 : {'pwm' : 5,  'dir' : 6,  'enab' : 13}
                 }
 
     GPIO.setmode(GPIO.BCM)
-    for i in range(1):
+
+    for i in range(len(armAction)):
         GPIO.setup(armAction[i]['pwm'], GPIO.OUT)
         GPIO.setup(armAction[i]['dir'], GPIO.OUT)
         GPIO.setup(armAction[i]['enab'], GPIO.OUT)
 
 elif "tegra-ubuntu" in system:
-    pass
+    system = "tx2"
+    sys.path.insert(0, subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8') + '/gpio/')
+    from tx2gpio import Tx2Gpio
+   
+    armAction = { 0 : {'pwm' : 396, 'dir' : 466, 'enab' : 397},
+                  1 : {'pwm' : 429, 'dir' : 428, 'enab' : 427},
+                  2 : {'pwm' : 398, 'dir' : 298, 'enab' : 389},
+                  3 : {'pwm' : 392, 'dir' : 296, 'enab' : 481}
+                }
+    
+    pinsUsed = [ 396, 466, 397,
+                 429, 428, 427,
+                 398, 298, 389,
+                 392, 296, 481 ]
+
+    tx2 = Tx2Gpio(pinsUsed)                        # Instantiating The Class Object
+
+    for i in range(len(armAction)):
+        tx2.setup(armAction[i]['pwm'], 'out')
+        tx2.setup(armAction[i]['dir'], 'out')
+        tx2.setup(armAction[i]['enab'], 'out')
+
+else:
+    system = "none"
 
 
 # To import packages from different Directories
@@ -280,7 +306,7 @@ def turn(outVal):
     return outVal
 
 
-def runPwm():
+def runPwmPi():
     global armAction
     while True:
         GPIO.output(armAction[0]['pwm'], 1)
@@ -288,6 +314,13 @@ def runPwm():
         GPIO.output(armAction[0]['pwm'], 0)
         sleep(.00003)
 
+def runPwmTx2():
+    global armAction
+    while True:
+        tx2.output(armAction[0]['pwm'], 1)
+        sleep(.00038)
+        tx2.output(armAction[0]['pwm'], 0)
+        sleep(.00003)
 
 def checkArmDirection(val):
     if val == -1:
@@ -295,16 +328,25 @@ def checkArmDirection(val):
     elif val == 1:
         return '1'
 
-
 def moveJoints(data):
-    global armAction
-    for i in range(1):#len(data)):
-        if data[i] != 0:
-            GPIO.output(armAction[i]['enab'], 0)
-            GPIO.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
-        else:
-            GPIO.output(armAction[i]['enab'], 1)
-    
+    global armAction, system
+
+    if system == 'tx2':
+        for i in range(1):#len(data)):
+            if data[i] != 0:
+                tx2.output(armAction[i]['enab'], 0)
+                tx2.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
+            else:
+                tx2.output(armAction[i]['enab'], 1)
+
+    elif system == 'pi':
+        for i in range(1):#len(data)):
+            if data[i] != 0:
+                GPIO.output(armAction[i]['enab'], 0)
+                GPIO.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
+            else:
+                GPIO.output(armAction[i]['enab'], 1)
+
 
 def main(*argv):
     global armIndependent, armAction
@@ -353,12 +395,17 @@ def main(*argv):
 
 if __name__ == '__main__':
 
-    
     # Only start the threads if the arm is attached
     try:
         if armAttached:
-            p1 = multiprocessing.Process(target=runPwm)
-            p1.start()
+            if system == 'tx2':
+                p1 = multiprocessing.Process(target=runPwmTx2)
+                p1.start()
+            elif system == 'pi':
+                p1 = multiprocessing.Process(target=runPwmTx2)
+                p1.start()
+
+        # Start the main loop
         main()
     except (KeyboardInterrupt, SystemExit):
         p1.terminate()
