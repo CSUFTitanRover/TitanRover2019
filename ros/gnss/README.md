@@ -18,7 +18,7 @@ Right now this supports all NMEA messages from the package, while some are not u
    * Port: any free port
    * Format: NMEA
 5. Using the IP of the Reach RTK and the specified port launch this package
-6. `rosrun reach_ros_node nmea_tcp_driver _host:=128.4.89.123 _port:=2234`
+6. `rosrun reach_ros_node nmea_tcp_driver _host:=***** _port:=*****`
 
 
 ## Driver Details
