@@ -51,7 +51,7 @@ elif "tegra-ubuntu" in system:
     armAction = { 0 : {'pwm' : 396, 'dir' : 466, 'enab' : 397},
                   1 : {'pwm' : 429, 'dir' : 428, 'enab' : 427},
                   2 : {'pwm' : 398, 'dir' : 298, 'enab' : 389},
-                  3 : {'pwm' : 392, 'dir' : 296, 'enab' : 481}
+                  3 : {'pwm' : 481, 'dir' : 254, 'enab' : 430}
                 }
     
     pinsUsed = [ 396, 466, 397,
@@ -61,10 +61,8 @@ elif "tegra-ubuntu" in system:
 
     tx2 = Tx2Gpio(pinsUsed)                        # Instantiating The Class Object
 
-    for i in range(len(armAction)):
-        tx2.setup(armAction[i]['pwm'], 'out')
-        tx2.setup(armAction[i]['dir'], 'out')
-        tx2.setup(armAction[i]['enab'], 'out')
+    for i in range(len(pinsUsed)):
+        tx2.setup(pinsUsed[i], 'out')
 
 else:
     system = "none"
@@ -100,7 +98,7 @@ global turnInPlace
 global armIndependent
 global armAttached
 armAttached = True
-armIndependent = True  # True means Mixed Mode for Linear Actuators
+armIndependent = True  # True means Independent Mode for Linear Actuators
 paused = False
 modeNum = 0
 actionTime = 3
