@@ -24,8 +24,7 @@ This Document provides a guideline on how to access J21 GPIO Pins on TX2 in Pyth
 
 ```
 
-3. Sample Code:
-You need to Have Titanrover2019 Folder on your machine. If you Don't use this command and if you do make sure to do a ```git pull```
+3. You need to Have **_Titanrover2019_** Folder on your machine. If you Don't use this command and if you do make sure to do a ```git pull```
 
 ```shell
 
@@ -35,7 +34,7 @@ You need to Have Titanrover2019 Folder on your machine. If you Don't use this co
     git checkout development
 
 ```
-
+4. Sample Code:
 ```python
     
     import sys
