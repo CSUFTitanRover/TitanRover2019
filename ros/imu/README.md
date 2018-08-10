@@ -1,11 +1,12 @@
 # BNO055 IMU
 
 **To Run the IMU in ROS:**
->Sync the ROS GitHub with the catkin environment
->Update catkin with *catkin_make*
->*cd to IMU folder under catkin/src*/**imu**
->python3.5 src/cal_run_Imu.py
-
+```shell
+  Sync the ROS GitHub with the catkin environment
+  Update catkin workspace with "catkin_make"
+  cd to IMU folder under ex. catkin_ws/src/imu
+  python3.5 src/cal_run_Imu.py
+```
 --------------------------------------------------------
 ### ROS IMU dependancies
 
