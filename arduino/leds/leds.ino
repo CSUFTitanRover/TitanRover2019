@@ -125,7 +125,7 @@ void csuf()
 {
     int chaseSize = 6;
     int current = 0;
-    for(int oddLed = 0; oddLed < 50000; oddLed++)
+    for(int oddLed = 0; ; oddLed++)
     {
         if (mode != 10 || freq != 10)
         {
