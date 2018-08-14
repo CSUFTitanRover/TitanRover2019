@@ -27,6 +27,16 @@ os.environ['SDL_VIDEODRIVER'] = 'dummy'
 pygame.init()
 pygame.joystick.init()
 
+global sock
+try:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    while True:
+        try:
+            sock.connect(('192.168.1.2', 9898))
+            break
+        except:
+            print("Connecting")
+
 # System setup wait
 sleep(2)
 
@@ -280,8 +290,9 @@ def main(*argv):
                 outVals = turn(list(map(computeSpeed, actionList))) # Output string determined by actionList[] order
             outVals = list(map(str, outVals))
             outString = ','.join(outVals)
+            sock.send(outString)
             print(outString)
-            
+
             #writeToBus(controls[mode]['ledCode'], controls[mode]['ledCode'])
 
 
