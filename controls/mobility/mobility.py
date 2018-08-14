@@ -12,7 +12,7 @@ Description: Mobility script reads in a text file with configuration for various
 
 import sys
 import os
-from socket import *
+import socket
 from struct import *
 from time import sleep, time, clock
 import multiprocessing
@@ -21,7 +21,7 @@ import pygame
 import numpy as np
 import subprocess
 import threading
-#from leds import writeToBus
+
 
 global system
 global armAction
