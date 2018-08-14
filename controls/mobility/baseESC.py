@@ -60,7 +60,7 @@ else:
 
 try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(('', 80))
+    sock.bind(('', 9898))
     sock.listen(5)
 
     while True:
