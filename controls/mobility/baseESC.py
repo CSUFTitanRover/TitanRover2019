@@ -9,7 +9,7 @@ import numpy as np
 import subprocess
 
 global armAttached
-armAttached = True
+armAttached = False
 
 '''
 global system
@@ -66,7 +66,8 @@ try:
     while True:
         try:
             #accept connections from outside
-            (client, address) = sock.accept()
+            client, address = sock.accept()
+            print("connection from ", client, address)
             break
         except:
             print("waiting for connection")
@@ -129,7 +130,8 @@ def moveJoints(data):
 
 def main():
     while True:
-        data = client.recv(1024)
+        data = client.recv(1024).decode('utf-8')
+        print(data)
         outVals = data.split(',')
         try:
             wheels.driveBoth(int(outVals[0]), int(outVals[1]))
@@ -162,5 +164,5 @@ if __name__ == '__main__':
         # Start the main loop
         main()
     except (KeyboardInterrupt, SystemExit):
-        p1.terminate()
+        #p1.terminate()
         raise
