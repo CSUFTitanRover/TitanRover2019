@@ -36,6 +36,8 @@ try:
             break
         except:
             print("Connecting")
+except:
+    ("error connecting")
 
 # System setup wait
 sleep(2)
@@ -290,7 +292,7 @@ def main(*argv):
                 outVals = turn(list(map(computeSpeed, actionList))) # Output string determined by actionList[] order
             outVals = list(map(str, outVals))
             outString = ','.join(outVals)
-            sock.send(outString)
+            sock.send(outString.encode('utf-8'))
             print(outString)
 
             #writeToBus(controls[mode]['ledCode'], controls[mode]['ledCode'])
@@ -300,18 +302,9 @@ if __name__ == '__main__':
 
     # Only start the threads if the arm is attached
     try:
-        if armAttached:
-            if system == 'tx2':
-                p1 = multiprocessing.Process(target=runPwmTx2)
-                p1.start()
-            elif system == 'pi':
-                p1 = multiprocessing.Process(target=runPwmTx2)
-                p1.start()
-
         # Start the main loop
         main()
     except (KeyboardInterrupt, SystemExit):
-        p1.terminate()
         raise
 
 
