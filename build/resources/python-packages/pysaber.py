@@ -36,7 +36,7 @@ class DriveEsc:
             self.motor2 = self.FORWARD_2
 
         # Serial instantiation for UART Logic
-        self.port = '/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0'
+        self.port = '/dev/serial/by-id/usb-Silicon_Labs_RoverESC_0001-if00-port0'
         self.saber = serial.Serial(self.port, '38400')
         self.address = address
 
