@@ -1,0 +1,268 @@
+#:kivy 1.10.0
+#:import utils kivy.utils
+<SelectableButton>:
+    # Draw a background to indicate selection
+    canvas.before:
+        #Color:
+        #    rgba: (0, 0.517, 0.705, 1) if self.selected else (0, 0.517, 0.705, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    background_color: [1, 1, 1, 1]  if self.selected else [1, 1, 1, 1]  # dark red else dark grey
+    
+
+<Log_Listener_GuiDb>:
+    column_headings: column_headings
+    orientation: "vertical"
+
+    
+    # Filter spinner
+    GridLayout:
+        canvas.before:
+            Color:                
+                rgb: utils.get_color_from_hex('#E62739')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        size_hint: 1, None
+        size_hint_y: None
+        font_size: 18
+        height: 25
+        cols: 2        
+
+        Label:
+            text: "Select node :"
+            bold: True
+        Spinner:
+            id: node_spinner            
+            background_color: utils.get_color_from_hex('#E62739')
+            bold: True
+            on_text: root.set_node(node_spinner.text)
+            
+
+    GridLayout:
+        canvas.before:
+            Color:                
+                rgb: utils.get_color_from_hex('#E62739')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        id: column_headings
+        size_hint: 1, None
+        size_hint_y: None
+        font_size: 18
+        height: 25
+        cols: 3
+        cols_minimum : {0:500, 1:10, 2:10}
+        
+
+    # Info Label
+    Label:
+        canvas.before:
+            Color:
+                rgba: (0, 0, 1, .5)     # 50% translucent blue
+            Rectangle:
+                pos: self.pos
+                size: self.size                
+        text: 'INFO LOGS'
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        size_hint: 1, 0.15
+        bold: True
+        padding: 10,0
+
+
+
+    # Info messages
+    BoxLayout:
+        padding: 10,0
+        
+        canvas.before:
+            Color:
+                rgb: utils.get_color_from_hex('#ADD8E6')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                
+
+        RecycleView:
+            viewclass: 'SelectableButton'
+            data: root.info_data
+            
+            SelectableRecycleGridLayout:
+                cols: 3
+                cols_minimum : {0:500, 1:10, 2:10}
+                default_size: None, dp(26)
+                default_size_hint: 1, None
+                
+                size_hint_y: None
+                width: self.minimum_width
+                height: self.minimum_height
+
+
+
+    # Warn Label
+    Label:
+        canvas.before:
+            Color:
+                rgba: (0, 0, 1, .5)     # 50% translucent blue
+            Rectangle:
+                pos: self.pos
+                size: self.size                
+        text: 'WARN LOGS'
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        size_hint: 1, 0.15
+        bold: True
+        padding: 10,0
+
+    # Warn Messages
+    BoxLayout:
+        padding: 10,0
+
+        canvas.before:
+            Color:
+                rgb: utils.get_color_from_hex('#E7DFDD')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        RecycleView:
+            viewclass: 'SelectableButton'
+            data: root.warn_data
+            
+            SelectableRecycleGridLayout:
+                cols: 3
+                cols_minimum : {0:500, 1:10, 2:10}
+                
+                default_size: None, dp(26)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+
+
+    # Debug Label
+    Label:
+        canvas.before:
+            Color:
+                rgba: (0, 0, 1, .5)     # 50% translucent blue
+            Rectangle:
+                pos: self.pos
+                size: self.size                
+        text: 'DEBUG LOGS'
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        size_hint: 1, 0.15
+        bold: True
+        padding: 10,0
+
+    # Debug Messages
+    BoxLayout:
+        padding: 10,0
+
+        canvas.before:
+            Color:
+                rgb: utils.get_color_from_hex('#ADD8E6')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        RecycleView:
+            viewclass: 'SelectableButton'
+            data: root.debug_data
+            
+            SelectableRecycleGridLayout:
+                cols: 3
+                cols_minimum : {0:500, 1:10, 2:10}
+                
+                default_size: None, dp(26)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+
+
+    # Error Label
+    Label:
+        canvas.before:
+            Color:
+                rgba: (0, 0, 1, .5)     # 50% translucent blue
+            Rectangle:
+                pos: self.pos
+                size: self.size                
+        text: 'ERROR LOGS'
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        size_hint: 1, 0.15
+        bold: True
+        padding: 10,0
+
+    # Error Messages
+    BoxLayout:
+        padding: 10,0
+
+        canvas.before:
+            Color:
+                rgb: utils.get_color_from_hex('#E7DFDD')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        RecycleView:
+            viewclass: 'SelectableButton'
+            data: root.error_data
+            
+            SelectableRecycleGridLayout:
+                cols: 3
+                cols_minimum : {0:500, 1:10, 2:10}
+                
+                default_size: None, dp(26)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+
+
+    # Fatal Label
+    Label:
+        canvas.before:
+            Color:
+                rgba: (0, 0, 1, .5)     # 50% translucent blue
+            Rectangle:
+                pos: self.pos
+                size: self.size                
+        text: 'FATAL LOGS'
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        size_hint: 1, 0.15
+        bold: True
+        padding: 10,0
+
+    # Fatal messages
+    BoxLayout:
+        padding: 10,0
+
+        canvas.before:
+            Color:
+                rgb: utils.get_color_from_hex('#ADD8E6')
+            Rectangle:
+                pos: self.pos
+                size: self.size                
+
+        RecycleView:
+            viewclass: 'SelectableButton'
+            data: root.fatal_data
+            
+            SelectableRecycleGridLayout:
+                cols: 3
+                cols_minimum : {0:500, 1:10, 2:10}
+                
+                default_size: None, dp(26)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
