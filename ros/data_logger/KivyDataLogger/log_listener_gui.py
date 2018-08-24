@@ -231,6 +231,7 @@ class Log_Listener_GuiDb(BoxLayout):
 class Log_Listener_GuiApp(App):
     def build(self):
         Window.clearcolor = (1, 1, 1, 1)    # white background
+        self.title = 'Log Listener GUI'
         return Log_Listener_GuiDb()
 
     def on_stop(self):
