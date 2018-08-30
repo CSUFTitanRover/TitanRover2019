@@ -10,10 +10,13 @@ Description: Mobility script reads in a text file with configuration for various
              e.g. <python version> mobility.py dual.txt
 '''
 
+import rospy
+from test_topic.msg import joystick
+
 import sys
 import os
 import socket
-from struct import *
+import struct
 from time import sleep, time, clock
 import multiprocessing
 from datetime import datetime
@@ -21,23 +24,23 @@ import pygame
 import numpy as np
 import subprocess
 import threading
+import serial
+
+
+# For 433 Mhz Communication
+rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Base433_0001-if00-port0', 9600, timeout=None)
+
+
+# Setup ROS Master
+os.environ["ROS_MASTER_URI"] = "http://192.168.1.2:11311"
+os.environ["ROS_IP"] = "192.168.1.22"
+
 
 # Initialize pygame and joysticks
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
 pygame.init()
 pygame.joystick.init()
 
-global sock
-try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    while True:
-        try:
-            sock.connect(('192.168.1.2', 9898))
-            break
-        except:
-            print("Connecting")
-except:
-    ("error connecting")
 
 # System setup wait
 sleep(2)
@@ -54,6 +57,9 @@ global maxRotateSpeed
 global turnInPlace
 global armIndependent
 global armAttached
+global GHz_UP
+
+GHZ_UP = True
 armAttached = True
 armIndependent = True  # True means Independent Mode for Linear Actuators
 paused = False
@@ -72,9 +78,9 @@ def setRoverActions():
     roverActions =  {
               'motor1':    {'special': 'motor', 'rate': 'motor', 'direction': 1, 'value': 0},
               'motor2':    {'special': 'motor', 'rate': 'motor', 'direction': 1, 'value': 0},
+              'arm2':      {'special': 'motor', 'rate': 'none', 'direction': 1, 'value': 0},
               'arm3':      {'special': 'motor', 'rate': 'none', 'direction': 1, 'value': 0},
               'joint1':    {'special': 'none', 'rate': 'none', 'direction': 1, 'value': 0},
-              'arm2':      {'special': 'motor', 'rate': 'none', 'direction': 1, 'value': 0},
               'joint4':    {'special': 'none', 'rate': 'none', 'direction': 1, 'value': 0},
               'joint5a':   {'special': 'none', 'rate': 'none', 'direction': 1, 'value': 0},
               'joint5b':   {'special': 'none', 'rate': 'none', 'direction': 1, 'value': 0},
@@ -260,11 +266,28 @@ def turn(outVal):
     turnInPlace = None
     return outVal
 
+def putRF(data):                            #arguments to make function more self-contained and function-like
+    rf_uart.setDTR(True)                    #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
+    rf_uart.setRTS(True)                    #then these two lines will send low logic to both which puts the module in transmit mode 0
+
+    rf_uart.write(b's')                     #start byte
+    rf_uart.write(data)                     #payload
+    rf_uart.write(b'f')                     #end byte
+    rf_uart.flush()                         #waits until all data is written
+
+def isGHzUp():
+    global GHZ_UP
+
+    GHZ_UP = True if os.system("ping -c 4 192.168.1.2") is 0 else False
+    sleep(15)
+
+
 
 def main(*argv):
-    global armIndependent, armAction
+    global armIndependent, armAction, GHZ_UP
     startUp(argv)  # Load appropriate controller(s) config file
     joystick_count = pygame.joystick.get_count()
+
     for i in range(joystick_count):
         pygame.joystick.Joystick(i).init()
 
@@ -291,20 +314,51 @@ def main(*argv):
             else:
                 outVals = turn(list(map(computeSpeed, actionList))) # Output string determined by actionList[] order
             outVals = list(map(str, outVals))
-            outString = ','.join(outVals)
-            sock.send(outString.encode('utf-8'))
-            print(outString)
 
-            #writeToBus(controls[mode]['ledCode'], controls[mode]['ledCode'])
+            try:
+                print(','.join(outVals))                    # Printing The OUTSTRING
+                
+                
+                if GHZ_UP:
+                    # Publishing to ROS From Base Station
+
+                    msg.header.stamp = rospy.Time.now()
+                    msg.header.frame_id = 'Titan Rover'
+                    msg.mobility.TurningX = int(outVals[0])
+                    msg.mobility.ForwardY = int(outVals[1])
+                    msg.arm.J1 = int(outVals[2])
+                    msg.arm.J2 = int(outVals[3])
+                    msg.arm.J3 = int(outVals[4])
+                    msg.arm.J4 = int(outVals[5])
+                    msg.arm.J51 = int(outVals[6])
+                    msg.arm.J52 = int(outVals[7])
+                    msg.mode.mode = int(outVals[-1])
+                    joy.publish(msg)
+
+                else:
+                    # For 433 MHz Frequency 
+
+                    data = struct.pack('2b', int(outVals[0]), int(outVals[1]))
+                    putRF(data)
+                
+            except:
+                #GHZ_UP = False
+                print("Error In Main Mobility")
 
 
 if __name__ == '__main__':
 
     # Only start the threads if the arm is attached
     try:
+        # Setup ROS Topic
+        joy = rospy.Publisher('joystick', joystick, queue_size=10)
+        rospy.init_node('talker_base_mobility', anonymous=True)
+        msg = joystick()
+
         # Start the main loop
         main()
+        #threading.Thread(target=isGHzUp).start()
+
     except (KeyboardInterrupt, SystemExit):
+        rospy.signal_shutdown()
         raise
-
-
