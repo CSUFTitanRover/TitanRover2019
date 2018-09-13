@@ -1,12 +1,30 @@
+'''
+File:         baseESC.py
+Authors:      Chary Vielma / Shripal Rawal
+Emails:       chary.vielma@csu.fullerton.edu / rawalshreepal000@gmail.com
+Description: Mobility script reads in a text file with configuration for various controllers. User actions
+             are interpreted by pygame and mapped to rover Actions for wheel and arm control. Communicating 
+             these values is handled by a separate classes.
+
+             To start program with a different configuration than rumblepad, list .txt file after script name:
+             e.g. <python version> mobility.py dual.txt
+'''
+
+import roslib
+import rospy
+from std_msgs.msg import String
+from test_mobility import joystick
 import sys
 import os
 import socket
-from struct import *
+import struct
 from time import sleep, time, clock
+from threading import Thread
 import multiprocessing
 import pygame
 import numpy as np
 import subprocess
+import serial
 
 global armAttached
 armAttached = False
@@ -55,26 +73,10 @@ elif "tegra-ubuntu" in system:
 
 else:
     system = "none"
+
 '''
 
-
-try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(('', 9898))
-    sock.listen(5)
-
-    while True:
-        try:
-            #accept connections from outside
-            client, address = sock.accept()
-            print("connection from ", client, address)
-            break
-        except:
-            print("waiting for connection")
-
-except:
-    print("cannot connect to Base Station")
-
+rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0', 9600, timeout=None)
 
 # To import packages from different Directories
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
@@ -128,23 +130,50 @@ def moveJoints(data):
                 GPIO.output(armAction[i]['enab'], 1)
 '''
 
-def main():
+def getRF(size_of_payload): #added argument to make it more function-like
+    rf_uart.setDTR(True) #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
+    rf_uart.setRTS(True) #then these two lines will send low logic to both which puts the module in transmit mode 0
     while True:
-        data = client.recv(1024).decode('utf-8')
-        print(data)
-        outVals = data.split(',')
-        try:
-            wheels.driveBoth(int(outVals[0]), int(outVals[1]))
-            '''
-            if armAttached:
-                moveJoints([int(outVals[4]), int(outVals[5]), int(outVals[6]), int(outVals[7])])
-                if outVals[-1] != '4':
-                    armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
-                else:
-                    armMix.driveBoth(-(int(outVals[3])), int(outVals[3]))    
-            '''        
-        except:
-            print("Mobility-main-drive error")
+        n = rf_uart.read(1) #read bytes one at a time
+        if n == b's': #throw away bytes until start byte is encountered
+            data = rf_uart.read(size_of_payload) #read fixed number of bytes
+            n = rf_uart.read(1) #the following byte should be the stop byte
+            if n == b'f':
+                #print('success')
+                data = struct.unpack('2b', data)
+                
+                msg.header.stamp = rospy.Time.now()
+                msg.header.frame_id = 'Titan Rover'
+                msg.mobility.TurningX = int(data[0])
+                msg.mobility.ForwardY = int(data[1])
+                msg.arm.J1 = int()
+                msg.arm.J2 = int()
+                msg.arm.J3 = int()
+                msg.arm.J4 = int()
+                msg.arm.J51 = int()
+                msg.arm.J52 = int()
+                msg.mode.mode = int()
+                joy.publish(msg)
+
+            else: #if that last byte wasn't the stop byte then something is out of sync
+                print("failure")
+                
+
+
+def main(data):
+    try:
+        wheels.driveBoth(data.x, data.y)
+        '''
+        if armAttached:
+            moveJoints([int(outVals[4]), int(outVals[5]), int(outVals[6]), int(outVals[7])])
+            if outVals[-1] != '4':
+                armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
+            else:
+                armMix.driveBoth(-(int(outVals[3])), int(outVals[3]))    
+        '''        
+    except:
+        print("Mobility-main-drive error")
+
 
 
 if __name__ == '__main__':
@@ -162,7 +191,15 @@ if __name__ == '__main__':
         '''
 
         # Start the main loop
-        main()
+        joy = rospy.Publisher('joystick', joystick, queue_size=10)
+        rospy.init_node('talker_base_mobility', anonymous=True)
+        msg = joystick()
+        
+        rospy.init_node('listener', anonymous=True)
+        rospy.Subscriber("joystick", joystick, main)
+        rospy.spin()
+
     except (KeyboardInterrupt, SystemExit):
         #p1.terminate()
+        rospy.signal_shutdown()
         raise
