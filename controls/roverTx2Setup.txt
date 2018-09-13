@@ -1,0 +1,72 @@
+apt-get update
+apt-get upgrade
+
+uninstall extra software
+
+##mount the harddrive
+nano /etc/fstab
+        /dev/sda1       none                    swap    sw              0 0
+        /dev/sda2       /home/nvidia/rover      auto    defaults        1 2
+        /dev/sda3       /home/nvidia/backup     auto    defaults        1 2
+        /dev/sda4       /opt/ros                auto    defaults        1 2
+
+#install
+        ros: follow wiki
+
+Python installs:
+        apt install python-pip  #python 2
+        apt install python3-pip #python 3
+        pip install --upgrade pip
+        pip3 install --upgrade pip
+
+try to skip this install-------------------------
+
+apt install:
+        apt-file
+        libsdl1.2-dev
+
+SDL install: (pygame support)
+        hg clone https://hg.libsdl.org/SDL SDL
+        cd SDL
+        mkdir build
+        cd build
+        ../configure
+        make
+        sudo make install
+
+-------------------------------------------------
+
+apt-get install:
+        motion
+        build-dep python-pygame
+        default-jre
+        default-jdk
+
+sudo nano /etc/environment #: add
+        JAVA_HOME="/usr/lib/jvm/java-8-openjdk-arm64"
+
+sudo pip install: (sometimes pip3 also)
+        pyyaml
+        rospkg
+        catkin_pkg
+        pyserial
+        numpy
+
+
+GitHub Downloads
+        https://github.com/ros/common_msgs.git #unzip in catkin space and run catk$
+
+GPIO Library for TX2
+https://github.com/derekstavis/python-sysfs-gpio
+
+
+
+
+
+
+
+
+
+
+
+
