@@ -22,7 +22,6 @@ import numpy as np
 import subprocess
 import threading
 
-
 global system
 global armAction
 system = subprocess.check_output("uname -a", shell=True).strip().decode("utf-8")
@@ -48,21 +47,24 @@ elif "tegra-ubuntu" in system:
     sys.path.insert(0, subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8') + '/gpio/')
     from tx2gpio import Tx2Gpio
    
-    armAction = { 0 : {'pwm' : 396, 'dir' : 466, 'enab' : 397},
-                  1 : {'pwm' : 429, 'dir' : 428, 'enab' : 427},
-                  2 : {'pwm' : 398, 'dir' : 298, 'enab' : 389},
-                  3 : {'pwm' : 481, 'dir' : 254, 'enab' : 430}
+    armAction = { 0 : {'pwm' : 396, 'dir' : 466, 'enab' : 397, 'sleep' : .000005},
+                  1 : {'pwm' : 429, 'dir' : 428, 'enab' : 427, 'sleep' : .000005},
+                  2 : {'pwm' : 398, 'dir' : 298, 'enab' : 389, 'sleep' : .000005},
+                  3 : {'pwm' : 481, 'dir' : 254, 'enab' : 430, 'sleep' : .000004}
                 }
     
     pinsUsed = [ 396, 466, 397,
                  429, 428, 427,
                  398, 298, 389,
-                 392, 296, 481 ]
+                 481, 254, 430 ]
 
     tx2 = Tx2Gpio(pinsUsed)                        # Instantiating The Class Object
 
     for i in range(len(pinsUsed)):
         tx2.setup(pinsUsed[i], 'out')
+
+    for i in range(2, len(pinsUsed), 3):
+        tx2.output(pinsUsed[i], 1)
 
 else:
     system = "none"
@@ -97,7 +99,7 @@ global maxRotateSpeed
 global turnInPlace
 global armIndependent
 global armAttached
-armAttached = True
+armAttached = False
 armIndependent = True  # True means Independent Mode for Linear Actuators
 paused = False
 modeNum = 0
@@ -286,6 +288,7 @@ def checkHats(currentJoystick):
                         roverActions[control_input[0]]['value'] = val[y]
                         roverActions[control_input[0]]['direction'] = control_input[1]  # Set direction multiplier
 
+
 def checkRotate():
     global turnInPlace
     if roverActions['rotate']['value'] !=0:
@@ -312,13 +315,13 @@ def runPwmPi():
         GPIO.output(armAction[0]['pwm'], 0)
         sleep(.00003)
 
-def runPwmTx2():
+def runPwmTx2(joint):
     global armAction
     while True:
-        tx2.output(armAction[0]['pwm'], 1)
-        sleep(.00038)
-        tx2.output(armAction[0]['pwm'], 0)
-        sleep(.00003)
+        tx2.output(armAction[joint]['pwm'], 1)
+        sleep(armAction[joint]['sleep'])
+        tx2.output(armAction[joint]['pwm'], 0)
+        #sleep(armAction[joint]['sleep'])
 
 def checkArmDirection(val):
     if val == -1:
@@ -336,7 +339,7 @@ def moveJoints(data):
                 tx2.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
             else:
                 tx2.output(armAction[i]['enab'], 1)
-
+    '''
     elif system == 'pi':
         for i in range(1):#len(data)):
             if data[i] != 0:
@@ -344,6 +347,7 @@ def moveJoints(data):
                 GPIO.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
             else:
                 GPIO.output(armAction[i]['enab'], 1)
+    '''
 
 
 def main(*argv):
@@ -397,16 +401,27 @@ if __name__ == '__main__':
     try:
         if armAttached:
             if system == 'tx2':
-                p1 = multiprocessing.Process(target=runPwmTx2)
-                p1.start()
+                pass
+                #p1 = multiprocessing.Process(target=runPwmTx2, args=(0,))
+                #p1.start()
+                #p2 = multiprocessing.Process(target=runPwmTx2, args=(1,))
+                #p2.start()
+                #p3 = multiprocessing.Process(target=runPwmTx2, args=(2,))
+                #p3.start()
+                #p4 = multiprocessing.Process(target=runPwmTx2, args=(3,))
+                #p4.start()
             elif system == 'pi':
-                p1 = multiprocessing.Process(target=runPwmTx2)
-                p1.start()
+                pass
+                #p1 = multiprocessing.Process(target=runPwmPi)
+                #p1.start()
 
         # Start the main loop
         main()
     except (KeyboardInterrupt, SystemExit):
-        p1.terminate()
+        #p1.terminate()
+        #p2.terminate()
+        #p3.terminate()
+        #p4.terminate()
         raise
 
 
