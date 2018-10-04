@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.5
+
 '''
 File:        baseMobility.py
 Authors:      Chary Vielma / Shripal Rawal
@@ -11,7 +13,7 @@ Description: Mobility script reads in a text file with configuration for various
 '''
 
 import rospy
-from test_topic.msg import joystick
+from mobility_topic.msg import joystick
 
 import sys
 import os
@@ -27,13 +29,18 @@ import threading
 import serial
 
 
-# For 433 Mhz Communication
-rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Base433_0001-if00-port0', 9600, timeout=None)
+try:    
+    # For 433 Mhz Communication
+    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Base433_0001-if00-port0', 9600, timeout=None)
+except:
+    print("433 Not Connected")
+    sleep(3)
 
 
 # Setup ROS Master
-os.environ["ROS_MASTER_URI"] = "http://192.168.1.2:11311"
-os.environ["ROS_IP"] = "192.168.1.22"
+if "tegra-ubuntu" not in subprocess.check_output("uname -a", shell=True).strip().decode("utf-8"):
+    os.environ["ROS_MASTER_URI"] = "http://192.168.1.2:11311"
+    os.environ["ROS_IP"] = "192.168.1.22"
 
 
 # Initialize pygame and joysticks
@@ -48,11 +55,11 @@ sleep(2)
 #Global declarations
 global paused
 global controlString
-global controls  # Holds file configurations
-global modeNum  # Current mode index to toggle modeNames lst
-global mode  # Current set name (string) in use
-global modeNames  # List of set names (strings) from .txt file
-global actionTime  # Seconds needed to trigger pause / mode change
+global controls                  # Holds file configurations
+global modeNum                   # Current mode index to toggle modeNames lst
+global mode                      # Current set name (string) in use
+global modeNames                 # List of set names (strings) from .txt file
+global actionTime                # Seconds needed to trigger pause / mode change
 global maxRotateSpeed
 global turnInPlace
 global armIndependent
@@ -61,7 +68,7 @@ global GHz_UP
 
 GHZ_UP = True
 armAttached = True
-armIndependent = True  # True means Independent Mode for Linear Actuators
+armIndependent = True            # True means Independent Mode for Linear Actuators
 paused = False
 modeNum = 0
 actionTime = 3
@@ -278,8 +285,9 @@ def putRF(data):                            #arguments to make function more sel
 def isGHzUp():
     global GHZ_UP
 
-    GHZ_UP = True if os.system("ping -c 4 192.168.1.2") is 0 else False
-    sleep(15)
+    while True:
+        GHZ_UP = True if os.system("ping -q -s 0 -c 5 192.168.1.2 >/dev/null 2>&1") is 0 else False
+        sleep(15)
 
 
 
@@ -291,7 +299,7 @@ def main(*argv):
     for i in range(joystick_count):
         pygame.joystick.Joystick(i).init()
 
-    while True:
+    while not rospy.is_shutdown():
         pygame.event.pump()  # Keeps pygame in sync with system, performs internal upkeep
         joystick_count = pygame.joystick.get_count()
         if joystick_count == 0:
@@ -318,26 +326,24 @@ def main(*argv):
             try:
                 print(','.join(outVals))                    # Printing The OUTSTRING
                 
-                
                 if GHZ_UP:
                     # Publishing to ROS From Base Station
-
                     msg.header.stamp = rospy.Time.now()
                     msg.header.frame_id = 'Titan Rover'
-                    msg.mobility.TurningX = int(outVals[0])
-                    msg.mobility.ForwardY = int(outVals[1])
-                    msg.arm.J1 = int(outVals[2])
-                    msg.arm.J2 = int(outVals[3])
-                    msg.arm.J3 = int(outVals[4])
+                    msg.mobility.TurningX = int(outVals[1])
+                    msg.mobility.ForwardY = int(outVals[0])
+                    msg.arm.J1 = int(outVals[4])
+                    msg.arm.J2 = int(outVals[2])
+                    msg.arm.J3 = int(outVals[3])
                     msg.arm.J4 = int(outVals[5])
                     msg.arm.J51 = int(outVals[6])
                     msg.arm.J52 = int(outVals[7])
                     msg.mode.mode = int(outVals[-1])
-                    joy.publish(msg)
+                    
+                    joy.publish(msg)                        # Publish to ROS on ROVER
 
                 else:
                     # For 433 MHz Frequency 
-
                     data = struct.pack('2b', int(outVals[0]), int(outVals[1]))
                     putRF(data)
                 
@@ -355,9 +361,9 @@ if __name__ == '__main__':
         rospy.init_node('talker_base_mobility', anonymous=True)
         msg = joystick()
 
-        # Start the main loop
-        main()
-        #threading.Thread(target=isGHzUp).start()
+        threading.Thread(target=isGHzUp).start()        # Check the connection to ROVER
+        main()                                          # Start the main loop
+        
 
     except (KeyboardInterrupt, SystemExit):
         rospy.signal_shutdown()
