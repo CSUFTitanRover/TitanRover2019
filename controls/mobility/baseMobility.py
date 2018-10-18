@@ -31,7 +31,7 @@ import serial
 
 try:    
     # For 433 Mhz Communication
-    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Base433_0001-if00-port0', 9600, timeout=None)
+    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Base433_0001-if00-port0', 19200, timeout=None)
 except:
     print("433 Not Connected")
     sleep(3)
@@ -80,6 +80,7 @@ actionList = ['motor1', 'motor2', 'arm2', 'arm3', 'joint1', 'joint4', 'joint5a',
 
 global roverActions
 
+
 def setRoverActions():
     global roverActions
     roverActions =  {
@@ -102,6 +103,7 @@ def setRoverActions():
     roverActions['armMode'] = {'held': False, 'direction': 1, 'value': 0, 'set': 0} # Added to support Mixed and Single Mode for Linear Actuators
 
 setRoverActions()  # Initiate roverActions to enter loop
+
 
 def startUp(argv):
     global controlString, controls, modeNames, mode, roverActions
@@ -139,6 +141,7 @@ def getRate():
 specialMultipliers = {'motor': 110, 'none': 1}
 rateMultipliers = {'motor': getRate, 'none': getOne}
 
+
 def throttleStep():
     global roverActions
     if (not roverActions['throttleStep']['held'] and roverActions['throttleStep']['value']):  # New button press
@@ -154,11 +157,13 @@ def throttleStep():
     if (roverActions['throttleStep']['held'] and not roverActions['throttleStep']['value']):  # Button held, but released
         roverActions['throttleStep']['held'] = False
 
+
 def computeSpeed(key):
     val = roverActions[key]
     throttleValue = rateMultipliers[val['rate']]()  # Get current rate multiplier (-1 to +1), calls getRate or getOne accordingly
     calcThrot = np.interp(throttleValue, [-1 , 1], [0, 1])
     return int(specialMultipliers[val['special']] * calcThrot * val['direction'] * val['value'])
+
 
 def checkArmMode():
     global armIndependent, roverActions, modeNum, mode
@@ -190,6 +195,7 @@ def checkPause():
         roverActions['pause']['lastpress'] = datetime.now()  # Keep updating time as button may continue to be held
         paused = not paused
 
+
 def checkModes():
     global modeNum, mode, roverActions
     if (not roverActions['mode']['held'] and roverActions['mode']['value']):  # New button press
@@ -208,6 +214,7 @@ def checkModes():
         roverActions['mode']['set'] = modeNum
         roverActions['ledMode']['value'] = controls[mode]['ledCode']
 
+
 def checkButtons(currentJoystick):
     global roverActions
     name = currentJoystick.get_name()
@@ -224,6 +231,7 @@ def checkButtons(currentJoystick):
                         roverActions[control_input[0]]['value'] = val
                         roverActions[control_input[0]]['direction'] = control_input[1]  # Set direction multiplier
 
+
 def checkAxes(currentJoystick):
     global roverActions
     name = currentJoystick.get_name()
@@ -238,6 +246,7 @@ def checkAxes(currentJoystick):
                     val = currentJoystick.get_axis(i)  # Read axis value, assign to roverActions
                     roverActions[control_input[0]]['value'] = val
                     roverActions[control_input[0]]['direction'] = control_input[1]  # Set direction multiplier
+
 
 def checkHats(currentJoystick):
     global roverActions
@@ -256,6 +265,7 @@ def checkHats(currentJoystick):
                         roverActions[control_input[0]]['value'] = val[y]
                         roverActions[control_input[0]]['direction'] = control_input[1]  # Set direction multiplier
 
+
 def checkRotate():
     global turnInPlace
     if roverActions['rotate']['value'] !=0:
@@ -273,22 +283,30 @@ def turn(outVal):
     turnInPlace = None
     return outVal
 
+
 def putRF(data):                            #arguments to make function more self-contained and function-like
     rf_uart.setDTR(True)                    #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
     rf_uart.setRTS(True)                    #then these two lines will send low logic to both which puts the module in transmit mode 0
 
-    rf_uart.write(b's')                     #start byte
-    rf_uart.write(data)                     #payload
-    rf_uart.write(b'f')                     #end byte
+    if not rf_uart.cts:                     #Check if path clear to send
+        rf_uart.write(b's')
+        rf_uart.write(data)
+        rf_uart.write(b'f')                 #start byte + payload + stop byte
+
     rf_uart.flush()                         #waits until all data is written
+
 
 def isGHzUp():
     global GHZ_UP
 
     while True:
-        GHZ_UP = True if os.system("ping -q -s 0 -c 5 192.168.1.2 >/dev/null 2>&1") is 0 else False
+        if os.system("ping -q -s 0 -c 10 192.168.1.2 >/dev/null 2>&1") is 0 and not GHZ_UP:
+            GHZ_UP = True
+            print("\n\n\nChanged To GHZ\n\n\n")
+        elif os.system("ping -q -s 0 -c 10 192.168.1.2 >/dev/null 2>&1") is not 0 and GHZ_UP:
+            GHZ_UP = False
+            print("\n\n\nChanged to MHZ\n\n\n")
         sleep(15)
-
 
 
 def main(*argv):
@@ -357,11 +375,12 @@ if __name__ == '__main__':
     # Only start the threads if the arm is attached
     try:
         # Setup ROS Topic
+        threading.Thread(target=isGHzUp).start()        # Check the connection to ROVER
+
         joy = rospy.Publisher('joystick', joystick, queue_size=10)
         rospy.init_node('talker_base_mobility', anonymous=True)
         msg = joystick()
 
-        threading.Thread(target=isGHzUp).start()        # Check the connection to ROVER
         main()                                          # Start the main loop
         
 
