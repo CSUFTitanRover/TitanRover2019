@@ -74,10 +74,14 @@ else:
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from pysaber import DriveEsc
+from lights import Rover_Status_Lights
 
 # Instantiating The Class Object
 wheels = DriveEsc(128, "mixed")
 armMix = DriveEsc(129, "notMixed")
+
+# Instantiating The Class Object For LED Lights
+led = Rover_Status_Lights(60)
 
 # Initialize pygame and joysticks
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
@@ -383,7 +387,7 @@ def main(*argv):
             outString = ','.join(outVals)
             print(outString)
             #writeToBus(controls[mode]['ledCode'], controls[mode]['ledCode'])
-
+            led.update(int(outVals[-1]))
             try:
                 wheels.driveBoth(int(outVals[0]), int(outVals[1]))
                 if armAttached:
