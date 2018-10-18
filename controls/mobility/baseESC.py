@@ -80,7 +80,8 @@ else:
 
 try:    
     # For 433 Mhz Communication
-    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0', 9600, timeout=None)
+    #/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0
+    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0', 19200, timeout=None)
 except:
     print("433 Not Connected")
     sleep(3)
@@ -89,10 +90,15 @@ except:
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from pysaber import DriveEsc
+from lights import Rover_Status_Lights
 
-# Instantiating The Class Object
+
+# Instantiating The Class Object For PySabertooth
 wheels = DriveEsc(128, "mixed")
 armMix = DriveEsc(129, "notMixed")
+
+# Instantiating The Class Object For LED Lights
+led = Rover_Status_Lights(60)
 
 '''
 def runPwmPi():
@@ -137,17 +143,19 @@ def moveJoints(data):
                 GPIO.output(armAction[i]['enab'], 1)
 '''
 
-def getRF(size_of_payload=2): #added argument to make it more function-like
-    rf_uart.setDTR(True) #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
-    rf_uart.setRTS(True) #then these two lines will send low logic to both which puts the module in transmit mode 0
+def getRF(size_of_payload=2):                           #added argument to make it more function-like
+    rf_uart.setDTR(True)                                #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
+    rf_uart.setRTS(True)                                #then these two lines will send low logic to both which puts the module in transmit mode 0
+    
     while True:
-        n = rf_uart.read(1) #read bytes one at a time
-        if n == b's': #throw away bytes until start byte is encountered
-            data = rf_uart.read(size_of_payload) #read fixed number of bytes
-            n = rf_uart.read(1) #the following byte should be the stop byte
+        n = rf_uart.read(1)                             #read bytes one at a time
+
+        if n == b's':                                   #throw away bytes until start byte is encountered
+            data = rf_uart.read(size_of_payload)        #read fixed number of bytes
+            n = rf_uart.read(1)                         #the following byte should be the stop byte
             if n == b'f':
-                #print('success')
                 data = struct.unpack('2b', data)
+                print(data)
                 
                 # Publishing to ROS From Base Station
                 msg.header.stamp = rospy.Time.now()
@@ -166,12 +174,11 @@ def getRF(size_of_payload=2): #added argument to make it more function-like
 
             else: #if that last byte wasn't the stop byte then something is out of sync
                 print("failure")
-                
-
 
 def main(data):
     try:
         wheels.driveBoth(data.mobility.ForwardY, data.mobility.TurningX)
+        #led.update(msg.mode.mode)
         '''
         if armAttached:
             moveJoints([data.arm.J1, data.arm.J4, data.arm.J51, data.arm.J52])
@@ -204,7 +211,7 @@ if __name__ == '__main__':
         rospy.init_node('talker_base_mobility', anonymous=True)
         msg = joystick()
         
-        #threading.Thread(target=getRF).start()
+        threading.Thread(target=getRF).start()
 
         # Initialize for Subscribe
         #rospy.init_node('listener', anonymous=True)
