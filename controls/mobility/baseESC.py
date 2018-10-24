@@ -175,6 +175,15 @@ def getRF(size_of_payload=2):                           #added argument to make 
             else: #if that last byte wasn't the stop byte then something is out of sync
                 print("failure")
 
+def putRF(data): #arguments to make function more self-contained and function-like
+    rf_uart.setDTR(True) #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
+    rf_uart.setRTS(True) #then these two lines will send low logic to both which puts the module in transmit mode 0
+
+    #does not check cts pin for clear buffer because it will most likely have data in its receive buffer
+    rf_uart.write(b's'+data+b'f') #start byte + payload + stop byte
+    rf_uart.flush() #waits until all data is written
+
+
 def main(data):
     try:
         wheels.driveBoth(data.mobility.ForwardY, data.mobility.TurningX)
@@ -212,6 +221,7 @@ if __name__ == '__main__':
         msg = joystick()
         
         threading.Thread(target=getRF).start()
+        putRF(struct.pack('1i', time()))
 
         # Initialize for Subscribe
         #rospy.init_node('listener', anonymous=True)

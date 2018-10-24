@@ -31,7 +31,7 @@ import serial
 
 try:    
     # For 433 Mhz Communication
-    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Base433_0001-if00-port0', 19200, timeout=None)
+    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Base433_0001-if00-port0', 19200, timeout=0.01) 
 except:
     print("433 Not Connected")
     sleep(3)
@@ -288,12 +288,29 @@ def putRF(data):                            #arguments to make function more sel
     rf_uart.setDTR(True)                    #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
     rf_uart.setRTS(True)                    #then these two lines will send low logic to both which puts the module in transmit mode 0
 
-    if not rf_uart.cts:                     #Check if path clear to send
-        rf_uart.write(b's')
-        rf_uart.write(data)
-        rf_uart.write(b'f')                 #start byte + payload + stop byte
+    if not rf_uart.cts:                     #Check if both send and receive buffers are empty
+        rf_uart.write(b's' + data + b'f')   #start byte + payload + stop byte
+        rf_uart.flush() 
+        return len(data)                 #waits until all data is written
+    else:
+        return -1
 
-    rf_uart.flush()                         #waits until all data is written
+def getRF(size_of_payload): #added argument to make it more function-like
+    rf_uart.setDTR(True) #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
+    rf_uart.setRTS(True) #then these two lines will send low logic to both which puts the module in transmit mode 0
+    while True:
+        n = rf_uart.read(1) #read bytes one at a time
+        if not n:
+            return 0
+        if n == b's': #throw away bytes until start byte is encountered
+            data = rf_uart.read(size_of_payload) #read fixed number of bytes
+            n = rf_uart.read(1) #the following byte should be the stop byte
+            if n == b'f':
+                return data
+            else: #if that last byte wasn't the stop byte then something is out of sync
+                return -1
+    return -1 #should never hit this return
+
 
 
 def isGHzUp():
@@ -364,6 +381,7 @@ def main(*argv):
                     # For 433 MHz Frequency 
                     data = struct.pack('2b', int(outVals[0]), int(outVals[1]))
                     putRF(data)
+                    gps = struct.unpack('2i', getRF(8))
                 
             except:
                 #GHZ_UP = False
