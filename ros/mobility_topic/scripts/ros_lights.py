@@ -18,20 +18,35 @@ from time import sleep
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.FT232H as FT232H
 from lights import Rover_Status_Lights
+import threading
+import sys
 
+def update_mode(msg_data):
+    global mode
+    global last_updated
+    last_updated = rospy.Time.now()
+    mode = msg_data.mode.mode
 
-def update_lights(msg_data):
-        print(msg_data.mode.mode)
-        status.update(msg_data.mode.mode)
+def update_lights():
+    status = Rover_Status_Lights(60)
+    global mode
+    global last_updated
+    while not rospy.is_shutdown():
+        if (rospy.Time.now() - last_updated) > rospy.Duration():
+            mode = -1
+            print("set mode to idle")
+        status.update(mode)
+
 
 if __name__ == '__main__':
-    try:
-        status = Rover_Status_Lights(60)
-        rospy.init_node('lights_node', anonymous=True)
-        rospy.Subscriber("joystick", joystick, update_lights)
-        rospy.spin()                                                  # Start the main loop
 
-    except (KeyboardInterrupt, SystemExit):
-        rospy.signal_shutdown()
-        raise
+    rospy.init_node('lights_node', anonymous=True)
+    mode = 0
+    last_updated = rospy.Time.now()
+
+    rospy.Subscriber("joystick", joystick, update_mode)
+    threading.Thread(target=update_lights).start()
+    rospy.spin()                                                  # Start the main loop
+
+
 
