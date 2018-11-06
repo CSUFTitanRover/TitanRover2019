@@ -133,7 +133,6 @@ class Rover_Status_Lights(object):
 			for j in range(60):
 				self.setColor(j, *BLUE)
 			for i in range (k, 30, 5):
-				print(i)
 				self.setColor(chaseL + i, *ORANGE)
 				self.setColor(chaseR - i, *ORANGE)
 			self.show()
