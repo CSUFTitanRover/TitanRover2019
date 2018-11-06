@@ -40,7 +40,7 @@ class DriveEsc:
         self.saber = serial.Serial(self.port, '38400')
         self.address = address
 
-        self.send(0x0E, 5)          # To set Timeout
+        self.send(0x0E, 6)          # To set Timeout
         self.send(0x0F, 4)          # To set Baudrate
 
 
