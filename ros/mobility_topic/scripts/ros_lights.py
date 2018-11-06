@@ -34,7 +34,6 @@ def update_lights():
     while not rospy.is_shutdown():
         if (rospy.Time.now() - last_updated) > rospy.Duration():
             mode = -1
-            print("set mode to idle")
         status.update(mode)
 
 
