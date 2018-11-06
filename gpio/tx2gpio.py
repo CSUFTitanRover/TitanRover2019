@@ -30,6 +30,6 @@ class Tx2Gpio:
         else:
             Controller.reset_pin(pin)
 
-    def input(self):
-        # To be implemented if we need to read pin logic level
-        pass
+    def read(self, pin):
+        pin = Controller.alloc_pin(1, INPUT)
+        return pin.read()

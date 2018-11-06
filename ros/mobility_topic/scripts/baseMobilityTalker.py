@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+
+
 '''
-File:        mobility.py
+File:        baseMobility.py
 Authors:      Chary Vielma / Shripal Rawal
 Emails:       chary.vielma@csu.fullerton.edu / rawalshreepal000@gmail.com
 Description: Mobility script reads in a text file with configuration for various controllers. User actions
@@ -9,6 +12,9 @@ Description: Mobility script reads in a text file with configuration for various
              To start program with a different configuration than rumblepad, list .txt file after script name:
              e.g. <python version> mobility.py dual.txt
 '''
+
+import rospy
+from mobility_topic.msg import joystick
 
 import sys
 import os
@@ -21,78 +27,29 @@ import pygame
 import numpy as np
 import subprocess
 import threading
-from smbus2 import SMBusWrapper
 
-global system
-global armAction
-import serial
-#polo = serial.Serial('/dev/serial/by-id/usb-Pololu_Corporation_Pololu_A-Star_32U4-if00', 9600)
+# Setup ROS Master
+os.environ["ROS_MASTER_URI"] = "http://192.168.1.2:11311"
+os.environ["ROS_IP"] = "192.168.1.187"
 
-#armAddress = { 0 : 0x08, 1 : 0x09, 2 : 0x10, 3 : 0x11}
-#armAddress = 0x08
-#arm1 = [0,0,0,0];
-#arm2 = [0,0,0,0];
-
-system = subprocess.check_output("uname -a", shell=True).strip().decode("utf-8")
-if "raspberrypi" in system:
-    system = "pi"
-    import RPi.GPIO as GPIO                 # For Arm Movement
-
-    armAction = { 0 : {'pwm' : 17, 'dir' : 27, 'enab' : 22},
-                  1 : {'pwm' : 16, 'dir' : 20, 'enab' : 21},
-                  2 : {'pwm' : 18, 'dir' : 23, 'enab' : 24},
-                  3 : {'pwm' : 5,  'dir' : 6,  'enab' : 13}
-                }
-
-    GPIO.setmode(GPIO.BCM)
-
-    for i in range(len(armAction)):
-        GPIO.setup(armAction[i]['pwm'], GPIO.OUT)
-        GPIO.setup(armAction[i]['dir'], GPIO.OUT)
-        GPIO.setup(armAction[i]['enab'], GPIO.OUT)
-
-elif "tegra-ubuntu" in system:
-    system = "tx2"
-    sys.path.insert(0, subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8') + '/gpio/')
-    from tx2gpio import Tx2Gpio
-   
-    armAction = { 0 : {'pwm' : 396, 'dir' : 466, 'enab' : 397, 'sleep' : .000005},
-                  1 : {'pwm' : 429, 'dir' : 428, 'enab' : 427, 'sleep' : .000005},
-                  2 : {'pwm' : 398, 'dir' : 298, 'enab' : 389, 'sleep' : .000005},
-                  3 : {'pwm' : 481, 'dir' : 254, 'enab' : 430, 'sleep' : .000004}
-                }
-    
-    pinsUsed = [ 396, 466, 397,
-                 429, 428, 427,
-                 398, 298, 389,
-                 481, 254, 430 ]
-
-    tx2 = Tx2Gpio(pinsUsed)                        # Instantiating The Class Object
-
-    for i in range(len(pinsUsed)):
-        tx2.setup(pinsUsed[i], 'out')
-
-    for i in range(2, len(pinsUsed), 3):
-        tx2.output(pinsUsed[i], 1)
-
-else:
-    system = "none"
-
-
-# To import packages from different Directories
-rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
-sys.path.insert(0, rootDir + '/build/resources/python-packages')
-from pysaber import DriveEsc
-from lights import Rover_Status_Lights
-
-# Instantiating The Class Object
-wheels = DriveEsc(128, "mixed")
-armMix = DriveEsc(129, "notMixed")
-
-# Initialize pygame and joysticks
+# Initialize pygame and Joysticks
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
 pygame.init()
 pygame.joystick.init()
+
+'''
+global sock
+try:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    while True:
+        try:
+            sock.connect(('192.168.1.2', 9898))
+            break
+        except:
+            print("Connecting")
+except:
+    ("error connecting")
+'''
 
 # System setup wait
 sleep(2)
@@ -109,7 +66,7 @@ global maxRotateSpeed
 global turnInPlace
 global armIndependent
 global armAttached
-armAttached = True
+armAttached = False
 armIndependent = True  # True means Independent Mode for Linear Actuators
 paused = False
 modeNum = 0
@@ -154,7 +111,7 @@ def startUp(argv):
         print("Exceeded arguments")
         sys.exit()
     try:
-        configDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8') + '/controls/mobility/txtConfig/' + fileName
+        configDir = '/home/jithin/Documents/TitanRover/TitanRover2019/controls/mobility/txtConfig/rumblepad.txt'#subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8') + '/controls/mobility/txtConfig/' + fileName
         controlString = open(configDir).read().replace('\n', '').replace('\r', '')
     except IOError:
         print ("Unable to open file " + configDir)
@@ -253,9 +210,9 @@ def checkModes():
 def checkButtons(currentJoystick):
     global roverActions
     name = currentJoystick.get_name()
-    joyForSet = controls[mode].get(name)  # Get joystick in current set
+    joyForSet = controls[mode].get(name)  # Get Joystick in current set
     if (joyForSet):
-        typeForJoy = joyForSet.get('buttons')  # Get joystick control type
+        typeForJoy = joyForSet.get('buttons')  # Get Joystick control type
         if (typeForJoy):
             buttons = currentJoystick.get_numbuttons()
             for i in range(buttons):
@@ -269,9 +226,9 @@ def checkButtons(currentJoystick):
 def checkAxes(currentJoystick):
     global roverActions
     name = currentJoystick.get_name()
-    joyForSet = controls[mode].get(name)  # Get joystick in current set
+    joyForSet = controls[mode].get(name)  # Get Joystick in current set
     if (joyForSet):
-        typeForJoy = joyForSet.get('axes')  # Get joystick control type
+        typeForJoy = joyForSet.get('axes')  # Get Joystick control type
         if (typeForJoy):
             axes = currentJoystick.get_numaxes()
             for i in range(axes):
@@ -284,9 +241,9 @@ def checkAxes(currentJoystick):
 def checkHats(currentJoystick):
     global roverActions
     name = currentJoystick.get_name()
-    joyForSet = controls[mode].get(name)  # Get joystick in current set
+    joyForSet = controls[mode].get(name)  # Get Joystick in current set
     if (joyForSet):
-        typeForJoy = joyForSet.get('hats')  # Get joystick control type
+        typeForJoy = joyForSet.get('hats')  # Get Joystick control type
         if (typeForJoy):
             count = currentJoystick.get_numhats()
             for x in range(count):
@@ -297,7 +254,6 @@ def checkHats(currentJoystick):
                     if (control_input):
                         roverActions[control_input[0]]['value'] = val[y]
                         roverActions[control_input[0]]['direction'] = control_input[1]  # Set direction multiplier
-
 
 def checkRotate():
     global turnInPlace
@@ -317,68 +273,32 @@ def turn(outVal):
     return outVal
 
 
-def runPwmPi():
-    global armAction
-    while True:
-        GPIO.output(armAction[0]['pwm'], 1)
-        sleep(.00038)
-        GPIO.output(armAction[0]['pwm'], 0)
-        sleep(.00003)
-
-def runPwmTx2(joint):
-    global armAction
-    while True:
-        tx2.output(armAction[joint]['pwm'], 1)
-        sleep(armAction[joint]['sleep'])
-        tx2.output(armAction[joint]['pwm'], 0)
-        #sleep(armAction[joint]['sleep'])
-
-def checkArmDirection(val):
-    if val == -1:
-        return '0' 
-    elif val == 1:
-        return '1'
-
-def moveJoints(data):
-    global armAction, system
-
-    if system == 'tx2':
-        for i in range(1):#len(data)):
-            if data[i] != 0:
-                tx2.output(armAction[i]['enab'], 0)
-                tx2.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
-            else:
-                tx2.output(armAction[i]['enab'], 1)
-    '''
-    elif system == 'pi':
-        for i in range(1):#len(data)):
-            if data[i] != 0:
-                GPIO.output(armAction[i]['enab'], 0)
-                GPIO.output(armAction[i]['dir'], int(checkArmDirection(data[i])))
-            else:
-                GPIO.output(armAction[i]['enab'], 1)
-    '''
-
-
 def main(*argv):
-    global armIndependent, armAction, arm1, arm2
+    global armIndependent, armAction
     startUp(argv)  # Load appropriate controller(s) config file
-    joystick_count = pygame.joystick.get_count()
-    for i in range(joystick_count):
+    Joystick_count = pygame.joystick.get_count()
+    for i in range(Joystick_count):
         pygame.joystick.Joystick(i).init()
+
+
+    pub = rospy.Publisher('joystick', joystick, queue_size=10)
+    rospy.init_node('talker_base_mobility', anonymous=True)
+    
+
+
 
     while True:
         pygame.event.pump()  # Keeps pygame in sync with system, performs internal upkeep
-        joystick_count = pygame.joystick.get_count()
-        if joystick_count == 0:
-            print("No joystick attached")
+        Joystick_count = pygame.joystick.get_count()
+        if Joystick_count == 0:
+            print("No Joystick attached")
             stop()
             sleep(1)
-        for i in range(joystick_count):
-            joystick = pygame.joystick.Joystick(i)
-            checkAxes(joystick)
-            checkHats(joystick)
-            checkButtons(joystick)
+        for i in range(Joystick_count):
+            Joystick = pygame.joystick.Joystick(i)
+            checkAxes(Joystick)
+            checkHats(Joystick)
+            checkButtons(Joystick)
             throttleStep()
             checkRotate()
             checkPause()
@@ -391,57 +311,39 @@ def main(*argv):
                 outVals = turn(list(map(computeSpeed, actionList))) # Output string determined by actionList[] order
             outVals = list(map(str, outVals))
             outString = ','.join(outVals)
+            #sock.send(outString.encode('utf-8'))
             print(outString)
+
             #writeToBus(controls[mode]['ledCode'], controls[mode]['ledCode'])
-            led.update(int(outVals[-1]))
-            try:
-                wheels.driveBoth(int(outVals[0]), int(outVals[1]))
-                if armAttached:
-                    #with SMBusWrapper(1) as bus:
-                    #for i in range(4):  #To grab current arm values for compare to old in arm2
-                        #arm1[i] = int(str(i+1)+str(int(outVals[i+4])+1))
-                    #for i in range(4):  #Only write to smbus if change in arm values
-                        #if arm1[i] != arm2[i]:
-                            #polo.write((str(i+1)+str(int(outVals[i+4])+1)).encode('utf-8'))
-                            #pass
-                            #bus.write_byte_data(armAddress, 0, int(str(i+1)+str(int(outVals[i+4])+1)))
-                        #else:
-                            #polo.write(b'a')
-                    #arm2[0:4] = arm1[0:4]
-                    #moveJoints([int(outVals[4]), int(outVals[5]), int(outVals[6]), int(outVals[7])])
-                    if armIndependent:
-                        armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
-                    else:
-                        armMix.driveBoth(-(int(outVals[3])), int(outVals[3]))            
-            except:
-                print("Mobility-main-drive error")
+
+            
+            
+            msg = joystick()
+            msg.header.stamp = rospy.Time.now()
+            msg.header.frame_id = 'Titan Rover'
+            msg.mobility.TurningX = int(outVals[0])
+            msg.mobility.ForwardY = int(outVals[1])
+            msg.arm.J1 = int(outVals[2])
+            msg.arm.J2 = int(outVals[3])
+            msg.arm.J3 = int(outVals[4])
+            msg.arm.J4 = int(outVals[5])
+            msg.arm.J51 = int(outVals[6])
+            msg.arm.J52 = int(outVals[7])
+            msg.mode.mode = int(outVals[-1])
+
+
+            #print(msg)
+            pub.publish(msg)
+            
+
 
 if __name__ == '__main__':
+
     # Only start the threads if the arm is attached
     try:
-        if armAttached:
-            if system == 'tx2':
-                pass
-                #p1 = multiprocessing.Process(target=runPwmTx2, args=(0,))
-                #p1.start()
-                #p2 = multiprocessing.Process(target=runPwmTx2, args=(1,))
-                #p2.start()
-                #p3 = multiprocessing.Process(target=runPwmTx2, args=(2,))
-                #p3.start()
-                #p4 = multiprocessing.Process(target=runPwmTx2, args=(3,))
-                #p4.start()
-            elif system == 'pi':
-                pass
-                #p1 = multiprocessing.Process(target=runPwmPi)
-                #p1.start()
-
         # Start the main loop
         main()
     except (KeyboardInterrupt, SystemExit):
-        #p1.terminate()
-        #p2.terminate()
-        #p3.terminate()
-        #p4.terminate()
         raise
 
 
