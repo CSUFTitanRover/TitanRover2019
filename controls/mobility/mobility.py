@@ -21,9 +21,18 @@ import pygame
 import numpy as np
 import subprocess
 import threading
+from smbus2 import SMBusWrapper
 
 global system
 global armAction
+import serial
+#polo = serial.Serial('/dev/serial/by-id/usb-Pololu_Corporation_Pololu_A-Star_32U4-if00', 9600)
+
+#armAddress = { 0 : 0x08, 1 : 0x09, 2 : 0x10, 3 : 0x11}
+#armAddress = 0x08
+#arm1 = [0,0,0,0];
+#arm2 = [0,0,0,0];
+
 system = subprocess.check_output("uname -a", shell=True).strip().decode("utf-8")
 if "raspberrypi" in system:
     system = "pi"
@@ -74,6 +83,7 @@ else:
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from pysaber import DriveEsc
+from lights import Rover_Status_Lights
 
 # Instantiating The Class Object
 wheels = DriveEsc(128, "mixed")
@@ -99,7 +109,7 @@ global maxRotateSpeed
 global turnInPlace
 global armIndependent
 global armAttached
-armAttached = False
+armAttached = True
 armIndependent = True  # True means Independent Mode for Linear Actuators
 paused = False
 modeNum = 0
@@ -351,7 +361,7 @@ def moveJoints(data):
 
 
 def main(*argv):
-    global armIndependent, armAction
+    global armIndependent, armAction, arm1, arm2
     startUp(argv)  # Load appropriate controller(s) config file
     joystick_count = pygame.joystick.get_count()
     for i in range(joystick_count):
@@ -383,11 +393,22 @@ def main(*argv):
             outString = ','.join(outVals)
             print(outString)
             #writeToBus(controls[mode]['ledCode'], controls[mode]['ledCode'])
-
+            led.update(int(outVals[-1]))
             try:
                 wheels.driveBoth(int(outVals[0]), int(outVals[1]))
                 if armAttached:
-                    moveJoints([int(outVals[4]), int(outVals[5]), int(outVals[6]), int(outVals[7])])
+                    #with SMBusWrapper(1) as bus:
+                    #for i in range(4):  #To grab current arm values for compare to old in arm2
+                        #arm1[i] = int(str(i+1)+str(int(outVals[i+4])+1))
+                    #for i in range(4):  #Only write to smbus if change in arm values
+                        #if arm1[i] != arm2[i]:
+                            #polo.write((str(i+1)+str(int(outVals[i+4])+1)).encode('utf-8'))
+                            #pass
+                            #bus.write_byte_data(armAddress, 0, int(str(i+1)+str(int(outVals[i+4])+1)))
+                        #else:
+                            #polo.write(b'a')
+                    #arm2[0:4] = arm1[0:4]
+                    #moveJoints([int(outVals[4]), int(outVals[5]), int(outVals[6]), int(outVals[7])])
                     if armIndependent:
                         armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
                     else:
@@ -396,7 +417,6 @@ def main(*argv):
                 print("Mobility-main-drive error")
 
 if __name__ == '__main__':
-
     # Only start the threads if the arm is attached
     try:
         if armAttached:

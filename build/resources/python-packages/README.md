@@ -13,9 +13,9 @@
 
 
 
-#Mobility
+# Mobility
 
-###Last Year
+### Last Year
 
 - The mobility worked using TX2, arduino and the ESC's (2x60).
 - The command flow was as mentioned:-
@@ -38,7 +38,7 @@
 - The TX and GND pins of the adapter is connected to S1 and 0V of the sabertooth, respectively.
 - We wrote a custom module in python by using the original [PySabertooth](https://github.com/MomsFriendlyRobotCompany/pysabertooth) library.
 
-####How to use the custom sabertooth module
+#### How to use the custom sabertooth module
 - In order to use this in software you can import the pysaber module from the packages folder and call the method to drive the motors.
 - The steps to import the package are:-
 ```
