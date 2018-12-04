@@ -1,2 +1,0 @@
-mobility_topic:multijoy:reach_ros_node:roverimu:test_topic:titan_imu
--DCATKIN_DEVEL_PREFIX=/home/nvidia/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/catkin_ws/install -G Unix Makefiles

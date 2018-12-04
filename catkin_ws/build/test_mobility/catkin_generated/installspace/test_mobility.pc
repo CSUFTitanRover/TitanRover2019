@@ -1,8 +1,0 @@
-prefix=/home/nvidia/catkin_ws/install
-
-Name: test_mobility
-Description: Description of test_mobility
-Version: 0.0.0
-Cflags: -I/home/nvidia/catkin_ws/install/include
-Libs: -L/home/nvidia/catkin_ws/install/lib 
-Requires: message_runtime
