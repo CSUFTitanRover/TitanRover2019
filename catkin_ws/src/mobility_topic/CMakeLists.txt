@@ -53,6 +53,7 @@ add_message_files(
   Mobility.msg
   Arm.msg
   Mode.msg
+  MultiJoy.msg
 )
 
 ## Generate services in the 'srv' folder
