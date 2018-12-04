@@ -13,6 +13,7 @@ https://learn.adafruit.com/adafruit-ft232h-breakout/spi
 '''
 import rospy
 from mobility_topic.msg import joystick, MultiJoy
+from sensor_msgs.msg import Joy
 
 from time import sleep
 #import Adafruit_GPIO as GPIO
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     last_updated = rospy.Time.now()
 
     rospy.Subscriber("joystick", joystick, update_mode)
-    rospy.Subscriber("joy/0", MultiJoy, update_joy0)
+    rospy.Subscriber("joy/0", Joy, update_joy0)
 
     threading.Thread(target=update_lights).start()
     rospy.spin()                                                  # Start the main loop
