@@ -51,7 +51,7 @@ if __name__ == '__main__':
     last_updated = rospy.Time.now()
 
     rospy.Subscriber("joystick", joystick, update_mode)
-    rospy.Subscriber("joy/0", joystick, update_joy0)
+    rospy.Subscriber("joy/0", MultiJoy, update_joy0)
 
     threading.Thread(target=update_lights).start()
     rospy.spin()                                                  # Start the main loop
