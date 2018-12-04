@@ -1,0 +1,7 @@
+<launch> 
+  <node type="stdr_server_node" pkg="stdr_server" name="stdr_server" args="$(find stdr_resources)/maps/titan.yaml"/>
+  
+  <node pkg="rviz" type="rviz" name="rviz"
+    args="-d $(find rviz)/map_loading.rviz"/>
+
+</launch>
