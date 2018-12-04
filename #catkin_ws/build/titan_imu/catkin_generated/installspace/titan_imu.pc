@@ -1,8 +1,0 @@
-prefix=/home/nvidia/catkin_ws/install
-
-Name: titan_imu
-Description: Description of titan_imu
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/nvidia/catkin_ws/install/lib 
-Requires: 
