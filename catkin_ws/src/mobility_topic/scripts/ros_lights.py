@@ -42,7 +42,7 @@ def update_lights():
     global mode
     global last_updated
     while not rospy.is_shutdown():
-        if (rospy.Time.now() - last_updated) > rospy.Duration():
+        if (rospy.Time.now() - last_updated) > rospy.Duration(15):
             mode = -1
             print("set mode to idle")
         status.update(mode)
