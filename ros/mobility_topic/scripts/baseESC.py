@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.5
+
 '''
 File:         baseESC.py
 Authors:      Chary Vielma / Shripal Rawal
@@ -10,24 +12,24 @@ Description: Mobility script reads in a text file with configuration for various
              e.g. <python version> mobility.py dual.txt
 '''
 
-import roslib
+#import roslib
 import rospy
 from mobility_topic.msg import joystick
+
 import sys
 import os
 import socket
-from struct import *
+import struct
 from time import sleep, time, clock
-#from threading import Thread
+import threading
 import multiprocessing
 import pygame
 import numpy as np
 import subprocess
+import serial
 
 global armAttached
-global value
 armAttached = False
-value = '0,0,0,0,0,0,0,0,0,1'
 
 '''
 global system
@@ -74,37 +76,28 @@ elif "tegra-ubuntu" in system:
 else:
     system = "none"
 
-
-
-try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(('', 9898))
-    sock.listen(5)
-
-    while True:
-        try:
-            #accept connections from outside
-            client, address = sock.accept()
-            print("connection from ", client, address)
-            break
-        except:
-            print("waiting for connection")
-
-except:
-    print("cannot connect to Base Station")
 '''
 
-
-
+try:    
+    # For 433 Mhz Communication
+    #/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0
+    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0', 19200, timeout=None)
+except:
+    print("433 Not Connected")
+    sleep(3)
 
 # To import packages from different Directories
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from pysaber import DriveEsc
+from lights import Rover_Status_Lights
 
-# Instantiating The Class Object
+
+# Instantiating The Class Object For PySabertooth
 wheels = DriveEsc(128, "mixed")
 armMix = DriveEsc(129, "notMixed")
+
+# Instantiating The Class Object For LED Lights
 
 '''
 def runPwmPi():
@@ -149,36 +142,70 @@ def moveJoints(data):
                 GPIO.output(armAction[i]['enab'], 1)
 '''
 
-def main(data):
-    global value
-    #while True:
-    '''
-    data = client.recv(1024).decode('utf-8')
-    print(data)
-    '''
-    #value = data.data
-    #rospy.loginfo(value)
-    #outVals = value.split(',')
+def getRF(size_of_payload=2):                           #added argument to make it more function-like
+    rf_uart.setDTR(True)                                #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
+    rf_uart.setRTS(True)                                #then these two lines will send low logic to both which puts the module in transmit mode 0
     
+    while True:
+        n = rf_uart.read(1)                             #read bytes one at a time
+
+        if n == b's':                                   #throw away bytes until start byte is encountered
+            data = rf_uart.read(size_of_payload)        #read fixed number of bytes
+            n = rf_uart.read(1)                         #the following byte should be the stop byte
+            if n == b'f':
+                data = struct.unpack('2b', data)
+                print(data)
+                
+                # Publishing to ROS From Base Station
+                msg.header.stamp = rospy.Time.now()
+                msg.header.frame_id = 'Titan Rover'
+                msg.mobility.TurningX = int(data[1])
+                msg.mobility.ForwardY = int(data[0])
+                msg.arm.J1 = int(0)
+                msg.arm.J2 = int(0)
+                msg.arm.J3 = int(0)
+                msg.arm.J4 = int(0)
+                msg.arm.J51 = int(0)
+                msg.arm.J52 = int(0)
+                msg.mode.mode = int(0)
+
+                joy.publish(msg)                        # Publish to ROS on ROVER
+
+            else: #if that last byte wasn't the stop byte then something is out of sync
+                print("failure")
+
+def putRF(): #arguments to make function more self-contained and function-like
+    while True:
+        rf_uart.setDTR(True) #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
+        rf_uart.setRTS(True) #then these two lines will send low logic to both which puts the module in transmit mode 0
+
+        data = struct.pack('1i', int(time()))
+        print("SENDING GPS")
+
+        #does not check cts pin for clear buffer because it will most likely have data in its receive buffer
+        rf_uart.write(b's'+data+b'f') #start byte + payload + stop byte
+        rf_uart.flush() #waits until all data is written
+        sleep(20)
+
+def main(data):
     try:
-        #wheels.driveBoth(int(outVals[0]), int(outVals[1]))
-        print(data.mobility.TurningX, data.mobility.ForwardY)
-        wheels.driveBoth(data.mobility.TurningX, data.mobility.ForwardY)
-        '''
+        wheels.driveBoth(data.mobility.ForwardY, data.mobility.TurningX)
+        armMix.driveBoth(data.arm.J2, data.arm.J3)
+        #led.update(msg.mode.mode)
         if armAttached:
-            moveJoints([int(outVals[4]), int(outVals[5]), int(outVals[6]), int(outVals[7])])
+            #moveJoints([data.arm.J1, data.arm.J4, data.arm.J51, data.arm.J52])
             if outVals[-1] != '4':
-                armMix.driveBoth(int(outVals[2]), int(outVals[3]))                        
+                armMix.driveBoth(data.arm.J2, data.arm.J3)                        
             else:
-                armMix.driveBoth(-(int(outVals[3])), int(outVals[3]))    
-        '''        
+                armMix.driveBoth(-data.arm.J3, data.arm.J3)    
     except:
         print("Mobility-main-drive error")
 
 
+
 if __name__ == '__main__':
 
-    # Only start the threads if the arm is attached
+    # Only start the threads if the arm is attached 
     try:
         '''
         if armAttached:
@@ -190,10 +217,18 @@ if __name__ == '__main__':
                 p1.start()
         '''
 
-        # Start the main loop
-        rospy.init_node('listener', anonymous=True)
+        # Initialize for Publish
+        joy = rospy.Publisher('joystick', joystick, queue_size=10)
+        rospy.init_node('talker_base_mobility', anonymous=True)
+        msg = joystick()
+        
+        threading.Thread(target=getRF).start()
+        threading.Thread(target=putRF).start()
+
+        # Initialize for Subscribe
+        #rospy.init_node('listener', anonymous=True)
         rospy.Subscriber("joystick", joystick, main)
-        rospy.spin()
+        rospy.spin()                                                  # Start the main loop
 
     except (KeyboardInterrupt, SystemExit):
         #p1.terminate()
