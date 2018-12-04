@@ -35,12 +35,12 @@ def update_joy0(msg_data):
     global last_updated
     mode = 5
 
-    if (msg_data.axes[0] > 1 \
-    or msg_data.axes[1] > 1 \
-    or msg_data.axes[2] > 1 \
-    or msg_data.axes[3] > 1 \
-    or msg_data.axes[4] > 1 \
-    or msg_data.axes[5] > 1 \
+    if (msg_data.axes[0] > 0 \
+    or msg_data.axes[1] > 0 \
+    or msg_data.axes[2] > 0 \
+    or msg_data.axes[3] > 0 \
+    or msg_data.axes[4] > 0 \
+    or msg_data.axes[5] > 0 \
     or msg_data.buttons[0] > 0 \
     or msg_data.buttons[1] > 0 \
     or msg_data.buttons[2] > 0 \
