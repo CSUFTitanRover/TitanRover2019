@@ -33,8 +33,27 @@ def update_joy0(msg_data):
     print("enter joy0")
     global mode
     global last_updated
-    last_updated = rospy.Time.now()
     mode = 5
+
+    if (msg_data.axes[0] > 1 \
+    or msg_data.axes[1] > 1 \
+    or msg_data.axes[2] > 1 \
+    or msg_data.axes[3] > 1 \
+    or msg_data.axes[4] > 1 \
+    or msg_data.axes[5] > 1 \
+    or msg_data.buttons[0] > 0 \
+    or msg_data.buttons[1] > 0 \
+    or msg_data.buttons[2] > 0 \
+    or msg_data.buttons[3] > 0 \
+    or msg_data.buttons[4] > 0 \
+    or msg_data.buttons[5] > 0 \
+    or msg_data.buttons[6] > 0 \
+    or msg_data.buttons[7] > 0 \
+    or msg_data.buttons[8] > 0 \
+    or msg_data.buttons[9] > 0 \
+    or msg_data.buttons[10] > 0 \
+    or msg_data.buttons[11] > 0):
+        last_updated = rospy.Time.now()
 
 def update_lights():
     print("enter update lights")
