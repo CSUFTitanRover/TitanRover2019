@@ -53,21 +53,30 @@ CMAKE_BINARY_DIR = /home/nvidia/catkin_ws/build
 # Include the progress variables for this target.
 include mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs.dir/progress.make
 
+mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mode.js
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mobility.js
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Arm.js
 
 
+/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js: /opt/ros/kinetic/lib/gennodejs/gen_nodejs.py
+/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js: /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg
+/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js: /opt/ros/kinetic/share/sensor_msgs/msg/Joy.msg
+/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
+/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js: /opt/ros/kinetic/share/std_msgs/msg/UInt8.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Javascript code from mobility_topic/MultiJoy.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
+
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mode.js: /opt/ros/kinetic/lib/gennodejs/gen_nodejs.py
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mode.js: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Javascript code from mobility_topic/Mode.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Javascript code from mobility_topic/Mode.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mobility.js: /opt/ros/kinetic/lib/gennodejs/gen_nodejs.py
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mobility.js: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Javascript code from mobility_topic/Mobility.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Javascript code from mobility_topic/Mobility.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js: /opt/ros/kinetic/lib/gennodejs/gen_nodejs.py
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js: /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg
@@ -75,15 +84,16 @@ mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs: /home/nvidia/
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js: /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Javascript code from mobility_topic/joystick.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Javascript code from mobility_topic/joystick.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Arm.js: /opt/ros/kinetic/lib/gennodejs/gen_nodejs.py
 /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Arm.js: /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Javascript code from mobility_topic/Arm.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Javascript code from mobility_topic/Arm.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg
 
 mobility_topic_generate_messages_nodejs: mobility_topic/CMakeFiles/mobility_topic_generate_messages_nodejs
+mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js
 mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mode.js
 mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mobility.js
 mobility_topic_generate_messages_nodejs: /home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js

@@ -38,6 +38,7 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
     "/home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg"
     "/home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg"
     "/home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg"
+    "/home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg"
     )
 endif()
 

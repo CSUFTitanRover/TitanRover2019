@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mobility_topic_generate_messages_nodejs"
+  "/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/MultiJoy.js"
   "/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mode.js"
   "/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/Mobility.js"
   "/home/nvidia/catkin_ws/devel/share/gennodejs/ros/mobility_topic/msg/joystick.js"

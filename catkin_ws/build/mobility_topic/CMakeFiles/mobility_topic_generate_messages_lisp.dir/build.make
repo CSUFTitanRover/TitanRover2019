@@ -53,21 +53,30 @@ CMAKE_BINARY_DIR = /home/nvidia/catkin_ws/build
 # Include the progress variables for this target.
 include mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp.dir/progress.make
 
+mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/MultiJoy.lisp
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mode.lisp
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mobility.lisp
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/joystick.lisp
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Arm.lisp
 
 
+/home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/MultiJoy.lisp: /opt/ros/kinetic/lib/genlisp/gen_lisp.py
+/home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/MultiJoy.lisp: /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg
+/home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/MultiJoy.lisp: /opt/ros/kinetic/share/sensor_msgs/msg/Joy.msg
+/home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/MultiJoy.lisp: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
+/home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/MultiJoy.lisp: /opt/ros/kinetic/share/std_msgs/msg/UInt8.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Lisp code from mobility_topic/MultiJoy.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
+
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mode.lisp: /opt/ros/kinetic/lib/genlisp/gen_lisp.py
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mode.lisp: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Lisp code from mobility_topic/Mode.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Lisp code from mobility_topic/Mode.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mobility.lisp: /opt/ros/kinetic/lib/genlisp/gen_lisp.py
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mobility.lisp: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Lisp code from mobility_topic/Mobility.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Lisp code from mobility_topic/Mobility.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/joystick.lisp: /opt/ros/kinetic/lib/genlisp/gen_lisp.py
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/joystick.lisp: /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg
@@ -75,15 +84,16 @@ mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp: /home/nvidia/ca
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/joystick.lisp: /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/joystick.lisp: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/joystick.lisp: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Lisp code from mobility_topic/joystick.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Lisp code from mobility_topic/joystick.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Arm.lisp: /opt/ros/kinetic/lib/genlisp/gen_lisp.py
 /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Arm.lisp: /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Lisp code from mobility_topic/Arm.msg"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Lisp code from mobility_topic/Arm.msg"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg
 
 mobility_topic_generate_messages_lisp: mobility_topic/CMakeFiles/mobility_topic_generate_messages_lisp
+mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/MultiJoy.lisp
 mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mode.lisp
 mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/Mobility.lisp
 mobility_topic_generate_messages_lisp: /home/nvidia/catkin_ws/devel/share/common-lisp/ros/mobility_topic/msg/joystick.lisp

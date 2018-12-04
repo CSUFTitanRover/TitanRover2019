@@ -53,23 +53,33 @@ CMAKE_BINARY_DIR = /home/nvidia/catkin_ws/build
 # Include the progress variables for this target.
 include mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp.dir/progress.make
 
+mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/Mode.h
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/Mobility.h
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/Arm.h
 
 
+/home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h: /opt/ros/kinetic/lib/gencpp/gen_cpp.py
+/home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h: /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg
+/home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h: /opt/ros/kinetic/share/sensor_msgs/msg/Joy.msg
+/home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
+/home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h: /opt/ros/kinetic/share/std_msgs/msg/UInt8.msg
+/home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h: /opt/ros/kinetic/share/gencpp/msg.h.template
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code from mobility_topic/MultiJoy.msg"
+	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
+
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Mode.h: /opt/ros/kinetic/lib/gencpp/gen_cpp.py
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Mode.h: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Mode.h: /opt/ros/kinetic/share/gencpp/msg.h.template
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code from mobility_topic/Mode.msg"
-	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating C++ code from mobility_topic/Mode.msg"
+	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
 
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Mobility.h: /opt/ros/kinetic/lib/gencpp/gen_cpp.py
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Mobility.h: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Mobility.h: /opt/ros/kinetic/share/gencpp/msg.h.template
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating C++ code from mobility_topic/Mobility.msg"
-	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating C++ code from mobility_topic/Mobility.msg"
+	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
 
 /home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h: /opt/ros/kinetic/lib/gencpp/gen_cpp.py
 /home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h: /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg
@@ -78,16 +88,17 @@ mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp: /home/nvidia/cat
 /home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
 /home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
 /home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h: /opt/ros/kinetic/share/gencpp/msg.h.template
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating C++ code from mobility_topic/joystick.msg"
-	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating C++ code from mobility_topic/joystick.msg"
+	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
 
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Arm.h: /opt/ros/kinetic/lib/gencpp/gen_cpp.py
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Arm.h: /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg
 /home/nvidia/catkin_ws/devel/include/mobility_topic/Arm.h: /opt/ros/kinetic/share/gencpp/msg.h.template
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating C++ code from mobility_topic/Arm.msg"
-	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating C++ code from mobility_topic/Arm.msg"
+	cd /home/nvidia/catkin_ws/src/mobility_topic && /home/nvidia/catkin_ws/build/catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/include/mobility_topic -e /opt/ros/kinetic/share/gencpp/cmake/..
 
 mobility_topic_generate_messages_cpp: mobility_topic/CMakeFiles/mobility_topic_generate_messages_cpp
+mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h
 mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/Mode.h
 mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/Mobility.h
 mobility_topic_generate_messages_cpp: /home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h

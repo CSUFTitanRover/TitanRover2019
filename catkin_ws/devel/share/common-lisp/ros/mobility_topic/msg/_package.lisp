@@ -7,6 +7,8 @@
    "MOBILITY"
    "<MODE>"
    "MODE"
+   "<MULTIJOY>"
+   "MULTIJOY"
    "<JOYSTICK>"
    "JOYSTICK"
   ))

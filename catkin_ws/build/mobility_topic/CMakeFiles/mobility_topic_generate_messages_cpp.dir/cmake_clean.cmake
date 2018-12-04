@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mobility_topic_generate_messages_cpp"
+  "/home/nvidia/catkin_ws/devel/include/mobility_topic/MultiJoy.h"
   "/home/nvidia/catkin_ws/devel/include/mobility_topic/Mode.h"
   "/home/nvidia/catkin_ws/devel/include/mobility_topic/Mobility.h"
   "/home/nvidia/catkin_ws/devel/include/mobility_topic/joystick.h"

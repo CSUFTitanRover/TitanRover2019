@@ -53,6 +53,7 @@ CMAKE_BINARY_DIR = /home/nvidia/catkin_ws/build
 # Include the progress variables for this target.
 include mobility_topic/CMakeFiles/mobility_topic_generate_messages_py.dir/progress.make
 
+mobility_topic/CMakeFiles/mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mode.py
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mobility.py
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py
@@ -60,15 +61,23 @@ mobility_topic/CMakeFiles/mobility_topic_generate_messages_py: /home/nvidia/catk
 mobility_topic/CMakeFiles/mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/__init__.py
 
 
+/home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py: /opt/ros/kinetic/lib/genpy/genmsg_py.py
+/home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py: /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg
+/home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py: /opt/ros/kinetic/share/sensor_msgs/msg/Joy.msg
+/home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
+/home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py: /opt/ros/kinetic/share/std_msgs/msg/UInt8.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Python from MSG mobility_topic/MultiJoy"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/MultiJoy.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
+
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mode.py: /opt/ros/kinetic/lib/genpy/genmsg_py.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mode.py: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Python from MSG mobility_topic/Mode"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Python from MSG mobility_topic/Mode"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mode.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mobility.py: /opt/ros/kinetic/lib/genpy/genmsg_py.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mobility.py: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Python from MSG mobility_topic/Mobility"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Python from MSG mobility_topic/Mobility"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py: /opt/ros/kinetic/lib/genpy/genmsg_py.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py: /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg
@@ -76,23 +85,25 @@ mobility_topic/CMakeFiles/mobility_topic_generate_messages_py: /home/nvidia/catk
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py: /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py: /opt/ros/kinetic/share/std_msgs/msg/Header.msg
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py: /home/nvidia/catkin_ws/src/mobility_topic/msg/Mobility.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Python from MSG mobility_topic/joystick"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Python from MSG mobility_topic/joystick"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/joystick.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Arm.py: /opt/ros/kinetic/lib/genpy/genmsg_py.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Arm.py: /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Python from MSG mobility_topic/Arm"
-	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Python from MSG mobility_topic/Arm"
+	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/catkin_ws/src/mobility_topic/msg/Arm.msg -Imobility_topic:/home/nvidia/catkin_ws/src/mobility_topic/msg -Istd_msgs:/opt/ros/kinetic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/kinetic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/kinetic/share/geometry_msgs/cmake/../msg -p mobility_topic -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg
 
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/__init__.py: /opt/ros/kinetic/lib/genpy/genmsg_py.py
+/home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/__init__.py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/__init__.py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mode.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/__init__.py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mobility.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/__init__.py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py
 /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/__init__.py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Arm.py
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Python msg __init__.py for mobility_topic"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating Python msg __init__.py for mobility_topic"
 	cd /home/nvidia/catkin_ws/build/mobility_topic && ../catkin_generated/env_cached.sh /usr/bin/python /opt/ros/kinetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py -o /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg --initpy
 
 mobility_topic_generate_messages_py: mobility_topic/CMakeFiles/mobility_topic_generate_messages_py
+mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_MultiJoy.py
 mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mode.py
 mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_Mobility.py
 mobility_topic_generate_messages_py: /home/nvidia/catkin_ws/devel/lib/python2.7/dist-packages/mobility_topic/msg/_joystick.py

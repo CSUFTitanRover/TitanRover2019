@@ -12,8 +12,7 @@ All base code taken directly from
 https://learn.adafruit.com/adafruit-ft232h-breakout/spi
 '''
 import rospy
-from mobility_topic.msg import joystick
-from MultiJoy.msg import MultiJoy
+from mobility_topic.msg import joystick, MultiJoy
 
 from time import sleep
 #import Adafruit_GPIO as GPIO
