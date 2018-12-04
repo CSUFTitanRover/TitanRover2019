@@ -23,18 +23,21 @@ import threading
 import sys
 
 def update_mode(msg_data):
+    print("enter update mode")
     global mode
     global last_updated
     last_updated = rospy.Time.now()
     mode = msg_data.mode.mode
 
 def update_joy0(msg_data):
+    print("enter joy0")
     global mode
     global last_updated
     last_updated = rospy.Time.now()
     mode = 5
 
 def update_lights():
+    print("enter update lights")
     status = Rover_Status_Lights(60)
     global mode
     global last_updated
