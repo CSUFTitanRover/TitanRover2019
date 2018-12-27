@@ -1,8 +1,0 @@
-prefix=/home/nvidia/catkin_ws/install
-
-Name: reach_ros_node
-Description: Description of reach_ros_node
-Version: 0.5.0
-Cflags: 
-Libs: -L/home/nvidia/catkin_ws/install/lib 
-Requires: 

@@ -1,8 +1,0 @@
-prefix=/home/nvidia/catkin_ws/install
-
-Name: hector_slam_example
-Description: Description of hector_slam_example
-Version: 0.0.1
-Cflags: 
-Libs: -L/home/nvidia/catkin_ws/install/lib 
-Requires: 
