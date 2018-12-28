@@ -11,7 +11,7 @@ Description: PySaber class to write commands directly from TX2 / RPI  to ESC's.
 '''
 
 import time
-import serial
+import serial, os
 
 class DriveEsc:
     def __init__(self, address, mode):      # Mode can be "mixed" and "notMixed"
@@ -36,7 +36,13 @@ class DriveEsc:
             self.motor2 = self.FORWARD_2
 
         # Serial instantiation for UART Logic
-        self.port = '/dev/serial/by-id/usb-Silicon_Labs_RoverESC_0001-if00-port0'
+        x = os.system('ls /dev/serial/by-id/usb-Silicon_Labs_RoverESC_0001-if00-port0')
+        if x == 0:
+            self.port = '/dev/serial/by-id/usb-Silicon_Labs_RoverESC_0001-if00-port0'
+            print('ESC Rover')
+        else:
+            self.port = '/dev/serial/by-id/usb-Silicon_Labs_RoverUART_0001-if00-port0'
+            print('ESC Runt')
         self.saber = serial.Serial(self.port, '38400')
         self.address = address
 
