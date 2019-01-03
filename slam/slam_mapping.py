@@ -10,10 +10,10 @@ global slam_map
 # dim's must be odd number size and form square for initialization 
 global dimx # Starting x size of array map
 global dimy # Starting y size of array map
-dimx = dimy = 3
 global fill_val # Fill val of unexplored space
-fill_val = np.int8(-1)
 global precision 
+dimx = dimy = 3
+fill_val = np.int8(-1)
 precision = 0.00001
 
 ###################################################################################
@@ -87,16 +87,13 @@ start_lat = 33.881825  #vertical Fullerton E21 Backdoor
 #array_offset_x , array_offset_y = start_lat - precision, start_lon
 
 ## Grid Offset start location latitude
-if start_lat < 0:
+if start_lat > 0:
     start_lat += ((dimx - 1)/2) * precision
 else:
     start_lat -= ((dimx - 1)/2) * precision
 
 ## Grid Offset start location longitude
-if start_lat > 0:
-    start_lon += ((dimy - 1)/2) * precision
-else:
-    start_lon -= ((dimy - 1)/2) * precision
+start_lon -= ((dimy - 1)/2) * precision
 
 
 
@@ -127,7 +124,7 @@ for x in range(181):
     else:
         scan.append(round((scan[x - 1] + half_deg_delta),5))
 
-print(scan)
+#print(scan)
 
 
 
