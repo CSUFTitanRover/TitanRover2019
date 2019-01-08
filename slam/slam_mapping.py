@@ -15,9 +15,10 @@ fill_val = np.int8(-1)
 precision = 0.00001
 slam_map = []
 measurement_array = []
-current_pos_gps = {'lat': 0, 'lon': 0}
-org_offset_gps  = {'lat': 0, 'lon': 0}
-dest_gps        = {'lat': 0, 'lon': 0}
+scan = []
+current_pos_gps = (0 , 0)  #(Latitude, Longitude)
+org_offset_gps  = (0 , 0)
+dest_gps        = (0 , 0)
 
 ###################################################################################
 ######## numpy made readible
@@ -64,8 +65,13 @@ def insert_y():
 
 #Other 2D array design
 # gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
+######################################################################################
+####### LiDAR Update
+def scan_update()
+    global scan
+    
 
-###################################################################################
+######################################################################################
 ##  Contour Map setup
 def make_map_image():
     from PIL import Image
@@ -117,11 +123,41 @@ def start_init():
 
     #print(measurement_array)
 
+def update_sensors():
+    #get IMU
+    #get current GPS
+    #get lidar scan
+    
+
+def main():
+    global slam_map, current_long, current_lat, scan, dimx, dimy, measurement_array
+    update_sensors()
+    
 
 
-print(geodesic(current_pos_gps, dest_gps).miles)
 
 
+
+
+    
+
+    #print(distance(current_pos_gps, dest_gps).cm)
+
+if __name__ == '__main__':
+    start_init()
+    #need ros spin
+    main()
+
+
+
+    # try:
+    #     rospy.init_node('talker_scan', anonymous=True)
+    #     msg = joystick()
+    #     rospy.Subscriber('lidar', lidar, main)
+    #     rospy.spin() 
+    # except(KeyboardInterrupt, SystemExit):
+    #     rospy.signal_shutdown()
+    #     raise
 
 
 
