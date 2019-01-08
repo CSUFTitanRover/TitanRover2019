@@ -5,16 +5,19 @@
 
 import random, time, math
 import numpy as np
+from geopy.distance import geodesic
+from geopy.distance import distance
 
-global slam_map
+## Global Variables
 # dim's must be odd number size and form square for initialization 
-global dimx # Starting x size of array map
-global dimy # Starting y size of array map
 dimx = dimy = 3
-global fill_val # Fill val of unexplored space
 fill_val = np.int8(-1)
-global precision 
 precision = 0.00001
+slam_map = []
+measurement_array = []
+current_pos_gps = {'lat': 0, 'lon': 0}
+org_offset_gps  = {'lat': 0, 'lon': 0}
+dest_gps        = {'lat': 0, 'lon': 0}
 
 ###################################################################################
 ######## numpy made readible
@@ -54,7 +57,6 @@ def insert_x():
     global dimy, slam_map, fill_val
     return np.insert(slam_map, 0, fill_val, axis=1)
     
-
 def insert_y():
     global dimx, slam_map, fill_val
     temp_arr = np.full((1, dimx), fill_val, dtype=np.int8)
@@ -63,67 +65,80 @@ def insert_y():
 #Other 2D array design
 # gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
 
-
-
 ###################################################################################
 ##  Contour Map setup
-from PIL import Image
-img = Image.new('RGB', (1000,1000), 'black')
-pixels = img.load()
+def make_map_image():
+    from PIL import Image
+    img = Image.new('RGB', (1000,1000), 'black')
+    pixels = img.load()
 
-##  Contour Map coloring ranges
-colors = {'-1':(211,211,211), '1':(255,255,255),'2':(255,204,204),'3':(255,153,153),
-            '4':(255,102,102),'5':(255,51,51),'6':(255,0,0),'7':(204,0,0),'8':(153,0,0),
-            '9':(102,0,0),'10':(51,0,0), '11':(0,0,0)}
+    ##  Contour Map coloring ranges
+    colors = {'-1':(211,211,211), '1':(255,255,255),'2':(255,204,204),'3':(255,153,153),
+                '4':(255,102,102),'5':(255,51,51),'6':(255,0,0),'7':(204,0,0),'8':(153,0,0),
+                '9':(102,0,0),'10':(51,0,0), '11':(0,0,0)}
+
+    #img.show()
+    #img.save('rover_map','png')
+    #print('image written')
+#######################################################################################
+
+def start_init():
+    global slam_map, current_long, current_lat, scan, dimx, dimy, measurement_array
+    ###################################################################################
+    ## GPS Array Creation
+    # Array of default size populated with fill_val  
+    slam_map = fillMap()
+
+    ## test points to prepare array
+    current_long = -117.882759 # horizontal Fullerton E21 Backdoor
+    current_lat = 33.881825  #vertical Fullerton E21 Backdoor
+    #lat_update = .005 
+    #array_offset_x , array_offset_y = current_lat - precision, current_long
+
+    ## Grid Offset start location latitude
+    if current_lat > 0:
+        current_lat += ((dimx - 1)/2) * precision
+    else:
+        current_lat -= ((dimx - 1)/2) * precision
+
+    ## Grid Offset start location longitude
+    current_long -= ((dimy - 1)/2) * precision
+
+    ###################################################################################
+    ## Measurement Array setup
+    half_deg_delta = .00828 # hypo length change every 1/2 degree with 0deg = 1.8m to 45deg = 2.54558  
+    measurement_start = 2.54
+    measurement_array = []
+    for x in range(181):
+        if x < 91:
+            measurement_array.append(round((measurement_start - (half_deg_delta * x)),5))
+        else:
+            measurement_array.append(round((measurement_array[x - 1] + half_deg_delta),5))
+
+    #print(measurement_array)
+
+
+
+print(geodesic(current_pos_gps, dest_gps).miles)
+
+
+
+
+
 ###################################################################################
-## GPS Array Creation
-# Array of default size populated with fill_val  
-slam_map = fillMap()
-
-## test points to prepare array
-start_lon = -117.882759 # horizontal Fullerton E21 Backdoor
-start_lat = 33.881825  #vertical Fullerton E21 Backdoor
-#lat_update = .005 
-#array_offset_x , array_offset_y = start_lat - precision, start_lon
-
-## Grid Offset start location latitude
-if start_lat > 0:
-    start_lat += ((dimx - 1)/2) * precision
-else:
-    start_lat -= ((dimx - 1)/2) * precision
-
-## Grid Offset start location longitude
-start_lon -= ((dimy - 1)/2) * precision
-
+##### Another Python Array Implementation
 
 ## prepopulated with GPS points based on start as unexplored
 '''
 for x in range(1000): #(-.005, .005, .00001)
     for y in range(1000): #(.00001)
-        gps_arr[x][y]=[{"lat": start_lat, "lon": start_lon},1] #[latitude, longitude, -1 = empty space]
-        start_lon += .00001
+        gps_arr[x][y]=[{"lat": current_lat, "lon": current_long},1] #[latitude, longitude, -1 = empty space]
+        current_long += .00001
         #pixels[x,y] = colors[str(gps_arr[x][y][1])]
         pixels[x,y] = colors[str(random.randint(1,10))] 
-    start_lat -= .00001
-    start_lon = -117.882759 #reset at start of longitude
+    current_lat -= .00001
+    current_long = -117.882759 #reset at start of longitude
 '''
-
-
-
-
-###################################################################################
-## Measurement Array setup
-half_deg_delta = .00828 # hypo length change every 1/2 degree with 0deg = 1.8m to 45deg = 2.54558  
-scan_start = 2.54
-scan = []
-for x in range(181):
-    if x < 91:
-        scan.append(round((scan_start - (half_deg_delta * x)),5))
-    else:
-        scan.append(round((scan[x - 1] + half_deg_delta),5))
-
-print(scan)
-
 
 
 '''
@@ -135,6 +150,3 @@ def SearchArray(x_range, y_range):
             pass
 '''
 
-#img.show()
-# img.save('rover_map','png')
-# print('image written')
