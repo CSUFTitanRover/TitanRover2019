@@ -87,18 +87,13 @@ start_lat = 33.881825  #vertical Fullerton E21 Backdoor
 #array_offset_x , array_offset_y = start_lat - precision, start_lon
 
 ## Grid Offset start location latitude
-if start_lat < 0:
+if start_lat > 0:
     start_lat += ((dimx - 1)/2) * precision
 else:
     start_lat -= ((dimx - 1)/2) * precision
 
 ## Grid Offset start location longitude
-if start_lat > 0:
-    start_lon += ((dimy - 1)/2) * precision
-else:
-    start_lon -= ((dimy - 1)/2) * precision
-
-
+start_lon -= ((dimy - 1)/2) * precision
 
 
 ## prepopulated with GPS points based on start as unexplored
