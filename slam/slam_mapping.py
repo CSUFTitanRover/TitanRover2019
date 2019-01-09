@@ -19,7 +19,9 @@ scan = []
 current_pos_gps = (0 , 0)  #(Latitude, Longitude)
 org_offset_gps  = (0 , 0)
 dest_gps        = (0 , 0)
-
+#augments the gps after 5 decimal cut
+gps_precision = [{'lat':0.00001, 'long':0},{'lat':0, 'long':0},{'lat':0, 'long':-0.00001},{'lat':0.00001, 'long':-0.00001}]
+curr_dir = 0
 ###################################################################################
 ######## numpy made readible
 def fillMap():
@@ -68,7 +70,9 @@ def insert_y():
 ######################################################################################
 ####### LiDAR Update
 def scan_update()
-    global scan
+    global scan, curr_dir, measurement_array
+    pass
+
     
 
 ######################################################################################
@@ -87,7 +91,26 @@ def make_map_image():
     #img.save('rover_map','png')
     #print('image written')
 #######################################################################################
+#### GPS Precision within the scanning range
+def gps_to_map():
+    global gps_precision, scan, measurement_array, current_pos_gps, curr_dir
+    temp_gps_list = []
+    if (curr_dir + 45 > 360):
+        if (curr_dir - 45 < 0):
+            start_scan = 360 - (45 - curr_dir)
+        else:
+            start_scan_dir = current_dir + 45
+    else:
+        start_scan = (start_scan + 45) - 360
 
+    # Build dictionary of surrounding Coords with float precision 5
+    for x in range(4):
+        temp_gps_list.append((float(format(current_lat + gps_precision[x]['lat'],'.5f')), float(format(current_long + gps_precision[x]['long'],'.5f'))))
+
+[(33.88184, -117.88276), (33.88182, -117.88276), (33.88182, -117.88277), (33.88184, -117.88277)]
+
+    
+#######################################################################################
 def start_init():
     global slam_map, current_long, current_lat, scan, dimx, dimy, measurement_array
     ###################################################################################
@@ -128,6 +151,8 @@ def update_sensors():
     #get current GPS
     #get lidar scan
     
+
+
 
 def main():
     global slam_map, current_long, current_lat, scan, dimx, dimy, measurement_array
