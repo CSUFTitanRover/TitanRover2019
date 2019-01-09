@@ -3,17 +3,22 @@
 
 Web solution for rover control.
 
+README Version:
+	1.8.19.1
+
 Author(s):
 	David Feinzimer dfeinzimer@csu.fullerton.edu
 
 Setup:
 	1) Ensure correct 'ros->url' value
 	2) Ensure correct 'camera' value
-	3) Tab Layout:
-			1) roscore
-			2) rostopic echo /joy/0
-			3) roslaunch rosbridge_server rosbridge_websocket.launch
-			5) sudo python -m SimpleHTTPServer
+	3) Ensure roscore is running
+	4) Tab Layout:
+			1) roslaunch rosbridge_server rosbridge_websocket.launch
+			2) sudo python -m SimpleHTTPServer
+			3) python appbaseESC.py
+			4) [OPTIONAL] rostopic echo /joy/0
+
 
 Problems & Solutions:
 	Motion:
