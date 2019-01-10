@@ -20,7 +20,6 @@ current_pos_gps = (0 , 0)  #(Latitude, Longitude)
 org_offset_gps  = (0 , 0)
 dest_gps        = (0 , 0)
 #augments the gps after 5 decimal cut
-gps_precision = [{'lat':0.00001, 'long':0},{'lat':0, 'long':0},{'lat':0, 'long':-0.00001},{'lat':0.00001, 'long':-0.00001}]
 curr_dir = 0
 ###################################################################################
 ######## numpy made readible
@@ -91,21 +90,45 @@ def make_map_image():
     #img.save('rover_map','png')
     #print('image written')
 #######################################################################################
-#### GPS Precision within the scanning range
+#### GPS Precision within the scanning range of 90degrees from start_scan
+#  Region Map
+#     North
+#   3    |    0
+#        |
+#        |
+# W------------- E
+#        |
+#        |
+#   2    |    1      
+#        S
+
 def gps_to_map():
-    global gps_precision, scan, measurement_array, current_pos_gps, curr_dir
+    global scan, measurement_array, current_pos_gps, curr_dir
+    gps_precision = [{'lat':0.00001, 'long':0},{'lat':0, 'long':0},{'lat':0, 'long':-0.00001},{'lat':0.00001, 'long':-0.00001}]
     temp_gps_list = []
-    if (curr_dir + 45 > 360):
-        if (curr_dir - 45 < 0):
-            start_scan = 360 - (45 - curr_dir)
-        else:
+    if (curr_dir < 315):  # check for cross over between region 3 and 0
+        start_scan = (curr_dir + 45)
+        if (curr_dir < 45): # if in region 0 ending in region 3
+            slam_map = insert_y()
+            slam_map = insert_x()
+            slam_map = append_x()
+        elif (curr_dir < 90):
+            pass
+        elif (curr_dir < 180):
             start_scan_dir = current_dir + 45
+            slam_map = insert_x()
+            slam_map = append_x()
+            slam_map = append_y()
+        elif (curr_dir < 270):
     else:
-        start_scan = (start_scan + 45) - 360
+        
+        start_scan = (curr_dir + 45) - 360
 
     # Build dictionary of surrounding Coords with float precision 5
     for x in range(4):
         temp_gps_list.append((float(format(current_lat + gps_precision[x]['lat'],'.5f')), float(format(current_long + gps_precision[x]['long'],'.5f'))))
+
+
 
 [(33.88184, -117.88276), (33.88182, -117.88276), (33.88182, -117.88277), (33.88184, -117.88277)]
 
