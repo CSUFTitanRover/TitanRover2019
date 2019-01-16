@@ -3,6 +3,13 @@
 # 2d array 1000 x 1000 m
 # precision to 0.00001 about 1m
 
+# To import packages from different Directories
+rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
+sys.path.insert(0, rootDir + '/build/resources/python-packages')
+
+from autonomousCore import *
+myDriver = Driver()
+
 import random, time, math
 import numpy as np
 from geopy.distance import geodesic
@@ -104,28 +111,37 @@ def make_map_image():
 
 def gps_to_map():
     global scan, measurement_array, current_pos_gps, curr_dir
-    gps_precision = [{'lat':0.00001, 'long':0},{'lat':0, 'long':0},{'lat':0, 'long':-0.00001},{'lat':0.00001, 'long':-0.00001}]
+    gps_precision = [   #surrounding 4 points
+                        {'lat': 0.00001, 'long':0},{'lat':0, 'long':0},{'lat':0, 'long':-0.00001},{'lat':0.00001, 'long':-0.00001}  
+                        
+                        #12 outer points
+                        {'lat': 0.00002, 'long':-0.00002}, {'lat': 0.00002,  'long':-0.00001}, {'lat': 0.00002, 'long':0},  {'lat': 0.00002, 'long':0.00001}, 
+                        {'lat': 0.00001, 'long':-0.00002}, {'lat': 0.00001,  'long': 0.00001},
+                        {'lat': 0,       'long':-0.00002}, {'lat': 0,        'long': 0.00001},
+                        {'lat':-0.00001, 'long':-0.00002}, {'lat':-0.00001,  'long':-0.00001}, {'lat':-0.00001, 'long':0},  {'lat':-0.00001, 'long':0.00001}]
     temp_gps_list = []
     if (curr_dir < 315):  # check for cross over between region 3 and 0
-        start_scan = (curr_dir + 45)
-        if (curr_dir < 45): # if in region 0 ending in region 3
-            slam_map = insert_y()
-            slam_map = insert_x()
-            slam_map = append_x()
-        elif (curr_dir < 90):
-            pass
-        elif (curr_dir < 180):
-            start_scan_dir = current_dir + 45
-            slam_map = insert_x()
-            slam_map = append_x()
-            slam_map = append_y()
-        elif (curr_dir < 270):
+            start_scan = (curr_dir + 45) - 360
+        else:
+            start_scan = curr_dir + 45
+    if (start_scan < 90): # if in region 0 ending in region 3
+        slam_map = insert_x()
+        slam_map = insert_y()
+        slam_map = append_x()
+    elif (start_scan < 180):
+        slam_map = insert_y()
+        slam_map = append_x()
+        slam_map = append_y()
+    elif (start_scan < 270):
+        slam_map = append_x()
+        slam_map = append_y()
+        slam_map = insert_x()
     else:
-        
-        start_scan = (curr_dir + 45) - 360
-
+        slam_map = append_y()
+        slam_map = insert_x()
+        slam_map = insert_y()
     # Build dictionary of surrounding Coords with float precision 5
-    for x in range(4):
+    for x in range(gps_precision):
         temp_gps_list.append((float(format(current_lat + gps_precision[x]['lat'],'.5f')), float(format(current_long + gps_precision[x]['long'],'.5f'))))
 
 
