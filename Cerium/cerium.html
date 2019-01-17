@@ -6,6 +6,7 @@
     <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
     <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="cer.css">
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -59,7 +60,8 @@
           rosbridge_obj.publish(message_obj); // Publish the message
       }
       $(document).ready(function(){ // After app has loaded
-        $('iframe#roverview1').attr('src', camera); // Load the camera stream
+        //$('iframe#roverview1').attr('src', camera); // Load the camera stream
+        $('iframe#roverview2').attr('src', camera); // Load the camera stream
         setInterval(reporter, 75); // Call reporter every 100ms
         document.getElementById("throttle").min = throttle_min;
         document.getElementById("throttle").max = throttle_max;
@@ -92,7 +94,12 @@
         <h4>1.16.19.1</h4>
     </div>
     <div><p id="status_roshost">Status Unavailable</p></div>
-    <div><iframe id="roverview1" src=""></iframe></div>
+    <!-- <div><iframe id="roverview1" src=""></iframe></div> -->
+    <div class="video-background">
+      <div class="video-foreground">
+        <iframe id="roverview2" src="" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
     <div><input type="range" id="throttle"></div>
     <div><label>Throttle</label></div>
     <div><input type="range" id="turn"></div>
