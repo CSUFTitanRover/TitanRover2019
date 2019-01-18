@@ -5,7 +5,16 @@ body {
     color: white;
     font-size: 1em;
     text-align: center;
+    position: relative;
 }
+
+html, body {
+  overflow-y: hidden;
+}
+
+* {
+      touch-action: manipulation;
+  }
 
 .control {
   background-color : #31B0D5;
