@@ -30,6 +30,8 @@ Problems & Solutions:
 		export ROS_MASTER_URI=http://...
 	Updating files:
 		sudo scp -r ~/localpath/Cerium/Web pi@IP:~/Cerium/
+	Modifying startup scripts:
+		nano ~/.bashrc
 
 Dependencies & Related Documentation:
 	rosbridge_server
