@@ -4,7 +4,7 @@
 Web solution for rover control.
 
 README Version:
-	1.8.19.1
+	1.17.19.4
 
 Author(s):
 	David Feinzimer dfeinzimer@csu.fullerton.edu
@@ -30,7 +30,7 @@ Problems & Solutions:
 		export ROS_MASTER_URI=http://...
 	Updating files:
 		sudo scp -r ~/localpath/Cerium/Web pi@IP:~/Cerium/
-	Modifying startup scripts:
+	Modifying/adding startup scripts:
 		nano ~/.bashrc
 
 Dependencies & Related Documentation:

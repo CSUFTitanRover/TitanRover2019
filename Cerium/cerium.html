@@ -11,7 +11,7 @@
     <link rel="icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script type="text/javascript">
-      var build = "1.17.19.2";
+      var build = "1.17.19.4";
       var camera = 'http://192.168.1.242:8081';
       var elem = document.documentElement;
       var ros = new ROSLIB.Ros({ // Make a new ros object
@@ -42,6 +42,14 @@
               elem.msRequestFullscreen();
             }
             fullscreen = true;
+      }
+      function steer_assist() {
+          if (turn > 0) {
+              turn = turn - 1;
+          }
+          else if (turn < 0) {
+              turn = turn + 1;
+          }
       }
       function report() { // Console log and publish current values
           var message_obj = new ROSLIB.Message({ // Create the message payload to be published
@@ -81,7 +89,8 @@
       }
       $(document).ready(function(){ // After app has loaded
           setInterval(report, 75); // Call report every x seconds
-          document.getElementById("status_roshost").style = "color:YELLOW";
+          setInterval(steer_assist, 75);
+          //document.getElementById("status_roshost").style = "color:GREEN";
           document.getElementById("status_build").innerHTML = "Titan Rover Cerium: " + build;
       });
       ros.on('error', function(error) { // Emit an 'error' if there is an error on the backend
