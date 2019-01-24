@@ -45,7 +45,7 @@ def putRF():
 def mobile(data):
     global armAttached
     try:
-        print('running')
+        print(int(data.axes[1]),int(data.axes[0]))
         wheels.driveBoth(int(data.axes[1]),int(data.axes[0]))   
     except:
         print("Mobility-main-drive error")
@@ -73,10 +73,9 @@ def main(data):
 
 if __name__ == '__main__':
     try:
-        platform = str(sys.args[0])
         rospy.init_node('talker_base_mobility', anonymous=True)
         msg = joystick()
-        if platform is None:
+        if len(sys.argv) == 1:
             rospy.Subscriber("joy/0", Joy, main)
         else:
             rospy.Subscriber("joy/0", Joy, mobile)
