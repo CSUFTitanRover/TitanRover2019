@@ -11,9 +11,10 @@
     <link rel="icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script type="text/javascript">
-      var build = "1.17.19.7";
+      var build = "1.23.19.1";
       var camera = 'http://192.168.1.242:8081';
       var elem = document.documentElement;
+      var fullscreen = false;
       var ros = new ROSLIB.Ros({ // Make a new ros object
         url : 'ws://192.168.1.242:9090'
       });
@@ -22,15 +23,16 @@
         name : '/joy/0',
         messageType : 'sensor_msgs/Joy'
       });
+      var settings_button_close = document.getElementById('settings_button_close');
+      var settings_button_open = document.getElementById('settings_button_open');
       var throttle = 0;
       var throttle_default = 0;
-      var throttle_max = 120;
-      var throttle_min = -120;
+      var throttle_max = 100;
+      var throttle_min = -100;
       var turn = 0;
       var turn_default = 0;
-      var turn_max = 120;
-      var turn_min = -120;
-      var fullscreen = false;
+      var turn_max = 100;
+      var turn_min = -100;
       function openFullscreen() { /* View in fullscreen */
             if (elem.requestFullscreen) {
               elem.requestFullscreen();
@@ -109,12 +111,27 @@
           document.getElementById("status_roshost").innerHTML = "Status: Closed";
           document.getElementById("status_roshost").style = "color:RED";
       });
+      function open_settings() {
+        var settings_panel = document.getElementById('settings_panel');
+        console.log(settings_panel);
+        settings_panel.style.display = "block";
+      }
+      function close_settings() {
+        var settings_panel = document.getElementById('settings_panel');
+        console.log(settings_panel);
+        settings_panel.style.display = "none";
+      }
+      window.onclick = function(event) {
+        if (event.target == settings_panel) {
+          close_settings();
+        }
+      }
     </script>
   </head>
   <body background="http://192.168.1.242:8081">
     <div class="flex-container">
-      <div id="settings_button">
-        <button class="control" onclick="">⚙</button>
+      <div id="settings_button_open">
+        <button class="control" onclick="open_settings()">⚙</button>
       </div>
       <div>
         <button class="info" id="status_roshost" disabled >Status: Connecting</button>
@@ -147,6 +164,14 @@
       </div>
       <div id="down_button">
         <button class="control" onclick="throttle_adjust(-10)">↓</button>
+      </div>
+    </div>
+    <div id="settings_panel" class="modal">
+      <div class="settings-content">
+        <div id="settings_button_close">
+          <button class="control" onclick="close_settings()">✖</button>
+        </div>
+        <p>Control 1</p>
       </div>
     </div>
   </body>
