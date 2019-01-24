@@ -45,7 +45,7 @@ def putRF():
 def mobile(data):
     global armAttached
     try:
-        print('running')
+        print(int(data.axes[1]),int(data.axes[0]))
         wheels.driveBoth(int(data.axes[1]),int(data.axes[0]))   
     except:
         print("Mobility-main-drive error")
