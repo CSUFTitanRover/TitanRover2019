@@ -22,7 +22,7 @@ from pysaber import DriveEsc
 
 # Instantiating The Class Object For PySabertooth
 wheels = DriveEsc(128, "mixed")
-#armMix = DriveEsc(129, "notMixed")
+armMix = DriveEsc(129, "notMixed")
 
 #global variables
 armAttached = False
@@ -42,14 +42,25 @@ def getRF():
 def putRF():
     pass
 
-def main(data):
+def mobile(data):
     global armAttached
     try:
         print('running')
-        wheels.driveBoth(int(data.axes[1]),int(data.axes[0]))
+        wheels.driveBoth(int(data.axes[1]),int(data.axes[0]))   
+    except:
+        print("Mobility-main-drive error")
+
+def main(data):
+    global throttle, armAttached
+    if(data.buttons[3] and throttle < 1):
+        throttle += .1
+    if(data.buttons[1] and throttle > .3):
+        throttle -= .1
+    try:
+        wheels.driveBoth(int(throttle*127*data.axes[1]),int(throttle*127*data.axes[0]))
         #print('Wheels = ',int(throttle*127*data.axes[1]), ' ' , int(throttle*127*data.axes[0]))
         #print('Arm    = ',int(127*data.axes[2]), ' ' ,int(127*data.axes[3]))
-        #armMix.driveBoth(int(127*data.axes[2]),int(127*data.axes[3]))
+        armMix.driveBoth(int(127*data.axes[2]),int(127*data.axes[3]))
         #led.update(msg.mode.mode)
         if armAttached:
             #moveJoints([data.arm.J1, data.arm.J4, data.arm.J51, data.arm.J52])
@@ -62,9 +73,13 @@ def main(data):
 
 if __name__ == '__main__':
     try:
+        platform = str(sys.args[0])
         rospy.init_node('talker_base_mobility', anonymous=True)
         msg = joystick()
-        rospy.Subscriber("joy/0", Joy, main)
+        if platform is None:
+            rospy.Subscriber("joy/0", Joy, main)
+        else:
+            rospy.Subscriber("joy/0", Joy, mobile)
         rospy.spin() 
     except(KeyboardInterrupt, SystemExit):
         rospy.signal_shutdown()
