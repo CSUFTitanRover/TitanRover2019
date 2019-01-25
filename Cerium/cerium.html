@@ -11,7 +11,7 @@
     <link rel="icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script type="text/javascript">
-      var build = "1.23.19.1";
+      var build = "1.24.19.2";
       var camera = 'http://192.168.1.242:8081';
       var elem = document.documentElement;
       var fullscreen = false;
@@ -31,6 +31,7 @@
       var throttle_min = -100;
       var turn = 0;
       var turn_default = 0;
+      var turn_invert = -1;
       var turn_max = 100;
       var turn_min = -100;
       function openFullscreen() { /* View in fullscreen */
@@ -62,7 +63,7 @@
             },
             axes : [
                parseFloat(throttle),
-               parseFloat(turn*-1),
+               parseFloat(turn*turn_invert),
                0
             ],
             buttons : [
@@ -71,9 +72,8 @@
           });
           document.getElementById("status_throttle").innerHTML = "Throttle: " + throttle;
           document.getElementById("status_turn").innerHTML = "Turn: " + turn;
-          //console.log(message_obj);
-          console.log("Throttle: ", throttle, "Turn: ", turn);
-          rosbridge_obj.publish(message_obj); // Publish the message
+          console.log("Throttle: ", throttle, "Turn: ", turn*turn_invert);
+          console.log(rosbridge_obj.publish(message_obj)); // Publish the message
       }
       function throttle_adjust(value) {
           if (throttle + value <= throttle_max && throttle + value >= throttle_min) {
@@ -92,7 +92,6 @@
       $(document).ready(function(){ // After app has loaded
           setInterval(report, 75); // Call report every x seconds
           setInterval(steer_assist, 75);
-          //document.getElementById("status_roshost").style = "color:GREEN";
           document.getElementById("status_build").innerHTML = "Titan Rover Cerium: " + build;
       });
       ros.on('error', function(error) { // Emit an 'error' if there is an error on the backend
@@ -113,13 +112,14 @@
       });
       function open_settings() {
         var settings_panel = document.getElementById('settings_panel');
-        console.log(settings_panel);
         settings_panel.style.display = "block";
       }
       function close_settings() {
         var settings_panel = document.getElementById('settings_panel');
-        console.log(settings_panel);
         settings_panel.style.display = "none";
+      }
+      function turn_inverter() {
+        turn_invert = turn_invert * -1;
       }
       window.onclick = function(event) {
         if (event.target == settings_panel) {
@@ -168,10 +168,18 @@
     </div>
     <div id="settings_panel" class="modal">
       <div class="settings-content">
+        <p>Settings Panel</p>
         <div id="settings_button_close">
           <button class="control" onclick="close_settings()">✖</button>
         </div>
-        <p>Control 1</p>
+        <div id="">
+          <input class="control" onclick=""></input>
+        </div>
+        <!-- Rounded switch -->
+        <label class="switch">
+          <input type="checkbox" onchange="turn_inverter()">
+          <span class="slider round"></span>
+        </label>
       </div>
     </div>
   </body>
