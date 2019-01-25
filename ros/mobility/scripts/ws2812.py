@@ -14,7 +14,6 @@ https://learn.adafruit.com/adafruit-ft232h-breakout/spi
 from time import sleep
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.FT232H as FT232H
-import math
 
 #tuples to be used as operands
 
@@ -28,25 +27,21 @@ BLUE_GREEN = (10, 255, 255) # Ebyte 433 MHZ COMM MODE
 BLUE = (0, 0, 255) #Ubiquiti 3.4 GHZ COMM MODE
 PURPLE = (255, 0, 127) #Attached MODULE MODE
 WHITE = (255, 255, 255) #chase light
+PINK = (255, 20, 147)
 
 #MODE = COLOR
-PAUSE_COLOR = RED
-FULL_CONTROL = GREEN #both mobility and arm/science
-MOBILITY_COLOR = BLUE #mobility only
-MODULE_COLOR = PURPLE #arm/science only
-MIXED_ARM_COLOR = ORANGE
+PAUSE = RED #L2 + R2
+IDLE = 0
+MOBILITY = YELLOW #R2 + L1
+ARM = BLUE_GREEN    #R2 + 3
+BOTH = ORANGE # R2 + 1
 
 #COMMS = COLOR
+LOCAL_COLOR = BLUE #any controller plugged into the rover
 GHZ_COLOR = GREEN #ubiquity
 MHZ_COLOR = PURPLE #433 MHz backup radio
 
-#MODE = INTEGER
-IDLE = -1 # gonna set this after a timer
-PAUSE_GHZ = 0 #red
-BOTH_GHZ = 1 # green
-MOBILITY_GHZ = 2 #blue
-ARM_GHZ = 3 #purple
-MIXED_ARM = 4 #orange
+
 
 class Rover_Status_Lights(object):
 
@@ -101,17 +96,20 @@ class Rover_Status_Lights(object):
 			sleep(0.02)
 
 	def set_rear(self, r, g, b):
-		chaseL = 31 #start status for the front left lights
-		chaseR = 30 #end status for the front right lights (order is reversed between sides)
-		for i in range(15):
+		#chaseL = 31 #start status for the front left lights
+		#chaseR = 30 #end status for the front right lights (order is reversed between sides)
+		for i in range(15, 45):
+			'''
 			self.setColor(chaseL + i, *WHITE) 
 			self.setColor(chaseR - i, *WHITE)
 			self.show()
 			sleep(0.03)
 			self.setColor(chaseL + i, r, g, b) 
 			self.setColor(chaseR - i, r, g, b)
+			'''
+			self.setColor(i, r, g, b)
 			self.show()
-			sleep(0.02)
+			#sleep(0.02)
 
 	def set_all(self, r, g, b):
 		chaseL = 31 #start status for the front left lights
@@ -138,19 +136,21 @@ class Rover_Status_Lights(object):
 			self.show()
 			sleep(0.5)
 
-	def update(self, new_mode):
+	def update(self, new_mode, new_source):
 		self.dispatch = {
-					-1 : (self.idle, WHITE),
-					0 : (self.set_front, PAUSE_COLOR),
-					1 : (self.set_front, FULL_CONTROL),
-					2 : (self.set_front, MOBILITY_COLOR),
-					3 : (self.set_front, MODULE_COLOR),
-					4 : (self.set_front, MIXED_ARM_COLOR),
-					5 : (self.set_all, MHZ_COLOR)
+					-1 : (self.set_front, PAUSE),
+					0 : (self.idle, WHITE), #argument used to match parameters for other functions in dictionary
+					1 : (self.set_front, MOBILITY),
+					2 : (self.set_front, ARM),
+					3 : (self.set_front, BOTH),
 						}
-		if 0 <= new_mode <=4:
-			self.set_rear(*GHZ_COLOR)
-
+		self.comms = {
+					0 : (self.set_rear, LOCAL_COLOR),
+					1 : (self.set_rear, GHZ_COLOR),
+					2 : (self.set_rear, MHZ_COLOR),
+					3 : (self.set_rear, PINK)
+					}
+		self.comms[new_source][0](*self.comms[new_source][1])
 		self.dispatch[new_mode][0](*self.dispatch[new_mode][1])
 
 

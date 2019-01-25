@@ -1,0 +1,6 @@
+<launch>
+<node pkg="mobility" type="lights.py" name="ros_lights"/>
+<node pkg="mobility" type="roverESC.py" name="roverESC"/>
+<node pkg="Cerium" type="hostHTTP.sh" />
+<include file="/opt/ros/kinetic/share/rosbridge_server/launch/rosbridge_websocket.launch"/>
+</launch>
