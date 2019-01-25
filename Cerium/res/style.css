@@ -71,12 +71,7 @@ html, body {
   right: 10px;
 }
 
-#settings_button {
-  position: fixed;
-  left: 10px;
-}
-
-#fs_button {
+#settings_button_open {
   position: fixed;
   right: 10px;
 }
@@ -179,7 +174,7 @@ html, body {
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #31B0D5;
 }
 
 input:focus + .slider {

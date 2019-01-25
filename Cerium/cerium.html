@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Titan Rover Cerium</title>
     <meta charset="utf-8"/>
     <script src="res/js/eventemitter2.min.js"></script>
     <script src="res/js/roslib.min.js"></script>
@@ -11,7 +10,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script type="text/javascript">
-      var build = "1.25.19.1";
+      var app_name = "Titan Rover Cerium"
+      var app_build = "1.25.19.2";
       var camera = 'http://192.168.1.2:8081';
       var elem = document.documentElement;
       var fullscreen = false;
@@ -59,7 +59,7 @@
             header : {
               seq : 0,
               stamp : 0,
-              frame_id : 'Titan Rover Cerium: ' + build,
+              frame_id : app_name + ' ' + app_build,
             },
             source : 3,
             njoys : {
@@ -70,7 +70,7 @@
               header : {
               seq : 0,
               stamp : 0,
-              frame_id : 'Titan Rover Cerium: ' + build,
+              frame_id : app_name + ' ' + app_build,
             },
              axes : [
                parseFloat(turn*turn_invert),
@@ -87,7 +87,7 @@
           });
           console.log(message_obj);
           document.getElementById("status_throttle").innerHTML = "Throttle: " + throttle;
-          document.getElementById("status_turn").innerHTML = "Turn: " + turn;
+          document.getElementById("status_turn").innerHTML = "Turn: " + turn*turn_invert;
           console.log("Throttle: ", throttle, "Turn: ", turn*turn_invert);
           console.log(rosbridge_obj.publish(message_obj)); // Publish the message
       }
@@ -101,15 +101,16 @@
               turn = turn + value;
           }
       }
-      function stop(value) {
+      function stop() {
           throttle = 0;
           turn = 0;
       }
       $(document).ready(function(){ // After app has loaded
           setInterval(report, 75); // Call report every x seconds
           setInterval(steer_assist, 75);
-          document.getElementById("status_build").innerHTML = "Titan Rover Cerium: " + build;
+          document.getElementById("status_build").innerHTML = app_name + ' ' + app_build;
           document.body.style.backgroundColor = camera;
+          document.title = app_name + ' ' + app_build;
       });
       ros.on('error', function(error) { // Emit backend error
           console.log(error);
@@ -147,9 +148,6 @@
   </head>
   <body>
     <div class="flex-container">
-      <div id="settings_button_open">
-        <button class="control" onclick="open_settings()">⚙</button>
-      </div>
       <div>
         <button class="info" id="status_roshost" disabled >Status: Connecting</button>
       </div>
@@ -162,8 +160,8 @@
       <div>
         <button class="info" id="status_build" disabled></button>
       </div>
-      <div id="fs_button">
-        <button class="control" onclick="openFullscreen()">☐</button>
+      <div id="settings_button_open">
+        <button class="control" onclick="open_settings()">⚙</button>
       </div>
     </div>
     <div id="left_button">
@@ -198,6 +196,10 @@
             <input type="checkbox" onchange="turn_inverter()">
             <span class="slider round"></span>
           </label>
+        </div>
+        <div id="fs_button">
+          <button class="info" id="" disabled>Attempt Fullscreen</button>
+          <button class="control" onclick="openFullscreen()">☐</button>
         </div>
       </div>
     </div>
