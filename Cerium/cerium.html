@@ -3,27 +3,22 @@
   <head>
     <title>Titan Rover Cerium</title>
     <meta charset="utf-8"/>
-    <script type="text/javascript" src="eventemitter2.min.js"></script>
-    <script type="text/javascript" src="roslib.min.js"></script>
-    <script src="jquery-3.3.1.min.js"></script>
+    <script src="res/js/eventemitter2.min.js"></script>
+    <script src="res/js/roslib.min.js"></script>
+    <script src="res/js/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="res/style.css">
+    <link rel="icon" href="res/i.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script type="text/javascript">
-      var build = "1.24.19.3";
+      var build = "1.25.19.1";
       var camera = 'http://192.168.1.2:8081';
       var elem = document.documentElement;
       var fullscreen = false;
-      var ros = new ROSLIB.Ros({ // Make a new ros object
+      var ros = new ROSLIB.Ros({ // Make new ros object
         url : 'ws://192.168.1.2:9090'
       });
-      /*var rosbridge_obj = new ROSLIB.Topic({ // Create a topic object
-        ros : ros,
-        name : '/joy/0',
-        messageType : 'sensor_msgs/Joy'
-      });*/
-      var rosbridge_obj_2 = new ROSLIB.Topic({
+      var rosbridge_obj = new ROSLIB.Topic({
          ros : ros,
          name : '/multijoy',
          messageType : "MultiJoy"
@@ -39,7 +34,7 @@
       var turn_invert = -1;
       var turn_max = 100;
       var turn_min = -100;
-      function openFullscreen() { /* View in fullscreen */
+      function openFullscreen() { // View in fullscreen
             if (elem.requestFullscreen) {
               elem.requestFullscreen();
             } else if (elem.mozRequestFullScreen) { /* Firefox */
@@ -60,76 +55,41 @@
           }
       }
       function report() { // Console log and publish current values
-          /*
           var message_obj = new ROSLIB.Message({ // Create the message payload to be published
             header : {
               seq : 0,
               stamp : 0,
-              frame_id : 'Titan Rover',
-            },
-            axes : [
-               parseFloat(throttle),
-               parseFloat(turn*turn_invert),
-               0
-            ],
-            buttons : [
-              0, 0, 0
-            ]
-          });
-          document.getElementById("status_throttle").innerHTML = "Throttle: " + throttle;
-          document.getElementById("status_turn").innerHTML = "Turn: " + turn;
-          console.log("Throttle: ", throttle, "Turn: ", turn*turn_invert);
-          console.log(rosbridge_obj.publish(message_obj)); // Publish the message
-          */
-
-
-          var message_obj_2 = new ROSLIB.Message({ // Create the message payload to be published
-            header : {
-              seq : 0,
-              stamp : 0,
-              frame_id : 'Titan Rover',
+              frame_id : 'Titan Rover Cerium: ' + build,
             },
             source : 3,
             njoys : {
-             data : 1
+              data : 1
             },
             joys : [
               {
               header : {
               seq : 0,
               stamp : 0,
-              frame_id : 'Titan Rover',
+              frame_id : 'Titan Rover Cerium: ' + build,
             },
              axes : [
                parseFloat(turn*turn_invert),
                parseFloat(throttle),
-               0,
-               0,
-               0,
-               0
+               0, 0,
+               0, 0
             ],
              buttons : [
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0,
-               0
+               0, 0, 0, 0,
+               0, 0, 0, 0,
+               0, 0, 0, 0
             ]
               }]
           });
-          console.log(message_obj_2);
-
+          console.log(message_obj);
           document.getElementById("status_throttle").innerHTML = "Throttle: " + throttle;
           document.getElementById("status_turn").innerHTML = "Turn: " + turn;
           console.log("Throttle: ", throttle, "Turn: ", turn*turn_invert);
-          console.log(rosbridge_obj_2.publish(message_obj_2)); // Publish the message
+          console.log(rosbridge_obj.publish(message_obj)); // Publish the message
       }
       function throttle_adjust(value) {
           if (throttle + value <= throttle_max && throttle + value >= throttle_min) {
@@ -149,18 +109,19 @@
           setInterval(report, 75); // Call report every x seconds
           setInterval(steer_assist, 75);
           document.getElementById("status_build").innerHTML = "Titan Rover Cerium: " + build;
+          document.body.style.backgroundColor = camera;
       });
-      ros.on('error', function(error) { // Emit an 'error' if there is an error on the backend
+      ros.on('error', function(error) { // Emit backend error
           console.log(error);
           document.getElementById("status_roshost").innerHTML = "Status: Error - " + error;
           document.getElementById("status_roshost").style = "color:ORANGE";
       });
-      ros.on('connection', function() { // Report a successful connection attempt
+      ros.on('connection', function() { // Report successful connection
           console.log("Connected to Rover");
           document.getElementById("status_roshost").innerHTML = "Status: Connected";
           document.getElementById("status_roshost").style = "color:GREEN";
       });
-      ros.on('close', function(reason) { // Report a connection closed
+      ros.on('close', function(reason) { // Report connection closed
           console.log("Rover has closed the connection");
           console.log(reason);
           document.getElementById("status_roshost").innerHTML = "Status: Closed";
@@ -184,7 +145,7 @@
       }
     </script>
   </head>
-  <body background="http://192.168.1.2:8081">
+  <body>
     <div class="flex-container">
       <div id="settings_button_open">
         <button class="control" onclick="open_settings()">⚙</button>
@@ -224,18 +185,20 @@
     </div>
     <div id="settings_panel" class="modal">
       <div class="settings-content">
-        <p>Settings Panel</p>
         <div id="settings_button_close">
           <button class="control" onclick="close_settings()">✖</button>
         </div>
         <div id="">
+          <button class="info" id="" disabled>Host IP</button>
           <input class="control" onclick=""></input>
         </div>
-        <!-- Rounded switch -->
-        <label class="switch">
-          <input type="checkbox" onchange="turn_inverter()">
-          <span class="slider round"></span>
-        </label>
+        <div id="">
+          <button class="info" id="" disabled>Inverse Steering</button>
+          <label class="switch"> <!-- Rounded switch -->
+            <input type="checkbox" onchange="turn_inverter()">
+            <span class="slider round"></span>
+          </label>
+        </div>
       </div>
     </div>
   </body>
