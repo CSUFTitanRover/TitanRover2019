@@ -71,12 +71,7 @@ html, body {
   right: 10px;
 }
 
-#settings_button {
-  position: fixed;
-  left: 10px;
-}
-
-#fs_button {
+#settings_button_open {
   position: fixed;
   right: 10px;
 }
@@ -106,7 +101,7 @@ html, body {
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+  background-color: rgba(0,0,0,0.95); /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
@@ -179,7 +174,7 @@ html, body {
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #31B0D5;
 }
 
 input:focus + .slider {
