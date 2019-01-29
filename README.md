@@ -25,4 +25,5 @@ David Feinzimer         -   dfeinzimer@gmail.com
 Georden Grabuskie       -   ggrabuskie@csu.fullerton.edu
 Maria Diaz              -   mardiaz353@csu.fullerton.edu
 Robert Pace IV          -   rpaceiv@csu.fullerton.edu
+Shripal Rawal           -   rawalshreepal000@gmail.com
 Timothy Parks           -   parkstimothyj@csu.fullerton.edu
