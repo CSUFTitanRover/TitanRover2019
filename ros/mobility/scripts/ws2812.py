@@ -40,7 +40,7 @@ BOTH = ORANGE # R2 + 1
 LOCAL_COLOR = BLUE #any controller plugged into the rover
 GHZ_COLOR = GREEN #ubiquity
 MHZ_COLOR = PURPLE #433 MHz backup radio
-
+APP_COLOR = BLUE_GREEN
 
 
 class Rover_Status_Lights(object):
