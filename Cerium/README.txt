@@ -1,10 +1,9 @@
-
 # Cerium - Web
 
 Web solution for rover control.
 
 README Version:
-	1.17.19.4
+	1.29.19.1
 
 Author(s):
 	David Feinzimer dfeinzimer@csu.fullerton.edu
@@ -12,7 +11,7 @@ Author(s):
 Setup:
 	1) Ensure correct 'ros->url' value
 	2) Ensure correct 'camera' value
-	3) Ensure roscore is running
+	3) Ensure roscore and a proper ESC file is running
 	4) Tab Layout:
 			1) roslaunch rosbridge_server rosbridge_websocket.launch
 			2) sudo python -m SimpleHTTPServer
@@ -21,7 +20,7 @@ Setup:
 
 
 Problems & Solutions:
-	Motion:
+	Motion not displaying camera feed:
 		1) Add 'modprobe bcm2835-v4l2' to /etc/rc.local
 		2) Or simply run 'sudo modprobe bcm2835-v4l2'
 	Sourcing:
@@ -32,9 +31,14 @@ Problems & Solutions:
 		sudo scp -r ~/localpath/Cerium/Web pi@IP:~/Cerium/
 	Modifying/adding startup scripts:
 		nano ~/.bashrc
+	Killing an existing SimpleHTTPServer port:
+		1) Find the PID using the port: sudo lsof -i:8000
+		2) Kill it: kill XXXX
 
 Dependencies & Related Documentation:
 	rosbridge_server
-		http://wiki.ros.org/rosbridge_server
+		wiki.ros.org/rosbridge_server
 	roslbjs
-		https://github.com/RobotWebTools/roslibjs
+		github.com/RobotWebTools/roslibjs
+	Motion
+		motion-project.github.io
