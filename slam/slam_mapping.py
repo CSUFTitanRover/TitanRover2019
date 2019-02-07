@@ -3,89 +3,220 @@
 # 2d array 1000 x 1000 m
 # precision to 0.00001 about 1m
 
+import sys , subprocess  
 # To import packages from different Directories
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 
-from autonomousCore import *
-myDriver = Driver()
-
-import random, time, math
+#from autonomousCore import *
+import random, time, math, re
 import numpy as np
 from geopy.distance import geodesic
 from geopy.distance import distance
 
+def truncate(f, n):
+    return math.floor(f * 10 ** n) / 10 ** n
+
 ## Global Variables
-# dim's must be odd number size and form square for initialization 
-dimx = dimy = 3
-fill_val = np.int8(-1)
-precision = 0.00001
-slam_map = []
 measurement_array = []
-scan = []
-current_pos_gps = (0 , 0)  #(Latitude, Longitude)
-org_offset_gps  = (0 , 0)
-dest_gps        = (0 , 0)
-#augments the gps after 5 decimal cut
-curr_dir = 0
-###################################################################################
-######## numpy made readible
-def fillMap():
-    global dimx, dimy, fill_val
-    return np.full((dimy, dimx), fill_val, dtype=np.int8)
 
-# example output for np.full((4, 3), -1, dtype=np.int8)
-'''[[-1. -1. -1.]
-    [-1. -1. -1.]  <----- Not the same output for this function
-    [-1. -1. -1.]  <----- the array matches the np call example only
-    [-1. -1. -1.]]
-FYI the dimx and dimy are switched in function call '''
-
-def append_y():
-    global dimy, slam_map, fill_val
-    dimy += 1
-    return np.insert(slam_map, dimy - 1, fill_val, axis=0)
-
-# example output for np.insert(arr, arr[0].size , 2, axis=0)
-'''[[-1. -1. -1.]
-    [-1. -1. -1.]
-    [-1. -1. -1.]
-    [ 2.  2.  2.]]'''
-
-def append_x():
-    global dimx, slam_map, fill_val
-    dimx += 1
-    return np.insert(slam_map, dimx - 1, fill_val, axis=1)
-
-# example output for np.insert(arr, arr[0].size , 2, axis=1)
-'''[[-1. -1. -1.  2.]
-    [-1. -1. -1.  2.]
-    [-1. -1. -1.  2.]]'''
-
-def insert_x():
-    global dimy, slam_map, fill_val
-    return np.insert(slam_map, 0, fill_val, axis=1)
+class slam():
+    global measurement_array
+    _dimx = 0
+    _dimy = 0
+    _precision = 0
+    fill_val = np.int8(-1)
+    #myDriver = Driver()
+    slam_map = []
+    scan = []
+    current_pos_gps = {'lat':0 ,'long': 0}  #(Latitude, Longitude)
+    org_offset_gps  = {'lat':0 ,'long': 0}
+    dest_gps        = {'lat':0 ,'long': 0}
+    #augments the gps after 5 decimal cut
+    curr_dir = 0
     
-def insert_y():
-    global dimx, slam_map, fill_val
-    temp_arr = np.full((1, dimx), fill_val, dtype=np.int8)
-    return np.insert(temp_arr, 1, slam_map, axis=0)
+    ###################################################################################
+    ######## Start the slam object this specific settings
+    def __init__(self, dimx, dimy, precision, current_lat, current_long):
+        self._dimx = dimx
+        self._dimy = dimy
+        self._precision = precision #should be 0.00001
+        self.current_pos_gps['lat'] = current_lat
+        self.current_pos_gps['long'] = current_long
+        ## GPS Array Creation
+        self.fillMap()  # Array of default size populated with fill_val  
 
-#Other 2D array design
-# gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
-######################################################################################
-####### LiDAR Update
-def scan_update()
-    global scan, curr_dir, measurement_array
-    pass
+        ## Grid Offset start location latitude
+        if current_lat > 0:
+            self.org_offset_gps['lat'] = truncate(current_lat,5) + (((self._dimx - 1.0)/2.0) * self._precision) #float(format(current_lat + ((self._dimx - 1)/2) * self._precision,'.5f')) 
+        else:
+            self.org_offset_gps['lat'] = truncate(current_lat,5) - (((self._dimx - 1.0)/2.0) * self._precision)  #float(format(current_lat - ((self._dimx - 1)/2) * self._precision,'.5f')) 
 
+        ## Grid Offset start location longitude
+        self.org_offset_gps['long'] = truncate(current_long,5) - (((self._dimy - 1.0)/2.0) * self._precision)  #float(format(current_long - ((self._dimy - 1)/2) * self._precision,'.5f')) 
     
+    ###################################################################################
+    ######## numpy made readible
+    def fillMap(self):
+        self.slam_map = np.full((self._dimy, self._dimx), self.fill_val, dtype=np.int8)
+        '''
+        dimx = dimy = 3
+        example output for np.full((dimy, dimx), -1, dtype=np.int8)
+           [[-1. -1. -1.]
+            [-1. -1. -1.]
+            [-1. -1. -1.]] FYI the dimx and dimy are switched in function call 
+        '''
+
+    def append_y(self):
+        self.slam_map = np.insert(self.slam_map, self._dimy, self.fill_val, axis=0)
+        self._dimy += 1
+        '''
+        example output for: print(slamit.slam_map); slamit.fill_val = 2; slamit.append_x(); print(slamit.slam_map)
+           [[-1 -1 -1] before
+            [-1 -1 -1]
+            [-1 -1 -1]]
+           [[-1 -1 -1] after
+            [-1 -1 -1]
+            [-1 -1 -1]
+            [ 2  2  2]]
+        '''
+
+    def append_x(self):
+        self.slam_map = np.insert(self.slam_map, self._dimx, self.fill_val, axis=1)
+        self._dimx += 1
+        '''
+        example output for: print(slamit.slam_map); slamit.fill_val = 2; slamit.append_x(); print(slamit.slam_map)
+           [[-1 -1 -1] before
+            [-1 -1 -1]
+            [-1 -1 -1]]
+           [[-1 -1 -1  2]  after
+            [-1 -1 -1  2]
+            [-1 -1 -1  2]]
+        '''
+
+    def insert_x(self):
+        self.slam_map = np.insert(self.slam_map, 0, self.fill_val, axis=1)
+        self._dimx += 1
+        '''
+        example output for: print(slamit.slam_map); slamit.fill_val = 2; slamit.insert_x(); print(slamit.slam_map)
+           [[-1 -1 -1] before
+            [-1 -1 -1]
+            [-1 -1 -1]]
+           [[ 2 -1 -1 -1]  after
+            [ 2 -1 -1 -1]
+            [ 2 -1 -1 -1]]
+        '''
+
+    def insert_y(self):
+        temp_arr = np.full((1, self._dimx), self.fill_val, dtype=np.int8)
+        self.slam_map = np.insert(temp_arr, 1, self.slam_map, axis=0)
+        self._dimy += 1
+        '''
+        example output for: print(slamit.slam_map); slamit.fill_val = 2; slamit.insert_y(); print(slamit.slam_map)
+           [[-1 -1 -1]  before
+            [-1 -1 -1]
+            [-1 -1 -1]]
+           [[ 2  2  2]  after
+            [-1 -1 -1]
+            [-1 -1 -1]
+            [-1 -1 -1]]
+        '''
+
+    #Other 2D array design
+    # gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
+    ######################################################################################
+    ####### LiDAR Update
+    def scan_update(self):
+        #scan, curr_dir, measurement_array
+        pass
+
+    #######################################################################################
+    #### GPS Precision within the scanning range of 90degrees from start_scan
+    #  Region Map
+    #     North
+    #   3    |    0
+    #        |
+    #        |
+    # W------------- E
+    #        |
+    #        |
+    #   2    |    1      
+    #        S
+
+    def gps_to_map(self):
+        
+        
+        temp_gps_list = []
+        temp_gps_list2 = []
+        if (self.curr_dir > 315):  # check for cross over between region 3 and 0
+            self.start_scan = (self.curr_dir + 45) - 360
+        else:
+            self.start_scan = self.curr_dir + 45
+
+        print(self.start_scan, '***************')
+
+        if (self.start_scan < 90): # if in region 0 ending in region 3
+            self.insert_x()
+            self.append_x()
+            self.insert_y()
+        elif (self.start_scan < 180):
+            self.insert_y()
+            self.append_x()
+            self.append_y()
+        elif (self.start_scan < 270):
+            self.append_x()
+            self.append_y()
+            self.insert_x()
+        else:
+            self.append_y()
+            self.insert_x()
+            self.insert_y()
+        # Build dictionary of surrounding Coords with float precision 5
+
+        self.gps_precision = [                             
+                            #16 outer points
+                            {'lat': 0.00002, 'long':-0.00002}, {'lat': 0.00001, 'long':-0.00001}, {'lat': 0, 'long':0},  {'lat': -0.00001, 'long':0.00001}]
+
+        for x in range(2, -2, -1):
+            for y in range(-2, 2, 1):
+                temp_gps_list2.append((float(format(self.current_pos_gps['lat'] + (x*0.00001),'.5f')), 
+                                    float(format(self.current_pos_gps['long'] + (y*0.00001),'.5f'))))
+
+        for x in range(len(self.gps_precision)):
+            for y in range(len(self.gps_precision)):
+                temp_gps_list.append((float(format(self.current_pos_gps['lat'] + self.gps_precision[x]['lat'],'.5f')), 
+                                    float(format(self.current_pos_gps['long'] + self.gps_precision[y]['long'],'.5f'))))
+        print(temp_gps_list)
+        print('*************************************')     
+        print(temp_gps_list2)
+    def update_sensors(self):
+        
+        #get IMU
+        #get current GPS
+        #get lidar scan
+        pass
+    
+#######################################################################################
+def start_init():
+    global measurement_array
+        
+    ###################################################################################
+    ## Measurement Array setup
+    half_deg_delta = .00828 # hypo length change every 1/2 degree with 0deg = 1.8m to 45deg = 2.54558  
+    measurement_start = 2.54
+    for x in range(181):
+        if x < 91:
+            measurement_array.append(round((measurement_start - (half_deg_delta * x)),5))
+        else:
+            measurement_array.append(round((measurement_array[x - 1] + half_deg_delta),5))
+
+    #print(measurement_array)
 
 ######################################################################################
 ##  Contour Map setup
-def make_map_image():
+def make_map_image(dimx, dimy):
     from PIL import Image
-    img = Image.new('RGB', (1000,1000), 'black')
+    img = Image.new('RGB', (dimx,dimy), 'black')
     pixels = img.load()
 
     ##  Contour Map coloring ranges
@@ -96,110 +227,23 @@ def make_map_image():
     #img.show()
     #img.save('rover_map','png')
     #print('image written')
-#######################################################################################
-#### GPS Precision within the scanning range of 90degrees from start_scan
-#  Region Map
-#     North
-#   3    |    0
-#        |
-#        |
-# W------------- E
-#        |
-#        |
-#   2    |    1      
-#        S
 
-def gps_to_map():
-    global scan, measurement_array, current_pos_gps, curr_dir
-    gps_precision = [   #surrounding 4 points
-                        {'lat': 0.00001, 'long':0},{'lat':0, 'long':0},{'lat':0, 'long':-0.00001},{'lat':0.00001, 'long':-0.00001}  
-                        
-                        #12 outer points
-                        {'lat': 0.00002, 'long':-0.00002}, {'lat': 0.00002,  'long':-0.00001}, {'lat': 0.00002, 'long':0},  {'lat': 0.00002, 'long':0.00001}, 
-                        {'lat': 0.00001, 'long':-0.00002}, {'lat': 0.00001,  'long': 0.00001},
-                        {'lat': 0,       'long':-0.00002}, {'lat': 0,        'long': 0.00001},
-                        {'lat':-0.00001, 'long':-0.00002}, {'lat':-0.00001,  'long':-0.00001}, {'lat':-0.00001, 'long':0},  {'lat':-0.00001, 'long':0.00001}]
-    temp_gps_list = []
-    if (curr_dir < 315):  # check for cross over between region 3 and 0
-            start_scan = (curr_dir + 45) - 360
-        else:
-            start_scan = curr_dir + 45
-    if (start_scan < 90): # if in region 0 ending in region 3
-        slam_map = insert_x()
-        slam_map = insert_y()
-        slam_map = append_x()
-    elif (start_scan < 180):
-        slam_map = insert_y()
-        slam_map = append_x()
-        slam_map = append_y()
-    elif (start_scan < 270):
-        slam_map = append_x()
-        slam_map = append_y()
-        slam_map = insert_x()
-    else:
-        slam_map = append_y()
-        slam_map = insert_x()
-        slam_map = insert_y()
-    # Build dictionary of surrounding Coords with float precision 5
-    for x in range(gps_precision):
-        temp_gps_list.append((float(format(current_lat + gps_precision[x]['lat'],'.5f')), float(format(current_long + gps_precision[x]['long'],'.5f'))))
-
-
-
-[(33.88184, -117.88276), (33.88182, -117.88276), (33.88182, -117.88277), (33.88184, -117.88277)]
-
-    
-#######################################################################################
-def start_init():
-    global slam_map, current_long, current_lat, scan, dimx, dimy, measurement_array
-    ###################################################################################
-    ## GPS Array Creation
-    # Array of default size populated with fill_val  
-    slam_map = fillMap()
-
+def main():
     ## test points to prepare array
     current_long = -117.882759 # horizontal Fullerton E21 Backdoor
     current_lat = 33.881825  #vertical Fullerton E21 Backdoor
-    #lat_update = .005 
-    #array_offset_x , array_offset_y = current_lat - precision, current_long
-
-    ## Grid Offset start location latitude
-    if current_lat > 0:
-        current_lat += ((dimx - 1)/2) * precision
-    else:
-        current_lat -= ((dimx - 1)/2) * precision
-
-    ## Grid Offset start location longitude
-    current_long -= ((dimy - 1)/2) * precision
-
-    ###################################################################################
-    ## Measurement Array setup
-    half_deg_delta = .00828 # hypo length change every 1/2 degree with 0deg = 1.8m to 45deg = 2.54558  
-    measurement_start = 2.54
-    measurement_array = []
-    for x in range(181):
-        if x < 91:
-            measurement_array.append(round((measurement_start - (half_deg_delta * x)),5))
-        else:
-            measurement_array.append(round((measurement_array[x - 1] + half_deg_delta),5))
-
-    #print(measurement_array)
-
-def update_sensors():
-    #get IMU
-    #get current GPS
-    #get lidar scan
-    
-
-
-
-def main():
-    global slam_map, current_long, current_lat, scan, dimx, dimy, measurement_array
-    update_sensors()
-    
-
-
-
+    start_init() #prep work for start
+    # dim's must be odd number size and form square for initialization 
+    slamit = slam(3, 3, 0.00001, current_lat, current_long)
+    slamit.update_sensors()
+    print(slamit.slam_map)
+    print(slamit.current_pos_gps)
+    print(slamit.org_offset_gps)
+    slamit.scan = measurement_array
+    slamit.fill_val = 2
+    slamit.curr_dir = 45
+    slamit.gps_to_map()
+    print(slamit.slam_map)
 
 
 
@@ -208,9 +252,9 @@ def main():
     #print(distance(current_pos_gps, dest_gps).cm)
 
 if __name__ == '__main__':
-    start_init()
     #need ros spin
     main()
+    pass
 
 
 
@@ -249,4 +293,23 @@ def SearchArray(x_range, y_range):
             #print gps_arr[x][y][0]['lat'] ,',', gps_arr[x][y][0]['lon']
             pass
 '''
-
+'''
+33.88184, -117.88278, #11111
+33.88184, -117.88277, #11444
+33.88184, -117.88276, #11888
+33.88184, -117.88275, #11FFF
+33.88184, -117.88278, #44111
+33.88184, -117.88277, #44444
+33.88184, -117.88276, #44888
+33.88184, -117.88275, #44FFF
+33.88182, -117.88278, #88111
+33.88182, -117.88277, #88444
+33.88182, -117.88276, #88888
+33.88182, -117.88275, #88FFF
+33.88181, -117.88278, #DD111
+33.88181, -117.88277, #DD444
+33.88181, -117.88276, #DD888
+33.88181, -117.88275, #DDFFF
+33.881825, -117.882759, #FF222
+33.881835, -117.882769, #F1111
+'''
