@@ -83,8 +83,8 @@ class Rover_Status_Lights(object):
 		self.spi.write(self.buffer)
 
 	def set_front(self, r, g, b):
-		chaseL = 46 #start status for the front left lights
-		chaseR = 15 #end status for the front right lights (order is reversed between sides)
+		chaseL = 45 #start status for the front left lights
+		chaseR = 14 #end status for the front right lights (order is reversed between sides)
 		for i in range(15):
 			self.setColor(chaseL + i, *WHITE) 
 			self.setColor(chaseR - i, *WHITE)
@@ -112,8 +112,8 @@ class Rover_Status_Lights(object):
 			#sleep(0.02)
 
 	def set_all(self, r, g, b):
-		chaseL = 31 #start status for the front left lights
-		chaseR = 30 #end status for the front right lights (order is reversed between sides)
+		chaseL = 30 #start status for the front left lights
+		chaseR = 29 #end status for the front right lights (order is reversed between sides)
 		for i in range(30):
 			self.setColor(chaseL + i, *WHITE) 
 			self.setColor(chaseR - i, *WHITE)
