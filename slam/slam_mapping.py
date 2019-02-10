@@ -8,7 +8,7 @@ import sys , subprocess
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 
-#from autonomousCore import *
+from driver import Driver
 import random, time, math, re
 import numpy as np
 from geopy.distance import geodesic
@@ -26,7 +26,7 @@ class slam():
     _dimy = 0
     _precision = 0
     fill_val = np.int8(-1)
-    #myDriver = Driver()
+    myDriver = Driver()
     slam_map = []
     scan = []
     current_pos_gps = {'lat':0 ,'long': 0}  #(Latitude, Longitude)
@@ -142,12 +142,9 @@ class slam():
     #        |
     #   2    |    1      
     #        S
-
+#add destination point
     def gps_to_map(self):
-        
-        
         temp_gps_list = []
-        temp_gps_list2 = []
         if (self.curr_dir > 315):  # check for cross over between region 3 and 0
             self.start_scan = (self.curr_dir + 45) - 360
         else:
@@ -176,19 +173,13 @@ class slam():
         self.gps_precision = [                             
                             #16 outer points
                             {'lat': 0.00002, 'long':-0.00002}, {'lat': 0.00001, 'long':-0.00001}, {'lat': 0, 'long':0},  {'lat': -0.00001, 'long':0.00001}]
-
+        
         for x in range(2, -2, -1):
             for y in range(-2, 2, 1):
-                temp_gps_list2.append((float(format(self.current_pos_gps['lat'] + (x*0.00001),'.5f')), 
-                                    float(format(self.current_pos_gps['long'] + (y*0.00001),'.5f'))))
+                temp_gps_list.append(((math.floor((self.current_pos_gps['lat'] + (x*0.00001)) * 10 ** 5)/ 10 ** 5), 
+                                    math.floor((self.current_pos_gps['long'] + (y*0.00001)) * 10 ** 5)/ 10 ** 5))
 
-        for x in range(len(self.gps_precision)):
-            for y in range(len(self.gps_precision)):
-                temp_gps_list.append((float(format(self.current_pos_gps['lat'] + self.gps_precision[x]['lat'],'.5f')), 
-                                    float(format(self.current_pos_gps['long'] + self.gps_precision[y]['long'],'.5f'))))
-        print(temp_gps_list)
-        print('*************************************')     
-        print(temp_gps_list2)
+        
     def update_sensors(self):
         
         #get IMU
