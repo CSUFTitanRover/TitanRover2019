@@ -1,6 +1,6 @@
 # Cerium - Web
 
-Updated: 2.9.19.22.55
+Updated: 2.9.19.23.02
 Author: David Feinzimer dfeinzimer@csu.fullerton.edu
 Description: A web based, mobile friendly solution for driving Titan Rover.
 
@@ -9,13 +9,13 @@ Setup:
 	2) Ensure correct 'camera' value in the <body> tag. of cerium.html.
 	3) Ensure roscore and a proper ESC (appbaseESC.py for the Runt) file is running
 	4) If running Cerium on the Runt platform:
-	        Launch Cerium manually open 3 terminals and run one of the following
-                commands in each.
-		     1) roslaunch rosbridge_server rosbridge_websocket.launch
-		     2) sudo python -m SimpleHTTPServer
-		     3) python appbaseESC.py
+	     Launch Cerium manually. Open 3 terminals and run one of the following
+      commands in each.
+		      1) roslaunch rosbridge_server rosbridge_websocket.launch
+		      2) sudo python -m SimpleHTTPServer
+		      3) python appbaseESC.py
 	5) If running Cerium on the Rover platform:
-		1) Ensure that the newest version of runCerium.sh is in the rover's home directory.
+		1) Ensure that the newest version of runCerium.sh is in rover's home directory.
 		2) ./runCerium.sh 
 
 Problems & Solutions:
