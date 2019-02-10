@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 '''
-File:         baseESC.py
+File:         appbaseESC.py
 Authors:      Shripal Rawal / Timothy Parks / Georden Grabuskie
 Emails:       rawalshreepal000@gmail.com / parkstimothyj@gmail.com / ggrabuskie@csu.fullerton.edu
-Description:
+Description:  This file is specially designed to run Cerium on the Runt platform
 '''
 
 

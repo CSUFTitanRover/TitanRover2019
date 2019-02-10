@@ -1,23 +1,18 @@
 # Cerium - Web
 
-Web solution for rover control.
-
-README Version:
-	1.29.19.1
-
-Author(s):
-	David Feinzimer dfeinzimer@csu.fullerton.edu
+Updated: 2.9.19.2
+Author: David Feinzimer dfeinzimer@csu.fullerton.edu
+Description: A web based, mobile friendly solution for driving Titan Rover.
 
 Setup:
-	1) Ensure correct 'ros->url' value
-	2) Ensure correct 'camera' value
-	3) Ensure roscore and a proper ESC file is running
-	4) Tab Layout:
+	1) Ensure correct 'ros->url' value in cerium.html.
+	2) Ensure correct 'camera' value in the <body> tag. of cerium.html.
+	3) Ensure roscore and a proper ESC (appbaseESC.py for the Runt) file is running
+	4) To launch Cerium manually open 3 terminals and run one of the following
+	   commands in each.
 			1) roslaunch rosbridge_server rosbridge_websocket.launch
 			2) sudo python -m SimpleHTTPServer
 			3) python appbaseESC.py
-			4) [OPTIONAL] rostopic echo /joy/0
-
 
 Problems & Solutions:
 	Motion not displaying camera feed:
