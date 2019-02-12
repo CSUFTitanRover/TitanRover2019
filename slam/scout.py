@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import sys, time, threading, signal
+import threading
+import sys, time, signal, socket
 ######################################################################################
 # System Requirement of one argument for process instructions
 if len (sys.argv) != 2 :
@@ -13,7 +14,31 @@ if len (sys.argv) != 2 :
 
 mode_info = None
 acceleration = 0
-curr_pos = []
+curr_pos = {0,0}
+
+def connect():
+    global curr_pos
+    host = "192.168.1.116" 
+    port = 9091
+    BUFFER_SIZE = 4096 
+
+    Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+    Client.connect((host, port))
+
+    while True:
+        try:
+            #MESSAGE = raw_input("Enter : ")
+            #Client.send(MESSAGE)     
+            data = Client.recv(BUFFER_SIZE)
+            data = data.split(b' ')
+            print(data)
+            #data = pickle.loads(data)
+            #print(" Client received data:", float(data[4]), ' ', float(data[5]))
+            curr_pos = float(data[4]), float(data[5])
+
+        except:
+            Client.close()
+            break
 
 #####################################################################################
 ## File I/O from https://www.g-loaded.eu/2016/11/24/how-to-terminate-running-python-threads-using-signals/
@@ -27,10 +52,12 @@ class Job(threading.Thread):
         self.shutdown_flag = threading.Event()
   
     def run(self):
+        global curr_pos
         print('Thread #%s started' % self.ident)
  
         while not self.shutdown_flag.is_set():
-            self._file.write("hello" + " " + "world" + "\n")
+            #self._file.write("hello" + " " + "world" + "\n")
+            self._file.write(str(curr_pos) + "\n")
             #scoutfile.write(data.pos)
             #print(data.pos + ' ' + acceleration + '\n')
             time.sleep(0.5)
@@ -60,14 +87,14 @@ def start_scouting(sf):
     try:
         j1 = Job(sf)
         j1.start()
-       
+               
         while True:
             time.sleep(0.5)
 
     except ServiceExit:
         j1.shutdown_flag.set()
         j1.join()
-         
+                
     print('Exiting main program')
 
 def update_acceleration(data):
@@ -85,6 +112,9 @@ def parse_map_file():
 
 if __name__ == '__main__':
     if sys.argv[1] == 'scout':
+        gps_data = threading.Thread(target = connect)
+        gps_data.start()
+        
         scoutfile = open("scoutfile.txt", "w")
         start_scouting(scoutfile)
     elif sys.argv[1] == 'parse':
