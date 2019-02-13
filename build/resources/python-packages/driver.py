@@ -50,8 +50,7 @@ class Driver:
         self.__distance = 0.0
         self.__motor1 = 0
         self.__motor2 = 0
-        rospy.init_node('fimu', anonymous=True)
-        rospy.init_node('gnss', anonymous=True)
+        rospy.init_node('listener', anonymous=True)
 
     def calculateGps(self, origin, heading, distance):
         '''
