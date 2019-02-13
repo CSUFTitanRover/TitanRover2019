@@ -26,3 +26,12 @@ for point in points:
 #heading = 0
 #distance = 100
 #point = myDriver.calcuateGps(crd, heading, distance)
+
+# Calculate the spiral points to travel
+#radius = 400        # 400 Cm --> 4 Mt
+#spilist = myDriver.spiralPoints(pt, radius)
+
+# Travel all the points in the spilist(In Concentric Circles)
+#while len(spilist) > 0:
+    #myDriver.goTo(spilist[-1])
+    #spilist.pop()
