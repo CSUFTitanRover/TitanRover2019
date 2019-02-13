@@ -1,9 +1,8 @@
 <launch>
-<launch>
-<node pkg="master_discovery_fkie" type="master_discovery" name="sync_stats" output="screen" launch-prefix="xterm -e"/>
-  <param name="_mcast_group" value="224.0.0.1" />
-<node pkg="master_sync_fkie" type="master_sync" name="master_sync" output="screen" launch-prefix="xterm -e"/>
-<node pkg="mobility" type="lights.py" name="ros_lights" output="screen" launch-prefix="xterm -e"/>
-<node pkg="mobility" type="roverESC.py" name="roverESC" output="screen" launch-prefix="xterm -e"/>
-<node pkg="mobility" type="mhzRx.py" name="backup_Radio" output="screen" launch-prefix="xterm -e"/>
+<node pkg="master_discovery_fkie" type="master_discovery" name="sync_stats"/>
+  <param name="_mcast_group" value="224.0.0.251" />
+<node pkg="master_sync_fkie" type="master_sync" name="master_sync"/>
+<node pkg="mobility" type="lights.py" name="ros_lights"/>
+<node pkg="mobility" type="roverESC.py" name="roverESC"/>
+<node pkg="mobility" type="mhzRx.py" name="backup_Radio"/>
 </launch>
