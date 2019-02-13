@@ -1,6 +1,7 @@
 7#####################################################################################
 #    Filename: driver.py
-#    Author: Chary Vielma chary.vielma@gmail.com
+#    Authors:      Chary Vielma / Shripal Rawal
+#    Emails:       chary.vielma@csu.fullerton.edu / rawalshreepal000@gmail.com
 #    Description: Autonomous traversal module - TitanRover2019
 #         Given a single GPS coordinate, the Rover will drive to this point (within a
 #         predetermined threshold). Driving occurs in a linear fashion.
@@ -13,6 +14,7 @@ import sys
 import math
 import numpy as np # remove if no longer needed
 from decimal import Decimal
+import rospy
 
 MINFORWARDSPEED = 20
 MAXFORWARDSPEED = 50
@@ -48,6 +50,8 @@ class Driver:
         self.__distance = 0.0
         self.__motor1 = 0
         self.__motor2 = 0
+        rospy.init_node('fimu', anonymous=True)
+        rospy.init_node('gnss', anonymous=True)
 
     def calculateGps(self, origin, heading, distance):
         '''
@@ -210,9 +214,12 @@ class Driver:
         Args:
         Returns:
         '''
-        pass # update to send motor values to rover
+        try:
+            wheels.driveBoth(int(self.__motor1), int(self.__motor2))
+        except:
+            print("Error Sending to PySaber")
 
-    def setGps(self):
+    def setGps(self, data):
         '''
         Description:
             Retrieves current GPS location, sets self.__gps 
@@ -222,11 +229,11 @@ class Driver:
             Nothing
         '''
         try:
-            self.__gps = None # update with current gps
+            self.__gps = (float(data.lat), float(data.lon))
         except:
             print("GPS error")
 
-    def setHeading(self):
+    def setHeading(self, data):
         '''
         Description:
             Retrieves current heading, sets self.__heading
@@ -236,7 +243,7 @@ class Driver:
             Nothing
         '''
         try:
-            self.__heading = None # update with current heading
+            self.__heading = float(data.Yaw.yaw)
         except:
             print("Heading error")
 
@@ -325,8 +332,8 @@ class Driver:
             return
 
         self.__nextWaypoint = point
-        self.setGps()
-        self.setHeading()
+        rospy.Subscriber("gnss", gnss, self.setGps)
+        rospy.Subscriber("fimu", fimu, self.setHeading)
         self.setDistance()
 
         while self.__distance > TARGETTHRESHOLD:
