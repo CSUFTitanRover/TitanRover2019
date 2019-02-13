@@ -1,10 +1,16 @@
 ######################################################################################
 #    Filename: traverse.py
-#    Author: Chary Vielma chary.vielma@gmail.com
+#    Authors:      Chary Vielma / Shripal Rawal
+#    Emails:       chary.vielma@csu.fullerton.edu / rawalshreepal000@gmail.com
 #    Description: Example code to use autonomousCore module
 ######################################################################################
 # AutonomousCore module example
-# insert path to python packages
+
+import sys
+import subprocess
+
+rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
+sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from driver import Driver
 myDriver = Driver()
 
