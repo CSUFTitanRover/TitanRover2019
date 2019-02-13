@@ -82,6 +82,48 @@ class Driver:
         lon2 = round(math.degrees(lon2), 9)
 
         return (lat2, lon2)
+    
+    def spiralPoints(self, origin, radius):
+        '''
+        Description:
+            Calculates a set of points located in Concentric circles in order to search the tennis ball
+        Args:
+            Origin --> (lat, lon), radius in Cms
+        Returns:
+            A list of waypoints that starts from the farthest point from the center
+        '''
+
+        if type(radius) != float or type(radius) != int:
+            #raise TypeError("Only Int or Float allowed")
+            #return
+            print("spiralPoints break - invalid radius", radius)
+
+        if type(origin) != tuple or type(origin[0]) != float or type(origin[0]) != int or type(origin[1]) != float or type(origin[1]) != int:
+            #raise TypeError("Only Tuples allowed")
+            #return
+            print("not float or int")
+
+        center = origin
+        spiral = []
+        if (radius / 100) % 2 != 0:
+            rad = radius - 100
+        else:
+            rad = radius
+        #print(self.calculateGps(center, 0, rad))
+        while rad > 0:
+            counter =  math.ceil(2 * math.pi * rad / 200)
+
+            #print("Counter = ", counter)
+            diff = round(360 / counter, 2)
+            head = 0
+            while counter > 0:
+                point = self.calculateGps(center, head, rad)
+                spiral.append(point)
+                #print("AT heading ", head)
+                head = round(head + diff, 2)
+                counter -= 1
+            rad -= 200
+        return spiral
 
     def setShouldTurnClockwise(self):
         '''
