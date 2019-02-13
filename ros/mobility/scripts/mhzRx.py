@@ -12,14 +12,14 @@ from multijoy.msg import MultiJoy
 from sensor_msgs.msg import Joy
 from mobility.msg import Status
 
-''' #to use sockets instead of rf for debug
+ #to use sockets instead of rf for debug
 import socket
 host = "192.168.1.2"
 port = 8888  # Make sure it's within the > 1024 $$ <65535 range
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind((host, port))
-'''
+
 
 def getRF(size_of_payload): #added argument to make it more function-like
     try:
@@ -68,14 +68,14 @@ def unpackDEEZNUTZ(message): #object to bytes
             t_joy.axes.append(float(float(data[i]) / float(127)))
         for i in range(8, 20):
             t_joy.buttons.append(data[i])
-        '''
+        
         print("axes")
         for i in range(6):
             print(t_joy.axes[i])
         print("buttons")
         for i in range(0, 12):
             print(t_joy.buttons[i])
-        '''
+        
         return t_joy
     except:
         print("Error in D")
