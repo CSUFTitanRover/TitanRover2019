@@ -326,7 +326,7 @@ class Driver:
         if type(point) != tuple:
             print("Only tuple form allowed - exiting goTo") #raise TypeError("Only tuples allowed")
             return
-        if type(point[0]) != float or type(point[0]) != int or type(point[1]) != float or type(point[1]) != int:
+        if type(point[0]) != float and type(point[1]) != float:
             print("Only float/int allowed - exiting goTo") #raise TypeError("Only floats allowed as tuple values")
             return
 
