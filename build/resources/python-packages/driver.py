@@ -1,6 +1,7 @@
 7#####################################################################################
 #    Filename: driver.py
-#    Author: Chary Vielma chary.vielma@gmail.com
+#    Authors:      Chary Vielma / Shripal Rawal
+#    Emails:       chary.vielma@csu.fullerton.edu / rawalshreepal000@gmail.com
 #    Description: Autonomous traversal module - TitanRover2019
 #         Given a single GPS coordinate, the Rover will drive to this point (within a
 #         predetermined threshold). Driving occurs in a linear fashion.
@@ -13,6 +14,7 @@ import sys
 import math
 import numpy as np # remove if no longer needed
 from decimal import Decimal
+import rospy
 
 MINFORWARDSPEED = 20
 MAXFORWARDSPEED = 50
@@ -48,6 +50,7 @@ class Driver:
         self.__distance = 0.0
         self.__motor1 = 0
         self.__motor2 = 0
+        rospy.init_node('listener', anonymous=True)
 
     def calculateGps(self, origin, heading, distance):
         '''
@@ -82,6 +85,48 @@ class Driver:
         lon2 = round(math.degrees(lon2), 9)
 
         return (lat2, lon2)
+    
+    def spiralPoints(self, origin, radius):
+        '''
+        Description:
+            Calculates a set of points located in Concentric circles in order to search the tennis ball
+        Args:
+            Origin --> (lat, lon), radius in Cms
+        Returns:
+            A list of waypoints that starts from the farthest point from the center
+        '''
+
+        if type(radius) != float or type(radius) != int:
+            #raise TypeError("Only Int or Float allowed")
+            #return
+            print("spiralPoints break - invalid radius", radius)
+
+        if type(origin) != tuple or type(origin[0]) != float or type(origin[0]) != int or type(origin[1]) != float or type(origin[1]) != int:
+            #raise TypeError("Only Tuples allowed")
+            #return
+            print("not float or int")
+
+        center = origin
+        spiral = []
+        if (radius / 100) % 2 != 0:
+            rad = radius - 100
+        else:
+            rad = radius
+        #print(self.calculateGps(center, 0, rad))
+        while rad > 0:
+            counter =  math.ceil(2 * math.pi * rad / 200)
+
+            #print("Counter = ", counter)
+            diff = round(360 / counter, 2)
+            head = 0
+            while counter > 0:
+                point = self.calculateGps(center, head, rad)
+                spiral.append(point)
+                #print("AT heading ", head)
+                head = round(head + diff, 2)
+                counter -= 1
+            rad -= 200
+        return spiral
 
     def setShouldTurnClockwise(self):
         '''
@@ -168,9 +213,12 @@ class Driver:
         Args:
         Returns:
         '''
-        pass # update to send motor values to rover
+        try:
+            wheels.driveBoth(int(self.__motor1), int(self.__motor2))
+        except:
+            print("Error Sending to PySaber")
 
-    def setGps(self):
+    def setGps(self, data):
         '''
         Description:
             Retrieves current GPS location, sets self.__gps 
@@ -180,11 +228,11 @@ class Driver:
             Nothing
         '''
         try:
-            self.__gps = None # update with current gps
+            self.__gps = (float(data.lat), float(data.lon))
         except:
             print("GPS error")
 
-    def setHeading(self):
+    def setHeading(self, data):
         '''
         Description:
             Retrieves current heading, sets self.__heading
@@ -194,7 +242,7 @@ class Driver:
             Nothing
         '''
         try:
-            self.__heading = None # update with current heading
+            self.__heading = float(data.Yaw.yaw)
         except:
             print("Heading error")
 
@@ -278,13 +326,13 @@ class Driver:
         if type(point) != tuple:
             print("Only tuple form allowed - exiting goTo") #raise TypeError("Only tuples allowed")
             return
-        if type(point[0]) != float or type(point[0]) != int or type(point[1]) != float or type(point[1]) != int:
+        if type(point[0]) != float and type(point[1]) != float:
             print("Only float/int allowed - exiting goTo") #raise TypeError("Only floats allowed as tuple values")
             return
 
         self.__nextWaypoint = point
-        self.setGps()
-        self.setHeading()
+        rospy.Subscriber("gnss", gnss, self.setGps)
+        rospy.Subscriber("fimu", fimu, self.setHeading)
         self.setDistance()
 
         while self.__distance > TARGETTHRESHOLD:
