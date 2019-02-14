@@ -17,7 +17,7 @@ class MainView(BoxLayout):
         self.main_text = Label(text="Initial Value = None")
         self.add_widget(self.main_text)
 
-        self.arr = Image(source='t.png')
+        self.arr = Image(source='icon.png')
         self.add_widget(self.arr)
         
         rospy.init_node('listener', anonymous=True)
