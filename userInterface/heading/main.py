@@ -30,7 +30,7 @@ class MainView(BoxLayout):
         rospy.Subscriber("imu", fimu, self.update)
     
 
-class MyApp(App):
+class HeadingApp(App):
     def build(self):
         return MainView()
 
