@@ -15,6 +15,10 @@ import math
 import numpy as np # remove if no longer needed
 from decimal import Decimal
 import rospy
+from pysaber import DriveEsc
+from gnss.msg import gps
+from finalimu.msg import fimu
+wheels = DriveEsc(128, "mixed")
 
 MINFORWARDSPEED = 20
 MAXFORWARDSPEED = 50
@@ -331,14 +335,14 @@ class Driver:
             return
 
         self.__nextWaypoint = point
-        rospy.Subscriber("gnss", gnss, self.setGps)
+        rospy.Subscriber("gps", gps, self.setGps)
         rospy.Subscriber("fimu", fimu, self.setHeading)
         self.setDistance()
 
         while self.__distance > TARGETTHRESHOLD:
             self.setTargetHeading()
             self.setHeadingDifference()
-            self.setDeltaDirection()
+            #self.setDeltaDirection()
             self.setShouldTurnClockwise()
             self.calculateMotors()
             if self.__deltaDirection < CORRECTIONTHRESHOLD:
@@ -348,8 +352,8 @@ class Driver:
             self.sendMotors()
 
             time.sleep(0.04)
-            self.setGps()
-            self.setHeading()
+            rospy.Subscriber("gps", gps, self.setGps)
+            rospy.Subscriber("fimu", fimu, self.setHeading)            
             self.setDistance()
 
         return 0
