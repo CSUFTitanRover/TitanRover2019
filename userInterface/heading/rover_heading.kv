@@ -1,0 +1,20 @@
+#:kivy 1.10.1
+
+<Arrow>:
+    canvas:
+        Rectangle:
+            source: 'icon.png'
+            canvas.before:
+                PushMatrix:
+                Rotate:
+                    angle: self.z_angle
+                    axis: 0, 0, 1
+            canvas.after:
+                PopMatrix:
+
+<HeadingView>:
+    arrow: nav_arrow
+
+    Arrow:
+        id: nav_arrow
+        center: self.parent.center
