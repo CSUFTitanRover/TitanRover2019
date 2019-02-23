@@ -122,7 +122,7 @@ class MultiJoyParser(object):
             rospy.loginfo('joys retrieved and published')
 
 if __name__=='__main__':
-    RSSI = 0
+    RSSI = -90
     #if(hostName != "tegra-ubuntu"):
     #    threading.Thread(target=getRSSI).start()
 
