@@ -12,11 +12,11 @@ from finalimu.msg import fimu
 from std_msgs.msg import String
 import rospy
 
-version = "2.20.19.23.34"
+version = "2.22.19.20.20"
 yaw = 0
 mode = "prod" # "dev" \\ "prod"
-screen_width = 1280
-screen_height = 720
+screen_width = 290
+screen_height = 290
 background_color = (0,0,0)
 text_color = (255, 255, 255)
 
@@ -32,9 +32,6 @@ class Nav_Arrow(Sprite):
         self.image = pygame.image.load('images/icon.png')
         self.rect = self.image.get_rect()
 
-        self.rect.centerx = 600
-        self.rect.centery = 400
-
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
@@ -44,18 +41,16 @@ class Nav_Arrow(Sprite):
         rect = self.image.get_rect()
         image = self.image
 
-        rot_image = pygame.transform.rotate(image, yaw*-1)
-        rot_rect = rot_image.get_rect(center=rect.center)
+        image = pygame.transform.rotate(image, yaw*-1)
+        rect = image.get_rect(center=rect.center)
 
-        self.screen.blit(rot_image, rot_rect)
+        self.centerx = float(self.rect.centerx)
+        self.centery = float(self.rect.centery)
 
+        self.rect.centerx = 300
+        self.rect.centery = 300
 
-    def update(self):
-        self.centerx = 640
-        self.rect.centerx = self.centerx
-
-        self.centery = 360
-        self.rect.centery = self.centery
+        self.screen.blit(image, rect)
 
 
 class Scoreboard():
@@ -146,7 +141,8 @@ def check_keyup_events(event):
 
 def listener():
 
-    rospy.init_node('listener', anonymous=True)
+    status = rospy.init_node('listener', anonymous=True)
+    print("Status", status)
 
     if mode == "prod":
         rospy.Subscriber("imu", fimu, callback)
@@ -157,8 +153,8 @@ def listener():
 
 def update_screen(screen, scoreboard, nav_arrow):
     screen.fill(background_color)
-    nav_arrow.blitme()
     scoreboard.blitme()
+    nav_arrow.blitme()
     pygame.display.flip()
 
 
