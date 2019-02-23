@@ -3,7 +3,7 @@ import rospy, socket, struct, serial, threading, paramiko
 import message_filters as mf
 from multijoy.msg import MultiJoy
 from sensor_msgs.msg import Joy
-
+from time import sleep
 base_ubiquiti = "192.168.1.200"
 hostName = socket.gethostname()
 print("Host: " + hostName)
@@ -37,6 +37,7 @@ def putSock(oData):
         rover = "192.168.1.2"
         antenna = "192.168.1.168"
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 26)
         print("s")
         s.connect((antenna, port))
         print("connected")
@@ -117,14 +118,15 @@ class MultiJoyParser(object):
         if(RSSI > -70) or hostName == "tegra-ubuntu":
             self.multijoy_pub.publish(msg)
         else:
-            putRF(packDEEZNUTZ(msg, 0)) #send to pi to send to radio
+            putSock(packDEEZNUTZ(msg, 0)) #send to pi to send to radio
+            sleep(0.1)
         if self.debug:
             rospy.loginfo('joys retrieved and published')
 
 if __name__=='__main__':
     RSSI = -90
-    #if(hostName != "tegra-ubuntu"):
-    #    threading.Thread(target=getRSSI).start()
+    if(False and hostName != "tegra-ubuntu"):
+        threading.Thread(target=getRSSI).start()
 
     rospy.init_node('multijoy_node')
     parser=MultiJoyParser()
