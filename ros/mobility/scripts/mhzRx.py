@@ -23,23 +23,30 @@ s.bind((host, port))
 
 def getRF(size_of_payload): #added argument to make it more function-like
     try:
-        rf_uart = serial.Serial("/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0", 19200, timeout=None)
+        print("enter getRF")
+        rf_uart = serial.Serial("/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0", 19200, timeout=1)
         rf_uart.setDTR(True) #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
         rf_uart.setRTS(True) #then these two lines will send low logic to both which puts the module in transmit mode 0
+        print("establish device")
         while True:
             n = rf_uart.read(1) #read bytes one at a time
             print("read 1")
             if not n:
+                print("not start byte")
                 return 0
             if n == b's': #throw away bytes until start byte is encountered
                 data = rf_uart.read(size_of_payload) #read fixed number of bytes
                 n = rf_uart.read(1) #the following byte should be the stop byte
+                print("read payload")
                 if n == b'f':
+                    print("matched stop byte")
                     return data
                 else: #if that last byte wasn't the stop byte then something is out of sync
+                    print("bad stop returning -1")
                     return -1
     except:
         print("error in getRF()")
+        sleep(0.5)
         return -1
     return -1 #should never hit this return
 
