@@ -2,6 +2,7 @@ from pygame.sprite import Group
 from pygame.sprite import Sprite
 from threading import Thread
 from time import sleep
+import pygame_textinput
 import pygame
 import pygame.font
 import random
@@ -12,9 +13,9 @@ from finalimu.msg import fimu
 from std_msgs.msg import String
 import rospy
 
-version = "2.22.19.20.20"
+version = "2.24.19.20.04"
 yaw = 0
-mode = "prod" # "dev" \\ "prod"
+mode = "dev" # "dev" \\ "prod"
 screen_width = 290
 screen_height = 290
 background_color = (0,0,0)
@@ -22,6 +23,7 @@ text_color = (255, 255, 255)
 
 
 class Nav_Arrow(Sprite):
+    
     global yaw
 
     def __init__(self, screen):
@@ -35,13 +37,16 @@ class Nav_Arrow(Sprite):
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
-
     def blitme(self):
-
         rect = self.image.get_rect()
         image = self.image
 
-        image = pygame.transform.rotate(image, yaw*-1)
+        if (mode == "prod"):
+            image = pygame.transform.rotate(image, yaw * -1)
+
+        if (mode == "dev"):
+            image = pygame.transform.rotate(image, float(yaw) * -1)
+
         rect = image.get_rect(center=rect.center)
 
         self.centerx = float(self.rect.centerx)
@@ -110,11 +115,11 @@ def callback(data):
 
     if (mode == "prod"):
         yaw = data.yaw.yaw
-        print("callback() [PROD]", yaw)
+        #print("callback(): [PROD]: ", yaw)
 
     if (mode == "dev"):
         yaw = data.data
-        print("callback() [DEV]", yaw)
+        print("callback(): [DEV]: ", yaw)
 
 
 def check_control_events():
