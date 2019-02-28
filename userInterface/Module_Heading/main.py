@@ -2,7 +2,6 @@ from finalimu.msg import fimu
 from pygame.sprite import Sprite
 from std_msgs.msg import String
 import pygame
-import pygame_textinput
 import rospy
 import sys
 
@@ -12,7 +11,7 @@ color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
 screen_height = 500
 screen_width = 500
-version = "2.27.19.22.17"
+version = "2.27.19.22.46"
 yaw = 0
 
 
@@ -45,11 +44,9 @@ class Nav_Arrow(Sprite):
 
 class Nav_Text():
 
-
     def blitme(self):
         self.update()
         self.screen.blit(self.high_score_image, self.high_score_rect)
-
 
     def update(self):
         high_score = float(yaw)
@@ -58,7 +55,6 @@ class Nav_Text():
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.top = self.high_score_rect.top
-
 
     def __init__(self, screen):
         self.screen = screen
@@ -75,7 +71,6 @@ def run():
     pygame.display.set_caption('Titan Rover - Heading - ' + version)
     nav_text = Nav_Text(screen)
     nav_arrow = Nav_Arrow(screen)
-    clock = pygame.time.Clock()
     while True:
         screen.fill(color_background)
         check_control_events()
