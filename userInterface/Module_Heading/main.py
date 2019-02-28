@@ -8,22 +8,22 @@ import pygame.font
 import random
 import sys
 import time
-
 from finalimu.msg import fimu
 from std_msgs.msg import String
 import rospy
 
-version = "2.24.19.20.04"
-yaw = 0
+
+color_background = (0,0,0)
+color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
-screen_width = 290
-screen_height = 290
-background_color = (0,0,0)
-text_color = (255, 255, 255)
+screen_height = 500
+screen_width = 500
+version = "2.24.19.21.56"
+yaw = 0
 
 
 class Nav_Arrow(Sprite):
-    
+
     global yaw
 
     def __init__(self, screen):
@@ -58,7 +58,7 @@ class Nav_Arrow(Sprite):
         self.screen.blit(image, rect)
 
 
-class Scoreboard():
+class Nav_Text():
 
 
     def blitme(self):
@@ -68,7 +68,7 @@ class Scoreboard():
     def update(self):
         high_score = float(yaw)
         high_score_str = "{:,}".format(high_score)
-        self.high_score_image = self.font.render(high_score_str, True, self.text_color, background_color)
+        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
 
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
@@ -80,7 +80,7 @@ class Scoreboard():
         self.screen = screen
         self.screen_rect = screen.get_rect()
 
-        self.text_color = text_color
+        self.color_text = color_text
         self.font = pygame.font.SysFont(None, 48)
 
         self.update()
@@ -95,7 +95,7 @@ def begin():
 
     pygame.display.set_caption('Rover Heading ' + version)
 
-    scoreboard = Scoreboard(screen)
+    nav_text = Nav_Text(screen)
 
     nav_arrow = Nav_Arrow(screen)
 
@@ -105,9 +105,9 @@ def begin():
 
         nav_arrow.update()
 
-        scoreboard.update()
+        nav_text.update()
 
-        update_screen(screen, scoreboard, nav_arrow)
+        update_screen(screen, nav_text, nav_arrow)
 
 
 def callback(data):
@@ -156,9 +156,9 @@ def listener():
         rospy.Subscriber("chatter", String, callback)
 
 
-def update_screen(screen, scoreboard, nav_arrow):
-    screen.fill(background_color)
-    scoreboard.blitme()
+def update_screen(screen, Nav_Text, nav_arrow):
+    screen.fill(color_background)
+    Nav_Text.blitme()
     nav_arrow.blitme()
     pygame.display.flip()
 
