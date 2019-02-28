@@ -12,7 +12,7 @@ color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
 screen_height = 500
 screen_width = 500
-version = "2.24.19.21.56"
+version = "2.27.19.22.17"
 yaw = 0
 
 
