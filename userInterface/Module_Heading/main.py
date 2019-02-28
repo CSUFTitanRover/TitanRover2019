@@ -1,16 +1,10 @@
-from pygame.sprite import Group
-from pygame.sprite import Sprite
-from threading import Thread
-from time import sleep
-import pygame_textinput
-import pygame
-import pygame.font
-import random
-import sys
-import time
 from finalimu.msg import fimu
+from pygame.sprite import Sprite
 from std_msgs.msg import String
+import pygame
+import pygame_textinput
 import rospy
+import sys
 
 
 color_background = (0,0,0)
@@ -27,34 +21,25 @@ class Nav_Arrow(Sprite):
     global yaw
 
     def __init__(self, screen):
-        """Initialize the triangle and set its starting position."""
         super(Nav_Arrow, self).__init__()
         self.screen = screen
-
         self.image = pygame.image.load('images/icon.png')
         self.rect = self.image.get_rect()
-
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
     def blitme(self):
         rect = self.image.get_rect()
         image = self.image
-
         if (mode == "prod"):
             image = pygame.transform.rotate(image, yaw * -1)
-
         if (mode == "dev"):
             image = pygame.transform.rotate(image, float(yaw) * -1)
-
         rect = image.get_rect(center=rect.center)
-
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
-
         self.rect.centerx = 300
         self.rect.centery = 300
-
         self.screen.blit(image, rect)
 
 
@@ -62,6 +47,7 @@ class Nav_Text():
 
 
     def blitme(self):
+        self.update()
         self.screen.blit(self.high_score_image, self.high_score_rect)
 
 
@@ -69,45 +55,33 @@ class Nav_Text():
         high_score = float(yaw)
         high_score_str = "{:,}".format(high_score)
         self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
-
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.top = self.high_score_rect.top
 
 
     def __init__(self, screen):
-        """Initializing scorekeeping attributes."""
         self.screen = screen
         self.screen_rect = screen.get_rect()
-
         self.color_text = color_text
         self.font = pygame.font.SysFont(None, 48)
-
         self.update()
 
 
-def begin():
+def run():
     pygame.init()
-
     listener() # Start listening to ROS
-
     screen = pygame.display.set_mode((screen_width, screen_height))
-
-    pygame.display.set_caption('Rover Heading ' + version)
-
+    pygame.display.set_caption('Titan Rover - Heading - ' + version)
     nav_text = Nav_Text(screen)
-
     nav_arrow = Nav_Arrow(screen)
-
+    clock = pygame.time.Clock()
     while True:
-
+        screen.fill(color_background)
         check_control_events()
-
-        nav_arrow.update()
-
-        nav_text.update()
-
-        update_screen(screen, nav_text, nav_arrow)
+        nav_text.blitme()
+        nav_arrow.blitme()
+        pygame.display.flip()
 
 
 def callback(data):
@@ -156,11 +130,4 @@ def listener():
         rospy.Subscriber("chatter", String, callback)
 
 
-def update_screen(screen, Nav_Text, nav_arrow):
-    screen.fill(color_background)
-    Nav_Text.blitme()
-    nav_arrow.blitme()
-    pygame.display.flip()
-
-
-begin()
+run()
