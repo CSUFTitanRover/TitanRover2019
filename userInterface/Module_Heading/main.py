@@ -11,8 +11,9 @@ color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
 screen_height = 500
 screen_width = 500
-version = "2.27.19.22.46"
+version = "3.3.19.01.17.30"
 yaw = 0
+new_destination = ""
 
 
 class Nav_Arrow(Sprite):
@@ -105,8 +106,35 @@ def check_control_events():
 
 
 def check_keydown_events(event):
+    global new_destination
     if event.key == pygame.K_q:
         sys.exit()
+    elif event.key == pygame.K_0:
+        new_destination += "0"
+    elif event.key == pygame.K_1:
+        new_destination += "1"
+    elif event.key == pygame.K_2:
+        new_destination += "2"
+    elif event.key == pygame.K_3:
+        new_destination += "3"
+    elif event.key == pygame.K_4:
+        new_destination += "4"
+    elif event.key == pygame.K_5:
+        new_destination += "5"
+    elif event.key == pygame.K_6:
+        new_destination += "6"
+    elif event.key == pygame.K_7:
+        new_destination += "7"
+    elif event.key == pygame.K_8:
+        new_destination += "8"
+    elif event.key == pygame.K_9:
+        new_destination += "9"
+    elif event.key == pygame.K_PERIOD:
+        new_destination += "."
+    elif event.key == pygame.K_RETURN:
+        print("Added destination:", new_destination)
+        new_destination = ""
+
 
 
 def check_keyup_events(event):
