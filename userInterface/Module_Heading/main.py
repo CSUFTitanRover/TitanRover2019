@@ -11,7 +11,7 @@ color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
 screen_height = 500
 screen_width = 500
-version = "3.3.19.20.19.10"
+version = "3.3.19.20.32.12"
 yaw = 0
 new_destination = ""
 
@@ -141,7 +141,7 @@ def check_keydown_events(event):
     elif event.key == pygame.K_PERIOD:
         new_destination += "."
     elif event.key == pygame.K_RETURN:
-        print("Added destination:", new_destination)
+        process_destination()
         new_destination = ""
     elif event.key == pygame.K_SPACE:
         new_destination += " "
@@ -187,6 +187,23 @@ def listener():
 
     elif mode == "dev":
         rospy.Subscriber("chatter", String, callback)
+
+
+def process_destination():
+    global new_destination
+    print("process_destination(): Heard:", new_destination)
+    args = new_destination.split()
+    format = args[0]
+    dest = args[1]
+    print("process_destination(): Found: format:", format, "dest:", dest)
+    if(format == "dms"):
+        print("Deg Min Sec")
+    elif(format == "ddm"):
+        print("Deg Dec Min")
+    elif(format == "dd"):
+        print("Dec Deg")
+    else:
+        print("BAD FORMAT")
 
 
 run()
