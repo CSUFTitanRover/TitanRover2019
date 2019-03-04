@@ -11,7 +11,7 @@ color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
 screen_height = 500
 screen_width = 500
-version = "3.3.19.20.04.21"
+version = "3.3.19.20.19.10"
 yaw = 0
 new_destination = ""
 
@@ -136,6 +136,21 @@ def check_keydown_events(event):
     global new_destination
     if event.key == pygame.K_q:
         sys.exit()
+    elif event.key == pygame.K_BACKSPACE:
+        new_destination = new_destination[:-1]
+    elif event.key == pygame.K_PERIOD:
+        new_destination += "."
+    elif event.key == pygame.K_RETURN:
+        print("Added destination:", new_destination)
+        new_destination = ""
+    elif event.key == pygame.K_SPACE:
+        new_destination += " "
+    elif event.key == pygame.K_d:
+        new_destination += "d"
+    elif event.key == pygame.K_m:
+        new_destination += "m"
+    elif event.key == pygame.K_s:
+        new_destination += "s"
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -156,11 +171,6 @@ def check_keydown_events(event):
         new_destination += "8"
     elif event.key == pygame.K_9:
         new_destination += "9"
-    elif event.key == pygame.K_PERIOD:
-        new_destination += "."
-    elif event.key == pygame.K_RETURN:
-        print("Added destination:", new_destination)
-        new_destination = ""
 
 
 def check_keyup_events(event):
