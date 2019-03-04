@@ -121,6 +121,27 @@ class slam():
             [-1 -1 -1]
             [-1 -1 -1]]
         '''
+    def expand_map():
+        import sqlite3
+        logindbfile = 'sql_file_name.db'
+        conn = sqlite3.connect(logindbfile)
+        cur = conn.cursor()
+        num_coords = 
+        num_coords = sql size
+        for x in range(num_coords):
+            newgps = sql_lat, sql_lon
+            if newgps[0] > org_offset_gps(lat) + _dimx
+                append_x difference amount
+            elif newgps[0] < org_offset_gps(lat)
+                insert_x difference amount
+            
+            if newgps[1] > org_offset_gps(lon) + _dimy
+                append_x difference amount
+            elif newgps[1] < org_offset_gps(lon)
+                insert_y difference amount
+
+        temp_gps_list.append(((math.floor((self.current_pos_gps['lat'] + (x*0.00001)) * 10 ** 5)/ 10 ** 5), 
+                                    math.floor((self.current_pos_gps['long'] + (y*0.00001)) * 10 ** 5)/ 10 ** 5))
 
     #Other 2D array design
     # gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
