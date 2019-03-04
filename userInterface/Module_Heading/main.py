@@ -11,7 +11,7 @@ color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
 screen_height = 500
 screen_width = 500
-version = "3.3.19.01.17.30"
+version = "3.3.19.20.04.21"
 yaw = 0
 new_destination = ""
 
@@ -43,6 +43,31 @@ class Nav_Arrow(Sprite):
         self.screen.blit(image, rect)
 
 
+class Nav_Destination():
+
+    global new_destination
+
+    def blitme(self):
+        self.update()
+        self.screen.blit(self.high_score_image, self.high_score_rect)
+
+    def update(self):
+        high_score = float(yaw)
+        high_score_str = "{:,}".format(high_score)
+        high_score_str = new_destination
+        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
+        self.high_score_rect = self.high_score_image.get_rect()
+        self.high_score_rect.centerx = self.screen_rect.centerx
+        self.high_score_rect.bottom = self.screen_rect.bottom
+
+    def __init__(self, screen):
+        self.screen = screen
+        self.screen_rect = screen.get_rect()
+        self.color_text = color_text
+        self.font = pygame.font.SysFont(None, 48)
+        self.update()
+
+
 class Nav_Text():
 
     def blitme(self):
@@ -70,13 +95,15 @@ def run():
     listener() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Heading - ' + version)
-    nav_text = Nav_Text(screen)
     nav_arrow = Nav_Arrow(screen)
+    nav_destination = Nav_Destination(screen)
+    nav_text = Nav_Text(screen)
     while True:
         screen.fill(color_background)
         check_control_events()
-        nav_text.blitme()
         nav_arrow.blitme()
+        nav_destination.blitme()
+        nav_text.blitme()
         pygame.display.flip()
 
 
@@ -134,7 +161,6 @@ def check_keydown_events(event):
     elif event.key == pygame.K_RETURN:
         print("Added destination:", new_destination)
         new_destination = ""
-
 
 
 def check_keyup_events(event):
