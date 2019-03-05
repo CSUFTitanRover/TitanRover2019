@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RoverCinema</class>
+ <widget class="QMainWindow" name="RoverCinema">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1205</width>
+    <height>867</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="CamScreen">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1201</width>
+      <height>801</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>2</number>
+    </property>
+    <property name="elideMode">
+     <enum>Qt::ElideLeft</enum>
+    </property>
+    <widget class="QWidget" name="ArmCam">
+     <attribute name="title">
+      <string>Arm</string>
+     </attribute>
+     <widget class="QWebView" name="Arm_Motion">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1201</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <property name="url">
+       <url>
+        <string>http://192.168.1.2:8081/</string>
+       </url>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="DriveCam">
+     <attribute name="title">
+      <string>Driving</string>
+     </attribute>
+     <widget class="QWebView" name="Drive_Motion">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1201</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <property name="url">
+       <url>
+        <string>http://192.168.1.2:8082/</string>
+       </url>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="DuelView">
+     <attribute name="title">
+      <string>DuelView</string>
+     </attribute>
+     <widget class="QWebView" name="DriveSide">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>591</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <property name="url">
+       <url>
+        <string>https://outlook.live.com/owa/</string>
+       </url>
+      </property>
+     </widget>
+     <widget class="QWebView" name="ArmSide">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>0</y>
+        <width>611</width>
+        <height>761</height>
+       </rect>
+      </property>
+      <property name="url">
+       <url>
+        <string>http://www.google.com/</string>
+       </url>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

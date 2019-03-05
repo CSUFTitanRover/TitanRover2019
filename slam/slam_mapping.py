@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #Timothy Parks mock slam design
 # 2d array 3281 x 3281 ft
 # 2d array 1000 x 1000 m
@@ -232,7 +234,7 @@ def main():
     print(slamit.org_offset_gps)
     slamit.scan = measurement_array
     slamit.fill_val = 2
-    slamit.curr_dir = 45
+    slamit.curr_dir = 45 
     slamit.gps_to_map()
     print(slamit.slam_map)
 
@@ -243,9 +245,8 @@ def main():
     #print(distance(current_pos_gps, dest_gps).cm)
 
 if __name__ == '__main__':
-    #need ros spin
+    #need ros spin?
     main()
-    pass
 
 
 
