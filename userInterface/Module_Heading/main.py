@@ -3,6 +3,7 @@ from pygame.sprite import Sprite
 from std_msgs.msg import String
 import pygame
 import rospy
+import sqlite3
 import sys
 
 
@@ -11,8 +12,9 @@ color_text = (255, 255, 255)
 mode = "dev" # "dev" \\ "prod"
 screen_height = 500
 screen_width = 500
-version = "2.27.19.22.46"
+version = "3.3.19.20.32.12"
 yaw = 0
+new_destination = ""
 
 
 class Nav_Arrow(Sprite):
@@ -42,6 +44,31 @@ class Nav_Arrow(Sprite):
         self.screen.blit(image, rect)
 
 
+class Nav_Destination():
+
+    global new_destination
+
+    def blitme(self):
+        self.update()
+        self.screen.blit(self.high_score_image, self.high_score_rect)
+
+    def update(self):
+        high_score = float(yaw)
+        high_score_str = "{:,}".format(high_score)
+        high_score_str = new_destination
+        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
+        self.high_score_rect = self.high_score_image.get_rect()
+        self.high_score_rect.centerx = self.screen_rect.centerx
+        self.high_score_rect.bottom = self.screen_rect.bottom
+
+    def __init__(self, screen):
+        self.screen = screen
+        self.screen_rect = screen.get_rect()
+        self.color_text = color_text
+        self.font = pygame.font.SysFont(None, 48)
+        self.update()
+
+
 class Nav_Text():
 
     def blitme(self):
@@ -69,13 +96,15 @@ def run():
     listener() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Heading - ' + version)
-    nav_text = Nav_Text(screen)
     nav_arrow = Nav_Arrow(screen)
+    nav_destination = Nav_Destination(screen)
+    nav_text = Nav_Text(screen)
     while True:
         screen.fill(color_background)
         check_control_events()
-        nav_text.blitme()
         nav_arrow.blitme()
+        nav_destination.blitme()
+        nav_text.blitme()
         pygame.display.flip()
 
 
@@ -105,8 +134,46 @@ def check_control_events():
 
 
 def check_keydown_events(event):
+    global new_destination
     if event.key == pygame.K_q:
         sys.exit()
+    elif event.key == pygame.K_BACKSPACE:
+        new_destination = new_destination[:-1]
+    elif event.key == pygame.K_PERIOD:
+        new_destination += "."
+    elif event.key == pygame.K_COMMA:
+        new_destination += ","
+    elif event.key == pygame.K_RETURN:
+        process_destination()
+        new_destination = ""
+    elif event.key == pygame.K_SPACE:
+        new_destination += " "
+    elif event.key == pygame.K_d:
+        new_destination += "d"
+    elif event.key == pygame.K_m:
+        new_destination += "m"
+    elif event.key == pygame.K_s:
+        new_destination += "s"
+    elif event.key == pygame.K_0:
+        new_destination += "0"
+    elif event.key == pygame.K_1:
+        new_destination += "1"
+    elif event.key == pygame.K_2:
+        new_destination += "2"
+    elif event.key == pygame.K_3:
+        new_destination += "3"
+    elif event.key == pygame.K_4:
+        new_destination += "4"
+    elif event.key == pygame.K_5:
+        new_destination += "5"
+    elif event.key == pygame.K_6:
+        new_destination += "6"
+    elif event.key == pygame.K_7:
+        new_destination += "7"
+    elif event.key == pygame.K_8:
+        new_destination += "8"
+    elif event.key == pygame.K_9:
+        new_destination += "9"
 
 
 def check_keyup_events(event):
@@ -124,5 +191,26 @@ def listener():
     elif mode == "dev":
         rospy.Subscriber("chatter", String, callback)
 
+
+def process_destination():
+    global new_destination
+    print("process_destination(): Heard:", new_destination)
+    args = new_destination.split()
+    format = args[0]
+    dest = args[1]
+    print("process_destination(): Found: format:", format, "dest:", dest)
+    if(format == "dms"):
+        print("Deg Min Sec")
+    elif(format == "ddm"):
+        print("Deg Dec Min")
+    elif(format == "dd"):
+        print("Dec Deg")
+    else:
+        print("BAD FORMAT")
+
+    dest = dest.split(",")
+    print("dest:",dest)
+    dd = float(dest[0]) + float(dest[1])/60 + float(dest[2])/3600
+    print("dd:",dd)
 
 run()
