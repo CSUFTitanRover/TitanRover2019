@@ -3,6 +3,7 @@ from pygame.sprite import Sprite
 from std_msgs.msg import String
 import pygame
 import rospy
+import sqlite3
 import sys
 
 
@@ -140,6 +141,8 @@ def check_keydown_events(event):
         new_destination = new_destination[:-1]
     elif event.key == pygame.K_PERIOD:
         new_destination += "."
+    elif event.key == pygame.K_COMMA:
+        new_destination += ","
     elif event.key == pygame.K_RETURN:
         process_destination()
         new_destination = ""
@@ -205,5 +208,9 @@ def process_destination():
     else:
         print("BAD FORMAT")
 
+    dest = dest.split(",")
+    print("dest:",dest)
+    dd = float(dest[0]) + float(dest[1])/60 + float(dest[2])/3600
+    print("dd:",dd)
 
 run()
