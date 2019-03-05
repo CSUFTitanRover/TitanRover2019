@@ -40,7 +40,7 @@ class Driver:
 
         # Tailored to Rover
         self.__angleX = [5, 15, 25]
-        self.__rotateY = [25, 42.5, 60]
+        self.__rotateY = [25, 25, 25]
         self.__distanceX = [20, 20]
         self.__speedY = [20, 20]
 
@@ -158,8 +158,8 @@ class Driver:
         Returns:
             Nothing
         '''
-        self.__headingDifference = (self.__targetHeading - self.__heading + 180) % 360 - 180
-        self.__headingDifference = self.__headingDifference + 360 if self.__headingDifference < -180 else self.__headingDifference
+        self.__headingDifference = (self.__targetHeading - self.__heading + 360) % 360
+        #self.__headingDifference = self.__headingDifference + 360 if self.__headingDifference < -180 else self.__headingDifference
         #print("setHeadingDifference ", self.__headingDifference)
 
     def setTargetHeading(self):
