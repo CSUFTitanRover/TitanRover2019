@@ -1,0 +1,6 @@
+set(reach_ros_node_SETUP_PY_VERSION "0.5.0")
+set(reach_ros_node_SETUP_PY_SCRIPTS "")
+set(reach_ros_node_SETUP_PY_PACKAGES "reach_ros_node")
+set(reach_ros_node_SETUP_PY_PACKAGE_DIRS "src/reach_ros_node")
+set(reach_ros_node_SETUP_PY_MODULES "")
+set(reach_ros_node_SETUP_PY_MODULE_DIRS "")
