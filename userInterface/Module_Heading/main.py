@@ -15,6 +15,7 @@ screen_width = 500
 version = "3.3.19.20.32.12"
 yaw = 0
 new_destination = ""
+new_destination_type = ""
 
 
 class Nav_Arrow(Sprite):
@@ -135,25 +136,31 @@ def check_control_events():
 
 def check_keydown_events(event):
     global new_destination
+    global new_destination_type
     if event.key == pygame.K_q:
         sys.exit()
     elif event.key == pygame.K_BACKSPACE:
         new_destination = new_destination[:-1]
     elif event.key == pygame.K_PERIOD:
         new_destination += "."
+        new_destination_type += "dec"
     elif event.key == pygame.K_COMMA:
         new_destination += ","
     elif event.key == pygame.K_RETURN:
         process_destination()
         new_destination = ""
+        new_destination_type = ""
     elif event.key == pygame.K_SPACE:
         new_destination += " "
     elif event.key == pygame.K_d:
-        new_destination += "d"
+        new_destination += "°"
+        new_destination_type += "deg"
     elif event.key == pygame.K_m:
-        new_destination += "m"
+        new_destination += "\""
+        new_destination_type += "sec"
     elif event.key == pygame.K_s:
-        new_destination += "s"
+        new_destination += "\'"
+        new_destination_type += "min"
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -194,23 +201,25 @@ def listener():
 
 def process_destination():
     global new_destination
+    global new_destination_type
+    print("process_destination(): Heard:", new_destination_type)
     print("process_destination(): Heard:", new_destination)
-    args = new_destination.split()
-    format = args[0]
-    dest = args[1]
-    print("process_destination(): Found: format:", format, "dest:", dest)
-    if(format == "dms"):
-        print("Deg Min Sec")
-    elif(format == "ddm"):
-        print("Deg Dec Min")
-    elif(format == "dd"):
-        print("Dec Deg")
-    else:
-        print("BAD FORMAT")
+    #args = new_destination.split()
+    #format = args[0]
+    #dest = args[1]
+    #print("process_destination(): Found: format:", format, "dest:", dest)
+    #if(format == "dms"):
+    #    print("Deg Min Sec")
+    #elif(format == "ddm"):
+    #    print("Deg Dec Min")
+    #elif(format == "dd"):
+    #    print("Dec Deg")
+    #else:
+    #    print("BAD FORMAT")
 
-    dest = dest.split(",")
-    print("dest:",dest)
-    dd = float(dest[0]) + float(dest[1])/60 + float(dest[2])/3600
-    print("dd:",dd)
+    #dest = dest.split(",")
+    #print("dest:",dest)
+    #dd = float(dest[0]) + float(dest[1])/60 + float(dest[2])/3600
+    #print("dd:",dd)
 
 run()
