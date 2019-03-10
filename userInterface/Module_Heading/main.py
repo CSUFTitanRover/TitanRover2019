@@ -1,3 +1,7 @@
+# David Feinzimer
+# dfeinzimer@csu.fullerton.edu
+
+
 from finalimu.msg import fimu
 from pygame.sprite import Sprite
 from std_msgs.msg import String
@@ -9,19 +13,19 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-mode = "dev" # "dev" \\ "prod"
+mode = "dev"                   # dev | prod
 screen_height = 500
 screen_width = 500
-version = "3.3.19.20.32.12"
+version = "3.9.19.23.10.00"
 yaw = 0
-new_destination = ""
-new_destination_type = ""
+new_destination = ""           # Numeric
+new_destination_type = ""      # DD | DDM | DMS
+new_destination_LatLon = ""    # LAT | LON
 
 
+# Object for displaying the heading arrow in the middle of the screen
 class Nav_Arrow(Sprite):
-
     global yaw
-
     def __init__(self, screen):
         super(Nav_Arrow, self).__init__()
         self.screen = screen
@@ -29,7 +33,6 @@ class Nav_Arrow(Sprite):
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
-
     def blitme(self):
         rect = self.image.get_rect()
         image = self.image
@@ -45,23 +48,21 @@ class Nav_Arrow(Sprite):
         self.screen.blit(image, rect)
 
 
+# Object for displaying new destination entry at the bottom of the screen
 class Nav_Destination():
-
     global new_destination
-
     def blitme(self):
         self.update()
         self.screen.blit(self.high_score_image, self.high_score_rect)
-
     def update(self):
         high_score = float(yaw)
         high_score_str = "{:,}".format(high_score)
         high_score_str = new_destination
-        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
+        self.high_score_image = self.font.render(high_score_str, True, 
+                                self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.bottom = self.screen_rect.bottom
-
     def __init__(self, screen):
         self.screen = screen
         self.screen_rect = screen.get_rect()
@@ -70,20 +71,19 @@ class Nav_Destination():
         self.update()
 
 
+# Object for displaying current heading at the top of the screen
 class Nav_Text():
-
     def blitme(self):
         self.update()
         self.screen.blit(self.high_score_image, self.high_score_rect)
-
     def update(self):
         high_score = float(yaw)
         high_score_str = "{:,}".format(high_score)
-        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
+        self.high_score_image = self.font.render(high_score_str, True, 
+                                self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.top = self.high_score_rect.top
-
     def __init__(self, screen):
         self.screen = screen
         self.screen_rect = screen.get_rect()
@@ -111,18 +111,16 @@ def run():
 
 def callback(data):
     global yaw
-
     if (mode == "prod"):
         yaw = data.yaw.yaw
         #print("callback(): [PROD]: ", yaw)
-
     if (mode == "dev"):
         yaw = data.data
-        print("callback(): [DEV]: ", yaw)
+        #print("callback(): [DEV]: ", yaw)
 
 
+# Respond to keypress and mouse events.
 def check_control_events():
-    # Respond to keypress and mouse events.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -141,26 +139,23 @@ def check_keydown_events(event):
         sys.exit()
     elif event.key == pygame.K_BACKSPACE:
         new_destination = new_destination[:-1]
+        new_destination_type = new_destination_type[:-3]
     elif event.key == pygame.K_PERIOD:
         new_destination += "."
-        new_destination_type += "dec"
-    elif event.key == pygame.K_COMMA:
-        new_destination += ","
     elif event.key == pygame.K_RETURN:
         process_destination()
         new_destination = ""
         new_destination_type = ""
-    elif event.key == pygame.K_SPACE:
-        new_destination += " "
+        new_destination_LatLon = ""
     elif event.key == pygame.K_d:
         new_destination += "°"
         new_destination_type += "deg"
     elif event.key == pygame.K_m:
-        new_destination += "\""
-        new_destination_type += "sec"
-    elif event.key == pygame.K_s:
         new_destination += "\'"
         new_destination_type += "min"
+    elif event.key == pygame.K_s:
+        new_destination += "\""
+        new_destination_type += "sec"
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -188,13 +183,10 @@ def check_keyup_events(event):
 
 
 def listener():
-
     status = rospy.init_node('listener', anonymous=True)
-    print("Status", status)
-
+    print("listener(): ROS Status:", status)
     if mode == "prod":
         rospy.Subscriber("imu", fimu, callback)
-
     elif mode == "dev":
         rospy.Subscriber("chatter", String, callback)
 
@@ -202,24 +194,19 @@ def listener():
 def process_destination():
     global new_destination
     global new_destination_type
-    print("process_destination(): Heard:", new_destination_type)
-    print("process_destination(): Heard:", new_destination)
-    #args = new_destination.split()
-    #format = args[0]
-    #dest = args[1]
-    #print("process_destination(): Found: format:", format, "dest:", dest)
-    #if(format == "dms"):
-    #    print("Deg Min Sec")
-    #elif(format == "ddm"):
-    #    print("Deg Dec Min")
-    #elif(format == "dd"):
-    #    print("Dec Deg")
-    #else:
-    #    print("BAD FORMAT")
+    print("process_destination(): Input Type: ", new_destination_type)
+    print("process_destination(): Input Value:", new_destination)
+    if (new_destination_type == "deg"):
+        new_destination_type = "DD Decimal Degrees"
+    elif (new_destination_type == "degmin"):
+        new_destination_type = "DDM Degrees Decimal Minutes"
+    elif (new_destination_type == "degminsec"):
+        new_destination_type = "DMS Degrees Minutes Seconds"
+    else:
+        new_destination_type = "Invalid"
+        new_destination = "Invalid"
+    print("process_destination(): Output Type: ", new_destination_type)
+    print("process_destination(): Output Value:", new_destination)
 
-    #dest = dest.split(",")
-    #print("dest:",dest)
-    #dd = float(dest[0]) + float(dest[1])/60 + float(dest[2])/3600
-    #print("dd:",dd)
 
 run()
