@@ -1,3 +1,15 @@
-Titan Rover Heading Module
+# Titan Rover - Heading Module
 
-Version: 2.21.19.09.15
+## Questions
+  David Feinzimer `dfeinzimer@csu.fullerton.edu`
+
+## Requirements
+  Python3
+  
+  Pygame 1.9.4
+  
+  ROS Kinetic or ROS Melodic
+  
+  ## Usage
+  
+  `python3 main.py`
