@@ -16,7 +16,7 @@ color_text = (255, 255, 255)
 mode = "dev"                   # dev | prod
 screen_height = 500
 screen_width = 500
-version = "3.9.19.23.10.00"
+version = "3.10.19.00.00.00"
 yaw = 0
 new_destination = ""           # Numeric
 new_destination_type = ""      # DD | DDM | DMS
@@ -142,6 +142,8 @@ def check_keydown_events(event):
         new_destination_type = new_destination_type[:-3]
     elif event.key == pygame.K_PERIOD:
         new_destination += "."
+    elif event.key == pygame.K_MINUS:
+        new_destination += "-"
     elif event.key == pygame.K_RETURN:
         process_destination()
         new_destination = ""
@@ -155,7 +157,7 @@ def check_keydown_events(event):
         new_destination_type += "min"
     elif event.key == pygame.K_s:
         new_destination += "\""
-        new_destination_type += "sec"
+        new_destination_type += "sec"   
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -202,6 +204,15 @@ def process_destination():
         new_destination_type = "DDM Degrees Decimal Minutes"
     elif (new_destination_type == "degminsec"):
         new_destination_type = "DMS Degrees Minutes Seconds"
+
+        d = new_destination
+        d = d.split("°")
+        d = d[0]
+        print("d",d)
+
+        m = d[1]
+        print("m",m)
+
     else:
         new_destination_type = "Invalid"
         new_destination = "Invalid"
