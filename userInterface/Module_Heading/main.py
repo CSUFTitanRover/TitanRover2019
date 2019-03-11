@@ -204,15 +204,17 @@ def process_destination():
         new_destination_type = "DDM Degrees Decimal Minutes"
     elif (new_destination_type == "degminsec"):
         new_destination_type = "DMS Degrees Minutes Seconds"
-
         d = new_destination
         d = d.split("°")
-        d = d[0]
-        print("d",d)
-
         m = d[1]
-        print("m",m)
-
+        d = d[0]
+        m = m.split("\'")
+        s = m[1]
+        s = s[:-1]
+        m = m[0]
+        DD = float(d) + float(m)/60 + float(s)/3600
+        new_destination_type = "DD Decimal Degrees"
+        new_destination = DD
     else:
         new_destination_type = "Invalid"
         new_destination = "Invalid"
