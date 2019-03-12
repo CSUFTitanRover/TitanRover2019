@@ -7,6 +7,7 @@ from pygame.sprite import Sprite
 from std_msgs.msg import String
 import pygame
 import rospy
+import socket
 import sqlite3
 import sys
 
@@ -16,6 +17,10 @@ color_text = (255, 255, 255)
 mode = "dev"                   # dev | prod
 screen_height = 500
 screen_width = 500
+socket_TCP_IP = '192.168.1.2'
+socket_TCP_PORT = 9600
+socket_BUFFER_SIZE = 1024
+socket_message = "SOCKET TEST"
 version = "3.10.19.23.00.00"
 yaw = 0
 new_destination = ""           # Numeric
@@ -184,6 +189,15 @@ def check_keyup_events(event):
     pass
 
 
+def dispatch_destination(destination):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((socket_TCP_IP, socket_TCP_PORT))
+    s.send(destination)
+    data = s.recv(BUFFER_SIZE)
+    print("dispatch_destination(): Received:",data)
+    s.close()
+
+
 def listener():
     status = rospy.init_node('listener', anonymous=True)
     print("listener(): ROS Status:", status)
@@ -226,6 +240,7 @@ def process_destination():
         new_destination = "Invalid"
     print("process_destination(): Output Type: ", new_destination_type)
     print("process_destination(): Output Value:", new_destination)
+    dispatch_destination(new_destination)
 
 
 run()
