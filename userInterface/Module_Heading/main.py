@@ -14,7 +14,7 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-mode = "dev"                   # dev | prod
+mode = "prod"                   # dev | prod
 screen_height = 500
 screen_width = 500
 socket_TCP_IP = '192.168.1.2'
@@ -240,7 +240,7 @@ def process_destination():
         new_destination = "Invalid"
     print("process_destination(): Output Type: ", new_destination_type)
     print("process_destination(): Output Value:", new_destination)
-    dispatch_destination(new_destination)
+    #dispatch_destination(new_destination)
 
 
 run()
