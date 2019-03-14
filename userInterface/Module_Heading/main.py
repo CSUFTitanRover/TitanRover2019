@@ -14,10 +14,10 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-mode = "prod"                   # dev | prod
+mode = "dev"                   # dev | prod
 screen_height = 500
 screen_width = 500
-socket_TCP_IP = '192.168.1.2'
+socket_TCP_IP = '10.0.1.140'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 1024
 socket_message = "SOCKET TEST"
@@ -192,8 +192,10 @@ def check_keyup_events(event):
 def dispatch_destination(destination):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((socket_TCP_IP, socket_TCP_PORT))
-    s.send(destination)
-    data = s.recv(BUFFER_SIZE)
+    destination = str(destination)
+    dest_encoded = destination.encode()    
+    s.send(dest_encoded)
+    data = s.recv(1024)
     print("dispatch_destination(): Received:",data)
     s.close()
 
@@ -240,7 +242,7 @@ def process_destination():
         new_destination = "Invalid"
     print("process_destination(): Output Type: ", new_destination_type)
     print("process_destination(): Output Value:", new_destination)
-    #dispatch_destination(new_destination)
+    dispatch_destination(new_destination)
 
 
 run()
