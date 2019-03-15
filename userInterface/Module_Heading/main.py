@@ -1,5 +1,5 @@
-# David Feinzimer
-# dfeinzimer@csu.fullerton.edu
+# David Feinzimer, Anette Ulrichsen
+# dfeinzimer@csu.fullerton.edu   amulrichsen@csu.fullerton.edu
 
 
 from finalimu.msg import fimu
@@ -21,7 +21,7 @@ socket_TCP_IP = '10.0.1.140'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 1024
 socket_message = "SOCKET TEST"
-version = "3.10.19.23.00.00"
+version = "3.14.19.23.03.00"
 yaw = 0
 new_destination = ""           # Numeric
 new_destination_type = ""      # DD | DDM | DMS
@@ -34,22 +34,22 @@ class Nav_Arrow(Sprite):
     def __init__(self, screen):
         super(Nav_Arrow, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/icon.png')
+        self.image = pygame.image.load('images/icon2.png')
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
     def blitme(self):
-        rect = self.image.get_rect()
         image = self.image
         if (mode == "prod"):
             image = pygame.transform.rotate(image, yaw * -1)
         if (mode == "dev"):
             image = pygame.transform.rotate(image, float(yaw) * -1)
-        rect = image.get_rect(center=rect.center)
+        rect = image.get_rect(center=self.rect.center)
+        self.rect.centerx = 81
+        self.rect.centery = 419        
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
-        self.rect.centerx = 300
-        self.rect.centery = 300
+        
         self.screen.blit(image, rect)
 
 
@@ -74,6 +74,28 @@ class Nav_Destination():
         self.color_text = color_text
         self.font = pygame.font.SysFont(None, 48)
         self.update()
+
+
+# Object for displaying the heading arrow in the middle of the screen
+class Nav_Background_Image(Sprite):
+
+    def __init__(self, screen):
+        super(Nav_Background_Image, self).__init__()
+        self.screen = screen
+        self.image = pygame.image.load('images/SETTING_CSUF.png')
+        self.rect = self.image.get_rect()
+        self.centerx = float(self.rect.centerx)
+        self.centery = float(self.rect.centery)
+    def blitme(self):
+        rect = self.image.get_rect()
+        image = self.image
+
+        rect = image.get_rect(center=rect.center)
+        self.centerx = float(self.rect.centerx)
+        self.centery = float(self.rect.centery)
+        self.rect.centerx = 0
+        self.rect.centery = 0
+        self.screen.blit(image, rect)
 
 
 # Object for displaying current heading at the top of the screen
@@ -104,13 +126,16 @@ def run():
     pygame.display.set_caption('Titan Rover - Heading - ' + version)
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
+    nav_bkgd = Nav_Background_Image(screen)
     nav_text = Nav_Text(screen)
     while True:
         screen.fill(color_background)
         check_control_events()
+        nav_bkgd.blitme()
         nav_arrow.blitme()
         nav_destination.blitme()
         nav_text.blitme()
+        
         pygame.display.flip()
 
 
