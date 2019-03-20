@@ -52,25 +52,24 @@ telem.armAttached = True
 #global variables
 last_mode = telem.mode
 def setStop(msg_data):
-            if (abs(msg_data.joys[0].axes[0]) > 0 \
-        or abs(msg_data.joys[0].axes[1]) > 0 \
-        or abs(msg_data.joys[0].axes[2]) > 0 \
-        or abs(msg_data.joys[0].axes[3]) > 0 \
-        or abs(msg_data.joys[0].axes[4]) > 0 \
-        or abs(msg_data.joys[0].axes[5]) > 0 \
-        or abs(msg_data.joys[0].buttons[0]) > 0 \
-        or abs(msg_data.joys[0].buttons[1]) > 0 \
-        or abs(msg_data.joys[0].buttons[2]) > 0 \
-        or abs(msg_data.joys[0].buttons[3]) > 0 \
-        or abs(msg_data.joys[0].buttons[4]) > 0 \
-        or abs(msg_data.joys[0].buttons[5]) > 0 \
-        or abs(msg_data.joys[0].buttons[6]) > 0 \
-        or abs(msg_data.joys[0].buttons[7]) > 0 \
-        or abs(msg_data.joys[0].buttons[8]) > 0 \
-        or abs(msg_data.joys[0].buttons[9]) > 0 \
-        or abs(msg_data.joys[0].buttons[10]) > 0 \
-        or abs(msg_data.joys[0].buttons[11]) > 0):
-
+    if (abs(msg_data.joys[0].axes[0]) > 0 \
+    or abs(msg_data.joys[0].axes[1]) > 0 \
+    or abs(msg_data.joys[0].axes[2]) > 0 \
+    or abs(msg_data.joys[0].axes[3]) > 0 \
+    or abs(msg_data.joys[0].axes[4]) > 0 \
+    or abs(msg_data.joys[0].axes[5]) > 0 \
+    or abs(msg_data.joys[0].buttons[0]) > 0 \
+    or abs(msg_data.joys[0].buttons[1]) > 0 \
+    or abs(msg_data.joys[0].buttons[2]) > 0 \
+    or abs(msg_data.joys[0].buttons[3]) > 0 \
+    or abs(msg_data.joys[0].buttons[4]) > 0 \
+    or abs(msg_data.joys[0].buttons[5]) > 0 \
+    or abs(msg_data.joys[0].buttons[6]) > 0 \
+    or abs(msg_data.joys[0].buttons[7]) > 0 \
+    or abs(msg_data.joys[0].buttons[8]) > 0 \
+    or abs(msg_data.joys[0].buttons[9]) > 0 \
+    or abs(msg_data.joys[0].buttons[10]) > 0 \
+    or abs(msg_data.joys[0].buttons[11]) > 0):
 
 def getActive(msg_data):
     try:
