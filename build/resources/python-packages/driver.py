@@ -22,8 +22,8 @@ wheels = DriveEsc(128, "mixed")
 
 MINFORWARDSPEED = 20
 MAXFORWARDSPEED = 20
-TARGETTHRESHOLD = 50  # In cm
-CORRECTIONTHRESHOLD = 4.5  # In degrees
+TARGETTHRESHOLD = 40  # In cm
+CORRECTIONTHRESHOLD = 10  # In degrees
 HEADINGTHRESHOLD = 15 # In degrees
 
 class Driver:
@@ -40,7 +40,7 @@ class Driver:
 
         # Tailored to Rover
         self.__angleX = [5, 15, 25]
-        self.__rotateY = [25, 25, 25]
+        self.__rotateY = [30, 30, 30]
         self.__distanceX = [20, 20]
         self.__speedY = [20, 20]
 
