@@ -37,7 +37,6 @@ def putSock(oData):
         rover = "192.168.1.2"
         antenna = "192.168.1.168"
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 26)
         print("s")
         s.connect((antenna, port))
         print("connected")
@@ -50,7 +49,7 @@ def putSock(oData):
 def packDEEZNUTZ(message, joyNum): #object to bytes
     try:
         return struct.pack(\
-        'iibbbbbbbbbbbbbbbbbb',\
+        '2i18b',\
         message.header.stamp.secs,\
         message.header.stamp.nsecs,\
         int(message.joys[joyNum].axes[0] * 127),\
@@ -115,7 +114,7 @@ class MultiJoyParser(object):
         print(msg)
 
         print(RSSI)
-        if(RSSI > -70) or hostName == "tegra-ubuntu":
+        if(RSSI > -85) or hostName == "tegra-ubuntu":
             self.multijoy_pub.publish(msg)
         else:
             putSock(packDEEZNUTZ(msg, 0)) #send to pi to send to radio
@@ -124,8 +123,8 @@ class MultiJoyParser(object):
             rospy.loginfo('joys retrieved and published')
 
 if __name__=='__main__':
-    RSSI = -90
-    if(False and hostName != "tegra-ubuntu"):
+    RSSI = 0
+    if(False and hostName != "tegra-ubuntu"): #toggle true/false for debuggingg
         threading.Thread(target=getRSSI).start()
 
     rospy.init_node('multijoy_node')

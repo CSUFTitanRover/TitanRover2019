@@ -1,0 +1,6 @@
+<launch>
+<node pkg="master_discovery_fkie" type="master_discovery" name="sync_stats" output="screen" launch-prefix="xterm -e"/>
+  <param name="_mcast_group" value="224.0.0.251" />
+<node pkg="master_sync_fkie" type="master_sync" name="master_sync" output="screen" launch-prefix="xterm -e"/>
+<include file="/home/ggrabuskie/catkin_ws/src/multijoy/launch/multijoy1.launch"/>
+</launch>
