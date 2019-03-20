@@ -2,25 +2,38 @@
 
 import threading
 import sys, time, signal, socket
+from gnss.msg import gps
 ######################################################################################
 # System Requirement of one argument for process instructions
 if len (sys.argv) != 2 :
     print("Usage: Run Command Missing ")
     sys.exit (1)
 
-#import rospy
+import rospy
 #from sensor_msgs.msg import LaserScan
 #from finalimu.msg import fimu
+
+msg = gps()
+gps_pub = rospy.Publisher('/gnss', gps, queue_size=1)
+rospy.init_node('gnss')
+rate = rospy.Rate(100) # 10hz
+msg.header.frame_id = 'GNSS'
 
 mode_info = None
 acceleration = 0
 curr_pos = {0,0}
 
 def connect():
+    #msg = gps()
+    #gps_pub = rospy.Publisher('/gnss', gps, queue_size=1)
+    #rospy.init_node('gnss')
+    #rate = rospy.Rate(100) # 10hz
+    #msg.header.frame_id = 'GNSS'
+
     global curr_pos
-    host = "192.168.1.116" 
+    host = "Rover_TR.local" #"192.168.1.117" 
     port = 9091
-    BUFFER_SIZE = 4096 
+    BUFFER_SIZE = 1024
 
     Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     Client.connect((host, port))
@@ -31,11 +44,10 @@ def connect():
             #Client.send(MESSAGE)     
             data = Client.recv(BUFFER_SIZE)
             data = data.split(b' ')
-            print(data)
-            #data = pickle.loads(data)
             #print(" Client received data:", float(data[4]), ' ', float(data[5]))
-            curr_pos = float(data[4]), float(data[5])
-
+            curr_pos = (float(data[4]), float(data[5]))
+            msg.lat, msg.lon = curr_pos[0], curr_pos[1]
+            gps_pub.publish(msg)
         except:
             Client.close()
             break
@@ -112,7 +124,7 @@ def parse_map_file():
 
 if __name__ == '__main__':
     if sys.argv[1] == 'scout':
-        gps_data = threading.Thread(target = connect)
+        gps_data = threading.Thread(target= connect)
         gps_data.start()
         
         scoutfile = open("scoutfile.txt", "w")
@@ -124,3 +136,18 @@ if __name__ == '__main__':
         exit()
 
 
+'''
+33.882440 , -117.883611
+33.881991 , -117.883712
+33.881974 , -117.883878
+33.881874 , -117.884192
+33.881984 , -117.884443
+33.881987 , -117.884439
+33.882019 , -117.884517
+33.882209 , -117.884571
+33.882223 , -117.884577
+33.882638 , -117.884322
+33.882641 , -117.883943
+33.882554 , -117.883688
+33.882440 , -117.883611
+'''

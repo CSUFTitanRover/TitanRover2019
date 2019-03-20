@@ -1,4 +1,4 @@
-7#####################################################################################
+#####################################################################################
 #    Filename: driver.py
 #    Authors:      Chary Vielma / Shripal Rawal
 #    Emails:       chary.vielma@csu.fullerton.edu / rawalshreepal000@gmail.com
@@ -15,11 +15,15 @@ import math
 import numpy as np # remove if no longer needed
 from decimal import Decimal
 import rospy
+from pysaber import DriveEsc
+from gnss.msg import gps
+from finalimu.msg import fimu
+wheels = DriveEsc(128, "mixed")
 
 MINFORWARDSPEED = 20
-MAXFORWARDSPEED = 50
-TARGETTHRESHOLD = 20  # In cm
-CORRECTIONTHRESHOLD = 3.5  # In degrees
+MAXFORWARDSPEED = 20
+TARGETTHRESHOLD = 40  # In cm
+CORRECTIONTHRESHOLD = 10  # In degrees
 HEADINGTHRESHOLD = 15 # In degrees
 
 class Driver:
@@ -36,9 +40,9 @@ class Driver:
 
         # Tailored to Rover
         self.__angleX = [5, 15, 25]
-        self.__rotateY = [25, 42.5, 60]
-        self.__distanceX = [20, 45]
-        self.__speedY = [25, 45]
+        self.__rotateY = [30, 30, 30]
+        self.__distanceX = [20, 20]
+        self.__speedY = [20, 20]
 
         self.__gps = (0.00, 0.00)
         self.__nextWaypoint = (0.00, 0.00)
@@ -46,7 +50,7 @@ class Driver:
         self.__targetHeading = 0.0
         self.__headingDifference = 0.0
         self.__clockwise = None
-        self.__deltaDirection = 0.0
+        #self.__deltaDirection = 0.0
         self.__distance = 0.0
         self.__motor1 = 0
         self.__motor2 = 0
@@ -84,6 +88,7 @@ class Driver:
         lat2 = round(math.degrees(lat2), 9)
         lon2 = round(math.degrees(lon2), 9)
 
+        #print("Next GPS", lat2, lon2)
         return (lat2, lon2)
     
     def spiralPoints(self, origin, radius):
@@ -153,8 +158,9 @@ class Driver:
         Returns:
             Nothing
         '''
-        self.__headingDifference = (self.__targetHeading - self.__heading + 180) % 360 - 180
-        self.__headingDifference = self.__headingDifference + 360 if self.__headingDifference < -180 else self.__headingDifference
+        self.__headingDifference = (self.__targetHeading - self.__heading + 360) % 360
+        #self.__headingDifference = self.__headingDifference + 360 if self.__headingDifference < -180 else self.__headingDifference
+        #print("setHeadingDifference ", self.__headingDifference)
 
     def setTargetHeading(self):
         '''
@@ -184,6 +190,7 @@ class Driver:
         compass_heading = (initial_heading + 360) % 360
 
         self.__targetHeading = compass_heading
+        #print("setTargetHeading ", self.__targetHeading)
 
     def setDistance(self):
         '''
@@ -206,6 +213,7 @@ class Driver:
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
         d = radius * c
         self.__distance = d * 100000
+	#print("setDistance ", self.__distance)
 
     def sendMotors(self):
         '''
@@ -228,7 +236,8 @@ class Driver:
             Nothing
         '''
         try:
-            self.__gps = (float(data.lat), float(data.lon))
+            self.__gps = (float(data.roverLat), float(data.roverLon))
+            #print("setGps ", self.__gps)
         except:
             print("GPS error")
 
@@ -242,7 +251,8 @@ class Driver:
             Nothing
         '''
         try:
-            self.__heading = float(data.Yaw.yaw)
+            self.__heading = float(data.yaw.yaw)
+            #print("setHeading", self.__heading)
         except:
             print("Heading error")
 
@@ -256,9 +266,9 @@ class Driver:
         Returns:
             Nothing
         '''
-        self.__motor2 = int(np.interp(self.__deltaDirection, self.__angleX, self.__rotateY))
+        self.__motor2 = int(np.interp(self.__headingDifference, self.__angleX, self.__rotateY))
         self.__motor1 = np.interp(self.__distance, self.__distanceX, self.__speedY)
-        self.__motor1 = int(self.__motor1 * np.interp(self.__deltaDirection,[3,30],[1,0]))
+        self.__motor1 = int(self.__motor1 * np.interp(self.__headingDifference,[3,30],[1,0]))
         if not self.__clockwise:
             self.__motor2 = -self.__motor2
 
@@ -299,9 +309,9 @@ class Driver:
         self.__targetHeading = newHeading
         self.setHeading()
         self.setHeadingDifference()
-        self.setDeltaDirection()
+        #self.setDeltaDirection()
         self.setShouldTurnClockwise()
-        while self.__deltaDirection > HEADINGTHRESHOLD:
+        while self.__headingDifference > HEADINGTHRESHOLD:
             motor2 = ROTATESPEED
             if not self.__clockwise:
                 motor2 = -ROTATESPEED
@@ -310,7 +320,7 @@ class Driver:
             time.sleep(0.04)
             self.setHeading()
             self.setHeadingDifference()
-            self.setDeltaDirection()
+            #self.setDeltaDirection()
             self.setShouldTurnClockwise()
 
     def goTo(self, point):
@@ -329,27 +339,31 @@ class Driver:
         if type(point[0]) != float and type(point[1]) != float:
             print("Only float/int allowed - exiting goTo") #raise TypeError("Only floats allowed as tuple values")
             return
-
         self.__nextWaypoint = point
-        rospy.Subscriber("gnss", gnss, self.setGps)
-        rospy.Subscriber("fimu", fimu, self.setHeading)
+        rospy.Subscriber("gnss", gps, self.setGps)
+        rospy.Subscriber("imu", fimu, self.setHeading)
         self.setDistance()
-
+        print(self.__heading, self.__gps)
         while self.__distance > TARGETTHRESHOLD:
             self.setTargetHeading()
             self.setHeadingDifference()
-            self.setDeltaDirection()
+            #self.setDeltaDirection()
             self.setShouldTurnClockwise()
             self.calculateMotors()
-            if self.__deltaDirection < CORRECTIONTHRESHOLD:
+            if self.__headingDifference < CORRECTIONTHRESHOLD:
                 self.__motor2 = 0
                 self.__headingDifference = None
+            #else:
+            #    rotateToHeading(self.__targetHeading)
 
             self.sendMotors()
-
+            print("------------------------------------------------")
+            print("destWaypoint: ", self.__nextWaypoint, "\ncurrentGPS: ", self.__gps, "\ndist(cm): ", self.__distance, "\ncurrentHeading: ", self.__heading, "\ntargetHeading: ", self.__targetHeading, "\nmotor1: ", self.__motor1, "\nmotor2: ", self.__motor2, "\nclockwise: ", self.__clockwise, "\nheadingDiff: ", self.__headingDifference, "\ntime: ", int(time.time()), "\n")    
+            print("------------------------------------------------")
             time.sleep(0.04)
-            self.setGps()
-            self.setHeading()
+            rospy.Subscriber("gnss", gps, self.setGps)
+            rospy.Subscriber("imu", fimu, self.setHeading)            
+            #print(self.__heading, self.__gps)
             self.setDistance()
 
         return 0
