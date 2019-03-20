@@ -120,7 +120,7 @@ def main(data):
         telem.mode = IDLE
         telem_pub.publish(telem)
     #set mode
-    elif(data.joys[0].buttons[b9] and data.joys[0].buttons[b3]):
+    if(data.joys[0].buttons[b9] and data.joys[0].buttons[b3]):
         telem.mode = PAUSE
     elif(data.joys[0].buttons[b9] and data.joys[0].buttons[b2]):
         telem.mode = MOBILITY
@@ -130,13 +130,13 @@ def main(data):
         telem.mode = BOTH
 
 
-    #single key presses for throttle
-    elif(data.joys[0].buttons[b4] and (telem.throttle < 1) and ((rospy.Time.now() - last_throttle) > rospy.Duration(0.25))):
-        telem.throttle += 0.1
-        last_throttle = rospy.Time.now()
-    elif (data.joys[0].buttons[b2] and (telem.throttle > .3) and ((rospy.Time.now() - last_throttle) > rospy.Duration(0.25))):
-        telem.throttle -= 0.1
-        last_throttle = rospy.Time.now()
+    else:#single key presses for throttle
+        if(data.joys[0].buttons[b4] and (telem.throttle < 1) and ((rospy.Time.now() - last_throttle) > rospy.Duration(0.25))):
+            telem.throttle += 0.1
+            last_throttle = rospy.Time.now()
+        elif (data.joys[0].buttons[b2] and (telem.throttle > .3) and ((rospy.Time.now() - last_throttle) > rospy.Duration(0.25))):
+            telem.throttle -= 0.1
+            last_throttle = rospy.Time.now()
     
 #.
     print(telem)
