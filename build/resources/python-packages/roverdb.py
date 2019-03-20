@@ -1,12 +1,12 @@
 import sqlite3
 
-class database():
+class Database():
     _dbname = None
     _cur = None
     _conn = None
 
-    def __init__(self, name):
-        _dbname = name
+    def __init__(self):
+        _dbname = "rover"
         self.create_rover_tables()
 
     def create_rover_tables(self):
@@ -16,7 +16,7 @@ class database():
             lat	        REAL NOT NULL,
             lon      	REAL NOT NULL,
             type    	TEXT NOT NULL,
-            acc_data    REAL NOT NULL
+            acc_data    REAL
             )
             ''')
         self._cur.execute('''CREATE TABLE IF NOT EXISTS pictures (
@@ -29,12 +29,12 @@ class database():
             )
             ''')
 
-    def newdb(self, tablename):
-        pass
+    def insert(self, value, table_name):
+	self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,)) 
 
     # Opens all db files and cursor attachments
     def open_db(self):
-        self._conn = sqlite3.connect(self._dbname)
+        self._conn = sqlite3.connect(str(self._dbname))
         self._cur = self._conn.cursor()
         # Let rows be of dict/tuple type
         self._conn.row_factory = sqlite3.Row
@@ -42,5 +42,6 @@ class database():
 
     # returns the size of table
     def getTableSize(self, tablename):
-        return (self._dbname.execute("SELECT COUNT(*) FROM " + tablename).fetchall())[0][0]
+        return (self._cur.execute("SELECT COUNT(*) FROM " + tablename).fetchall())[0][0]
+
 
