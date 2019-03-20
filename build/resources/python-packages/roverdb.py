@@ -2,8 +2,8 @@ import sqlite3
 
 class database():
     _dbname = None
-    _conn = None
     _cur = None
+    _conn = None
 
     def __init__(self, name):
         _dbname = name
@@ -44,4 +44,3 @@ class database():
     def getTableSize(self, tablename):
         return (self._dbname.execute("SELECT COUNT(*) FROM " + tablename).fetchall())[0][0]
 
-if __name__ == "__main__":
