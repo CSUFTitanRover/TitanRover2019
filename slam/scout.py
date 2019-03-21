@@ -1,19 +1,23 @@
 #!/usr/bin/env python
-
+import sys
+import subprocess
 import threading
-import sys, time, signal, socket
-from gnss.msg import gps
+import sys, time, signal, socket, rospy
+from gnss.msg import gps as msg
+#from sensor_msgs.msg import LaserScan
+#from finalimu.msg import fimu
+
+rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
+sys.path.insert(0, rootDir + '/build/resources/python-packages')
+from driver import Driver as myDriver
+
 ######################################################################################
 # System Requirement of one argument for process instructions
 if len (sys.argv) != 2 :
     print("Usage: Run Command Missing ")
     sys.exit (1)
 
-import rospy
-#from sensor_msgs.msg import LaserScan
-#from finalimu.msg import fimu
-
-msg = gps()
+#msg = gps()
 gps_pub = rospy.Publisher('/gnss', gps, queue_size=1)
 rospy.init_node('gnss')
 rate = rospy.Rate(100) # 10hz
@@ -119,8 +123,25 @@ def mode_update(data):
 
 def parse_map_file():
     print('Parsing the Scout file')
+    #erase dup and 5 dec
+    #use distance between points and remove 3m
+    f = open("scoutfile","r")
+    location = f.readline()
+    while not EOFError
+        myDriver.__gps = float(location.split(" , "))
+        myDriver.__gps = myDriver.__nextWaypoint =  math.floor(myDriver.__gps(0) * 10 ** 5)/(10 ** 5) , 
+                                                    math.floor(myDriver.__gps(1) * 10 ** 5)/(10 ** 5)
+        myDriver.setDistance()
+        while myDriver._distance < 300:  #distance in cm
+            location = f.readline()
+            myDriver.__nextWaypoint = float(location.split(" , "))
+            myDriver.__nextWaypoint =  math.floor(myDriver.__nextWaypoint(0) * 10 ** 5)/(10 ** 5) , 
+                                        math.floor(myDriver.__nextWaypoint(1) * 10 ** 5)/(10 ** 5)
+            myDriver.setDistance()
 
 
+
+        
 
 if __name__ == '__main__':
     if sys.argv[1] == 'scout':
