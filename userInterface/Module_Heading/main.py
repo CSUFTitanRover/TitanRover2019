@@ -1,6 +1,5 @@
-# David Feinzimer, Anette Ulrichsen
-# dfeinzimer@csu.fullerton.edu   amulrichsen@csu.fullerton.edu
-
+# David Feinzimer  - dfeinzimer@csu.fullerton.edu
+# Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
 from finalimu.msg import fimu
 from pygame.sprite import Sprite
@@ -14,7 +13,11 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-mode = "dev"                   # dev | prod
+icon_arrow = "images/icon2.png"
+mode = "dev"                        # dev | prod
+new_destination = ""
+new_destination_type = ""           # DD | DDM | DMS
+new_destination_LatLon = "LAT"      # LAT | LON
 screen_height = 500
 screen_width = 500
 socket_TCP_IP = '192.168.1.2'
@@ -23,18 +26,15 @@ socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 version = "3.20.19.23.03.10"
 yaw = 0
-new_destination = ""           # Numeric
-new_destination_type = ""      # DD | DDM | DMS
-new_destination_LatLon = "LAT"    # LAT | LON
 
 
-# Object for displaying the heading arrow in the middle of the screen
+# Object for displaying the heading arrow on the map.
 class Nav_Arrow(Sprite):
     global yaw
     def __init__(self, screen):
         super(Nav_Arrow, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/icon2.png')
+        self.image = pygame.image.load(icon_arrow)
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -53,7 +53,8 @@ class Nav_Arrow(Sprite):
         self.screen.blit(image, rect)
 
 
-# Object for displaying new destination entry at the bottom of the screen
+# Object for displaying the new destination coordinates users can type into
+# at the bottom of the screen.
 class Nav_Destination():
     global new_destination
     def blitme(self):
@@ -76,7 +77,7 @@ class Nav_Destination():
         self.update()
 
 
-# Object for displaying the heading arrow in the middle of the screen
+# Object for displaying the map.
 class Nav_Background_Image(Sprite):
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
@@ -97,7 +98,7 @@ class Nav_Background_Image(Sprite):
         self.screen.blit(image, rect)
 
 
-# Object for displaying current heading at the top of the screen
+# Object for displaying rover's current heading at the top of the screen.
 class Nav_Text():
     def blitme(self):
         self.update()
@@ -118,6 +119,7 @@ class Nav_Text():
         self.update()
 
 
+# This is the application entry point.
 def run():
     global new_destination
     global new_destination_LatLon
@@ -289,4 +291,5 @@ def process_destination():
     dispatch_destination(LAT_LON + " " + str(new_destination))
 
 
+# Start the application uo
 run()
