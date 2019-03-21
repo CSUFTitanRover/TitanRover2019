@@ -21,11 +21,11 @@ socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "3.14.19.23.03.00"
+version = "3.20.19.23.03.10"
 yaw = 0
 new_destination = ""           # Numeric
 new_destination_type = ""      # DD | DDM | DMS
-new_destination_LatLon = ""    # LAT | LON
+new_destination_LatLon = "LAT"    # LAT | LON
 
 
 # Object for displaying the heading arrow in the middle of the screen
@@ -78,7 +78,6 @@ class Nav_Destination():
 
 # Object for displaying the heading arrow in the middle of the screen
 class Nav_Background_Image(Sprite):
-
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
         self.screen = screen
@@ -120,6 +119,8 @@ class Nav_Text():
 
 
 def run():
+    global new_destination
+    global new_destination_LatLon
     pygame.init()
     listener() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -128,6 +129,7 @@ def run():
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
     nav_text = Nav_Text(screen)
+    new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
         check_control_events()
@@ -135,7 +137,6 @@ def run():
         nav_arrow.blitme()
         nav_destination.blitme()
         nav_text.blitme()
-        
         pygame.display.flip()
 
 
@@ -165,20 +166,27 @@ def check_control_events():
 def check_keydown_events(event):
     global new_destination
     global new_destination_type
+    global new_destination_LatLon
     if event.key == pygame.K_q:
         sys.exit()
     elif event.key == pygame.K_BACKSPACE:
-        new_destination = new_destination[:-1]
-        new_destination_type = new_destination_type[:-3]
+        if len(new_destination) >= 5:
+            new_destination = new_destination[:-1]
+            new_destination_type = new_destination_type[:-3]
     elif event.key == pygame.K_PERIOD:
         new_destination += "."
     elif event.key == pygame.K_MINUS:
         new_destination += "-"
     elif event.key == pygame.K_RETURN:
         process_destination()
-        new_destination = ""
+        if new_destination_LatLon == "LAT":           
+            new_destination_LatLon = "LON"
+            print("check_keydown_events(): new_destination_LatLon set to LON")
+        else:
+            new_destination_LatLon = "LAT"
+            print("check_keydown_events(): new_destination_LatLon set to LAT")
+        new_destination = new_destination_LatLon + " "
         new_destination_type = ""
-        new_destination_LatLon = ""
     elif event.key == pygame.K_d:
         new_destination += "°"
         new_destination_type += "deg"
@@ -215,14 +223,16 @@ def check_keyup_events(event):
 
 
 def dispatch_destination(destination):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((socket_TCP_IP, socket_TCP_PORT))
-    destination = str(destination)
-    dest_encoded = destination.encode()    
-    s.send(dest_encoded)
-    data = s.recv(1024)
-    print("dispatch_destination(): Received:",data)
-    s.close()
+    print("dispatch_destination("+destination+")")
+    if mode == "prod":
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((socket_TCP_IP, socket_TCP_PORT))
+        destination = str(destination)
+        dest_encoded = destination.encode()    
+        s.send(dest_encoded)
+        data = s.recv(1024)
+        print("dispatch_destination(): Received:",data)
+        s.close()
 
 
 def listener():
@@ -239,6 +249,15 @@ def process_destination():
     global new_destination_type
     print("process_destination(): Input Type: ", new_destination_type)
     print("process_destination(): Input Value:", new_destination)
+
+    # Strip away prepended LAT or LON for conversion and prepend it again after
+    # conversion.
+    new_destination = new_destination.split(" ")
+    print("process_destination(): new_destination = ")
+    print(new_destination)
+    LAT_LON = new_destination[0]
+    new_destination = new_destination[1]
+
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
     elif (new_destination_type == "degmin"):
@@ -267,7 +286,7 @@ def process_destination():
         new_destination = "Invalid"
     print("process_destination(): Output Type: ", new_destination_type)
     print("process_destination(): Output Value:", new_destination)
-    dispatch_destination(new_destination)
+    dispatch_destination(LAT_LON + " " + str(new_destination))
 
 
 run()
