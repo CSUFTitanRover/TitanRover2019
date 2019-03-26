@@ -22,7 +22,7 @@ def create_connection(db_file):
         return conn
     except Error as e:
         print(e)
- 
+
     return None
 
 
@@ -35,12 +35,13 @@ def new_socket():
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(server_address)
     sock.listen(1)
-    
+
     db = Database()
     conn, addr = sock.accept()
     print 'Connection address:', addr
     while 1:
         data = conn.recv(256).decode()
+	print("new_socket() Received: " data)
         db.insert(data, "map")
 	print(db.getTableSize("map"))
         if not data: break
