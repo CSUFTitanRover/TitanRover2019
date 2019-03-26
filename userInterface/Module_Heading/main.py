@@ -230,19 +230,25 @@ def dispatch_destination(destination):
 
     print("dispatch_destination("+destination+")")
 
-    if len(new_destination_set) < 2:
-        print("new destination set too small")
-        new_destination_set.append(destination)
+    new_destination_set.append(destination)
 
-    if mode == "prod":
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((socket_TCP_IP, socket_TCP_PORT))
-        destination = str(destination)
-        dest_encoded = destination.encode()    
-        s.send(dest_encoded)
-        data = s.recv(1024)
-        print("dispatch_destination(): Received:",data)
-        s.close()
+    if len(new_destination_set) == 2:
+        print("dispatch_destination(): Ready to send")
+        if mode == "prod":
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((socket_TCP_IP, socket_TCP_PORT))
+            destination = str(destination)
+            dest_encoded = destination.encode()    
+            s.send(dest_encoded)
+            data = s.recv(1024)
+            print("dispatch_destination(): Received:",data)
+            s.close()
+        else:
+            print("Did not send, mode set to dev")
+        print("new_destination_set = ", new_destination_set)
+        print("Clearing new_destination_set")        
+        del new_destination_set[:]
+        print("new_destination_set = ", new_destination_set)
 
 
 def listener():

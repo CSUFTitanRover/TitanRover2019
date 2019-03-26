@@ -45,7 +45,7 @@ def new_socket():
         db.insert(data, "map")
 	print(db.getTableSize("map"))
         if not data: break
-        print "received data:", data
+        print("received data: ", data)
         conn.send(data)  # echo
     conn.close()
     return
