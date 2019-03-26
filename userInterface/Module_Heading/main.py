@@ -14,10 +14,11 @@ import sys
 color_background = (0,0,0)
 color_text = (255, 255, 255)
 icon_arrow = "images/icon2.png"
-mode = "dev"                        # dev | prod
+mode = "prod"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
 new_destination_LatLon = "LAT"      # LAT | LON
+new_destination_set = []            # A LAT/LON set 
 screen_height = 500
 screen_width = 500
 socket_TCP_IP = '192.168.1.2'
@@ -225,7 +226,14 @@ def check_keyup_events(event):
 
 
 def dispatch_destination(destination):
+    global new_destination_set
+
     print("dispatch_destination("+destination+")")
+
+    if len(new_destination_set) < 2:
+        print("new destination set too small")
+        new_destination_set.append(destination)
+
     if mode == "prod":
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((socket_TCP_IP, socket_TCP_PORT))
