@@ -1,2 +1,0 @@
-data_logger:gnss:imu:mobility_topic
--DCATKIN_DEVEL_PREFIX=/home/skrapmi/TitanRover2019/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/skrapmi/TitanRover2019/catkin_ws/install -G Unix Makefiles

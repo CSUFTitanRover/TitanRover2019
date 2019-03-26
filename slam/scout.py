@@ -1,19 +1,23 @@
 #!/usr/bin/env python
+import sys
+import subprocess
+import threading, keyboard
+import sys, time, signal, socket, rospy
+from gnss.msg import gps as msg
+#from sensor_msgs.msg import LaserScan
+#from finalimu.msg import fimu
 
-import threading
-import sys, time, signal, socket
-from gnss.msg import gps
+rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
+sys.path.insert(0, rootDir + '/build/resources/python-packages')
+from driver import Driver as myDriver
+
 ######################################################################################
 # System Requirement of one argument for process instructions
 if len (sys.argv) != 2 :
     print("Usage: Run Command Missing ")
     sys.exit (1)
 
-import rospy
-#from sensor_msgs.msg import LaserScan
-#from finalimu.msg import fimu
-
-msg = gps()
+#msg = gps()
 gps_pub = rospy.Publisher('/gnss', gps, queue_size=1)
 rospy.init_node('gnss')
 rate = rospy.Rate(100) # 10hz
@@ -23,34 +27,34 @@ mode_info = None
 acceleration = 0
 curr_pos = {0,0}
 
-def connect():
-    #msg = gps()
-    #gps_pub = rospy.Publisher('/gnss', gps, queue_size=1)
-    #rospy.init_node('gnss')
-    #rate = rospy.Rate(100) # 10hz
-    #msg.header.frame_id = 'GNSS'
+# def connect():
+#     #msg = gps()
+#     #gps_pub = rospy.Publisher('/gnss', gps, queue_size=1)
+#     #rospy.init_node('gnss')
+#     #rate = rospy.Rate(100) # 10hz
+#     #msg.header.frame_id = 'GNSS'
 
-    global curr_pos
-    host = "Rover_TR.local" #"192.168.1.117" 
-    port = 9091
-    BUFFER_SIZE = 1024
+#     global curr_pos
+#     host = "Rover_TR.local" #"192.168.1.117" 
+#     port = 9091
+#     BUFFER_SIZE = 1024
 
-    Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-    Client.connect((host, port))
+#     Client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+#     Client.connect((host, port))
 
-    while True:
-        try:
-            #MESSAGE = raw_input("Enter : ")
-            #Client.send(MESSAGE)     
-            data = Client.recv(BUFFER_SIZE)
-            data = data.split(b' ')
-            #print(" Client received data:", float(data[4]), ' ', float(data[5]))
-            curr_pos = (float(data[4]), float(data[5]))
-            msg.lat, msg.lon = curr_pos[0], curr_pos[1]
-            gps_pub.publish(msg)
-        except:
-            Client.close()
-            break
+#     while True:
+#         try:
+#             #MESSAGE = raw_input("Enter : ")
+#             #Client.send(MESSAGE)     
+#             data = Client.recv(BUFFER_SIZE)
+#             data = data.split(b' ')
+#             #print(" Client received data:", float(data[4]), ' ', float(data[5]))
+#             curr_pos = (float(data[4]), float(data[5]))
+#             msg.lat, msg.lon = curr_pos[0], curr_pos[1]
+#             gps_pub.publish(msg)
+#         except:
+#             Client.close()
+#             break
 
 #####################################################################################
 ## File I/O from https://www.g-loaded.eu/2016/11/24/how-to-terminate-running-python-threads-using-signals/
@@ -62,16 +66,25 @@ class Job(threading.Thread):
         self._file = sf
         threading.Thread.__init__(self)
         self.shutdown_flag = threading.Event()
+        rospy.init_node('listener', anonymous=True)
+
+    def callback(data):
+
+        if keyboard.is_pressed('q'):
+            curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'primary'
+        else:
+            curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'breadcrumb'
+
+        self._file.write(str(curr_pos) + "\n")
+        
+
   
     def run(self):
         global curr_pos
         print('Thread #%s started' % self.ident)
  
-        while not self.shutdown_flag.is_set():
-            #self._file.write("hello" + " " + "world" + "\n")
-            self._file.write(str(curr_pos) + "\n")
-            #scoutfile.write(data.pos)
-            #print(data.pos + ' ' + acceleration + '\n')
+        while not self.shutdown_flag.is_set():            
+            rospy.Subscriber("gnss", gps, callback)
             time.sleep(0.5)
  
         print('Thread #%s stopped' % self.ident)
@@ -119,7 +132,30 @@ def mode_update(data):
 
 def parse_map_file():
     print('Parsing the Scout file')
+    #erase dup and 5 dec
+    #use distance between points and remove 3m
+    f = open("scoutfile","r")
+    location = f.readline()
+    while not EOFError:
+        myDriver.__gps = float(location.split(", "))
+        myDriver.__gps = myDriver.__nextWaypoint =  math.floor(myDriver.__gps(0) * 10 ** 5)/(10 ** 5) , 
+                                                    math.floor(myDriver.__gps(1) * 10 ** 5)/(10 ** 5)
+        myDriver.setDistance()
+        while myDriver._distance < 300 and not EOFError:  #distance in cm
+            location = f.readline()
+            myDriver.__nextWaypoint = float(location.split(", "))
+            myDriver.__nextWaypoint =  math.floor(myDriver.__nextWaypoint(0) * 10 ** 5)/(10 ** 5) , 
+                                        math.floor(myDriver.__nextWaypoint(1) * 10 ** 5)/(10 ** 5)
+            myDriver.setDistance()
 
+        #write myDriver.__gps to db
+    #write myDriver.__nextWaypoint to db
+
+
+#add button to catch tennis ball point
+def ballMotherFucker():
+    while True:
+        
 
 
 if __name__ == '__main__':
@@ -129,6 +165,7 @@ if __name__ == '__main__':
         
         scoutfile = open("scoutfile.txt", "w")
         start_scouting(scoutfile)
+
     elif sys.argv[1] == 'parse':
         parse_map_file()
     else:
