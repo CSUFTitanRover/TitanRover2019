@@ -1,6 +1,5 @@
-# David Feinzimer, Anette Ulrichsen
-# dfeinzimer@csu.fullerton.edu   amulrichsen@csu.fullerton.edu
-
+# David Feinzimer  - dfeinzimer@csu.fullerton.edu
+# Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
 from finalimu.msg import fimu
 from pygame.sprite import Sprite
@@ -14,27 +13,28 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-mode = "dev"                   # dev | prod
+icon_arrow = "images/icon2.png"
+mode = "dev"                        # dev | prod
+new_destination = ""
+new_destination_type = ""           # DD | DDM | DMS
+new_destination_LatLon = "LAT"      # LAT | LON
 screen_height = 500
 screen_width = 500
 socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "3.14.19.23.03.00"
+version = "3.20.19.23.03.10"
 yaw = 0
-new_destination = ""           # Numeric
-new_destination_type = ""      # DD | DDM | DMS
-new_destination_LatLon = ""    # LAT | LON
 
 
-# Object for displaying the heading arrow in the middle of the screen
+# Object for displaying the heading arrow on the map.
 class Nav_Arrow(Sprite):
     global yaw
     def __init__(self, screen):
         super(Nav_Arrow, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/icon2.png')
+        self.image = pygame.image.load(icon_arrow)
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -53,7 +53,8 @@ class Nav_Arrow(Sprite):
         self.screen.blit(image, rect)
 
 
-# Object for displaying new destination entry at the bottom of the screen
+# Object for displaying the new destination coordinates users can type into
+# at the bottom of the screen.
 class Nav_Destination():
     global new_destination
     def blitme(self):
@@ -76,9 +77,8 @@ class Nav_Destination():
         self.update()
 
 
-# Object for displaying the heading arrow in the middle of the screen
+# Object for displaying the map.
 class Nav_Background_Image(Sprite):
-
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
         self.screen = screen
@@ -98,7 +98,7 @@ class Nav_Background_Image(Sprite):
         self.screen.blit(image, rect)
 
 
-# Object for displaying current heading at the top of the screen
+# Object for displaying rover's current heading at the top of the screen.
 class Nav_Text():
     def blitme(self):
         self.update()
@@ -119,7 +119,10 @@ class Nav_Text():
         self.update()
 
 
+# This is the application entry point.
 def run():
+    global new_destination
+    global new_destination_LatLon
     pygame.init()
     listener() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -128,6 +131,7 @@ def run():
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
     nav_text = Nav_Text(screen)
+    new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
         check_control_events()
@@ -135,7 +139,6 @@ def run():
         nav_arrow.blitme()
         nav_destination.blitme()
         nav_text.blitme()
-        
         pygame.display.flip()
 
 
@@ -165,20 +168,27 @@ def check_control_events():
 def check_keydown_events(event):
     global new_destination
     global new_destination_type
+    global new_destination_LatLon
     if event.key == pygame.K_q:
         sys.exit()
     elif event.key == pygame.K_BACKSPACE:
-        new_destination = new_destination[:-1]
-        new_destination_type = new_destination_type[:-3]
+        if len(new_destination) >= 5:
+            new_destination = new_destination[:-1]
+            new_destination_type = new_destination_type[:-3]
     elif event.key == pygame.K_PERIOD:
         new_destination += "."
     elif event.key == pygame.K_MINUS:
         new_destination += "-"
     elif event.key == pygame.K_RETURN:
         process_destination()
-        new_destination = ""
+        if new_destination_LatLon == "LAT":           
+            new_destination_LatLon = "LON"
+            print("check_keydown_events(): new_destination_LatLon set to LON")
+        else:
+            new_destination_LatLon = "LAT"
+            print("check_keydown_events(): new_destination_LatLon set to LAT")
+        new_destination = new_destination_LatLon + " "
         new_destination_type = ""
-        new_destination_LatLon = ""
     elif event.key == pygame.K_d:
         new_destination += "°"
         new_destination_type += "deg"
@@ -215,14 +225,16 @@ def check_keyup_events(event):
 
 
 def dispatch_destination(destination):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((socket_TCP_IP, socket_TCP_PORT))
-    destination = str(destination)
-    dest_encoded = destination.encode()    
-    s.send(dest_encoded)
-    data = s.recv(1024)
-    print("dispatch_destination(): Received:",data)
-    s.close()
+    print("dispatch_destination("+destination+")")
+    if mode == "prod":
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((socket_TCP_IP, socket_TCP_PORT))
+        destination = str(destination)
+        dest_encoded = destination.encode()    
+        s.send(dest_encoded)
+        data = s.recv(1024)
+        print("dispatch_destination(): Received:",data)
+        s.close()
 
 
 def listener():
@@ -239,6 +251,15 @@ def process_destination():
     global new_destination_type
     print("process_destination(): Input Type: ", new_destination_type)
     print("process_destination(): Input Value:", new_destination)
+
+    # Strip away prepended LAT or LON for conversion and prepend it again after
+    # conversion.
+    new_destination = new_destination.split(" ")
+    print("process_destination(): new_destination = ")
+    print(new_destination)
+    LAT_LON = new_destination[0]
+    new_destination = new_destination[1]
+
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
     elif (new_destination_type == "degmin"):
@@ -267,7 +288,8 @@ def process_destination():
         new_destination = "Invalid"
     print("process_destination(): Output Type: ", new_destination_type)
     print("process_destination(): Output Value:", new_destination)
-    dispatch_destination(new_destination)
+    dispatch_destination(LAT_LON + " " + str(new_destination))
 
 
+# Start the application uo
 run()

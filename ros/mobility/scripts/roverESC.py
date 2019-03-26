@@ -51,26 +51,26 @@ telem.armAttached = True
 
 #global variables
 last_mode = telem.mode
-def setStop(msg_data):
-    msg_data.joys[0].axes[0] = 0 
-    msg_data.joys[0].axes[1] = 0 
-    msg_data.joys[0].axes[2] = 0 
-    msg_data.joys[0].axes[3] = 0 
-    msg_data.joys[0].axes[4] = 0 
-    msg_data.joys[0].axes[5] = 0 
-    msg_data.joys[0].buttons[0] = 0 
-    msg_data.joys[0].buttons[1] = 0 
-    msg_data.joys[0].buttons[2] = 0 
-    msg_data.joys[0].buttons[3] = 0 
-    msg_data.joys[0].buttons[4] = 0 
-    msg_data.joys[0].buttons[5] = 0 
-    msg_data.joys[0].buttons[6] = 0 
-    msg_data.joys[0].buttons[7] = 0 
-    msg_data.joys[0].buttons[8] = 0 
-    msg_data.joys[0].buttons[9] = 0 
-    msg_data.joys[0].buttons[10] = 0
-    msg_data.joys[0].buttons[11] = 0
-    return msg_data
+def setStop(joy_data):
+    joy_data.joys[0].axes[0] = 0 
+    joy_data.joys[0].axes[1] = 0 
+    joy_data.joys[0].axes[2] = 0 
+    joy_data.joys[0].axes[3] = 0 
+    joy_data.joys[0].axes[4] = 0 
+    joy_data.joys[0].axes[5] = 0 
+    joy_data.joys[0].buttons[0] = 0 
+    joy_data.joys[0].buttons[1] = 0 
+    joy_data.joys[0].buttons[2] = 0 
+    joy_data.joys[0].buttons[3] = 0 
+    joy_data.joys[0].buttons[4] = 0 
+    joy_data.joys[0].buttons[5] = 0 
+    joy_data.joys[0].buttons[6] = 0 
+    joy_data.joys[0].buttons[7] = 0 
+    joy_data.joys[0].buttons[8] = 0 
+    joy_data.joys[0].buttons[9] = 0 
+    joy_data.joys[0].buttons[10] = 0
+    joy_data.joys[0].buttons[11] = 0
+    return joy_data
 
 def getActive(msg_data):
     try:
@@ -120,16 +120,16 @@ def main(data):
         telem.mode = IDLE
         telem_pub.publish(telem)
     #set mode
-    if(data.joys[0].buttons[b9] and data.joys[0].buttons[b3]):
-        telem.mode = PAUSE
-    elif(data.joys[0].buttons[b9] and data.joys[0].buttons[b2]):
-        telem.mode = MOBILITY
-    elif(data.joys[0].buttons[b9] and data.joys[0].buttons[b4]):
-        telem.mode = ARM
-    elif(data.joys[0].buttons[b9] and data.joys[0].buttons[b1]):
-        telem.mode = BOTH
-
-
+    if(data.joys[0].buttons[b9]):
+        #data = setStop(data) #set no movement
+        if(data.joys[0].buttons[b3]):
+            telem.mode = PAUSE
+        elif(data.joys[0].buttons[b2]):
+            telem.mode = MOBILITY
+        elif(data.joys[0].buttons[b4]):
+            telem.mode = ARM
+        elif(data.joys[0].buttons[b1]):
+            telem.mode = BOTH
     else:#single key presses for throttle
         if(data.joys[0].buttons[b4] and (telem.throttle < 1) and ((rospy.Time.now() - last_throttle) > rospy.Duration(0.25))):
             telem.throttle += 0.1
@@ -137,28 +137,27 @@ def main(data):
         elif (data.joys[0].buttons[b2] and (telem.throttle > .3) and ((rospy.Time.now() - last_throttle) > rospy.Duration(0.25))):
             telem.throttle -= 0.1
             last_throttle = rospy.Time.now()
-    
-#.
-    print(telem)
-    telem_pub.publish(telem)
+        else:
+            try:
+                print(telem)
+                telem_pub.publish(telem)
+                if telem.mode in {MOBILITY, BOTH}:
+                    #turn in place
+                    if data.joys[0].buttons[b1]:
+                        wheels.driveBoth(0,-63)
+                    elif data.joys[0].buttons[b3]:
+                        wheels.driveBoth(0,63)
+                    else:
+                        #normal movement
+                        if telem.source is 3:
+                            wheels.driveBoth(int(data.joys[0].axes[1]),int(data.joys[0].axes[0]))
+                        else:
+                            wheels.driveBoth(int(telem.throttle*127*data.joys[0].axes[1]),int(-1 * telem.throttle*127*data.joys[0].axes[0]))
 
-    try:
-        print(telem.mode)
-        if telem.mode in {MOBILITY, BOTH}:
-            if telem.source is 3:
-                wheels.driveBoth(int(data.joys[0].axes[1]),int(data.joys[0].axes[0]))
-            else:
-                wheels.driveBoth(int(telem.throttle*127*data.joys[0].axes[1]),int(-1 * telem.throttle*127*data.joys[0].axes[0]))
-            if data.joys[0].buttons[b1]:
-                wheels.driveBoth(0,-63)
-            elif data.joys[0].buttons[b3]:
-                wheels.driveBoth(0,63)
-
-        if telem.armAttached and telem.mode in {BOTH, ARM}:
-            armMix.driveBoth(int(127*data.joys[0].axes[2]),int(127*data.joys[0].axes[3]))#j2, j3
-
-    except:
-        print("Mobility-main-drive error")
+                if telem.armAttached and telem.mode in {BOTH, ARM}:
+                    armMix.driveBoth(int(127*data.joys[0].axes[2]),int(127*data.joys[0].axes[3]))#j2, j3
+            except:
+                print("Mobility-main-drive error")
 
 if __name__ == '__main__':
     try:

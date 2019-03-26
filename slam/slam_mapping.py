@@ -27,6 +27,7 @@ class slam():
     _dimx = 0
     _dimy = 0
     _precision = 0
+    _boarder = 10 # padded edge for map
     fill_val = np.int8(-1)
     myDriver = Driver()
     slam_map = []
@@ -123,27 +124,36 @@ class slam():
             [-1 -1 -1]
             [-1 -1 -1]]
         '''
-    def expand_map():
+    def expand_map(self):
         import sqlite3
         logindbfile = 'sql_file_name.db'
         conn = sqlite3.connect(logindbfile)
         cur = conn.cursor()
-        num_coords = 
         num_coords = sql size
         for x in range(num_coords):
-            newgps = sql_lat, sql_lon
-            if newgps[0] > org_offset_gps(lat) + _dimx
-                append_x difference amount
-            elif newgps[0] < org_offset_gps(lat)
-                insert_x difference amount
             
-            if newgps[1] > org_offset_gps(lon) + _dimy
-                append_x difference amount
-            elif newgps[1] < org_offset_gps(lon)
-                insert_y difference amount
+            newgps = gps_trunc(sql_lat, sql_lon)
+            # widen the x_plane
+            if newgps[0] > org_offset_gps['lat'] + (self._dimx * self._precision * self._boarder):
+                for i in range(int(newgps[0] - (org_offset_gps['lat'] + (self._dimx * self._precision)) / self._precision) + self._boarder):
+                    append_x() #append difference amount
+            elif newgps[0] < org_offset_gps['lat'] - (self._precision * self._boarder):
+                for i in range(int((org_offset_gps['lat'] - (self._precision * self._boarder)) - newgps[0])):
+                    insert_x() #insert difference amount
+            
+            # widen the y-plane
+            if newgps[1] > org_offset_gps['long'] + (self._dimy * self._precision * self._boarder):
+                for i in range(int(newgps[1] - (org_offset_gps['long'] + (self._dimy * self._precision * self._boarder)))):
+                    append_y() #append difference amount
+            elif newgps[1] < org_offset_gps['long'] - (self._dimy * self._precision * self._boarder):
+                for i in range(int((org_offset_gps['long'] - (self._dimy * self._precision * self._boarder) - newgps[1]))):
+                    insert_y() #insert difference amount
 
-        temp_gps_list.append(((math.floor((self.current_pos_gps['lat'] + (x*0.00001)) * 10 ** 5)/ 10 ** 5), 
-                                    math.floor((self.current_pos_gps['long'] + (y*0.00001)) * 10 ** 5)/ 10 ** 5))
+    ######################################################################################
+    ####### math Truncating to 5 decimal positions without rounding
+    def gps_trunc(f_lat, f_lon)
+        import math
+        return math.floor(f_lat * 10 ** 5)/(10 ** 5) , math.floor(f_lon * 10 ** 5)/(10 ** 5)
 
     #Other 2D array design
     # gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
@@ -259,9 +269,29 @@ def main():
     slamit.gps_to_map()
     print(slamit.slam_map)
 
+    '''
+    while:
+        next point in driver.goto() 
+        if next point type ==  scoutprimary
+            call varun function
+        if next point type == primary
+            call varun
+            call spiral
+            add list to db
+        if next point type == spiral
+            goto point
+            call varun
+        if next point type == ball
+            goto point
+            call ballmotherfucker
+                wait 10sec
+                display ball
+            clear all spiral
+            
+            
 
 
-    
+    '''
 
     #print(distance(current_pos_gps, dest_gps).cm)
 

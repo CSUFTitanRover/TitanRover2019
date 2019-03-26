@@ -1,8 +1,0 @@
-prefix=/home/skrapmi/TitanRover2019/catkin_ws/install
-
-Name: mobility_topic
-Description: Description of mobility_topic
-Version: 0.0.0
-Cflags: -I/home/skrapmi/TitanRover2019/catkin_ws/install/include
-Libs: -L/home/skrapmi/TitanRover2019/catkin_ws/install/lib 
-Requires: message_runtime
