@@ -269,9 +269,29 @@ def main():
     slamit.gps_to_map()
     print(slamit.slam_map)
 
+    '''
+    while:
+        next point in driver.goto() 
+        if next point type ==  scoutprimary
+            call varun function
+        if next point type == primary
+            call varun
+            call spiral
+            add list to db
+        if next point type == spiral
+            goto point
+            call varun
+        if next point type == ball
+            goto point
+            call ballmotherfucker
+                wait 10sec
+                display ball
+            clear all spiral
+            
+            
 
 
-    
+    '''
 
     #print(distance(current_pos_gps, dest_gps).cm)
 
