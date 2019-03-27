@@ -7,7 +7,6 @@ class Database():
 
     def __init__(self):
         _dbname = "rover"
-        open_db()
         # self.create_rover_tables() Only needs to run on first call
 
     def create_rover_tables(self):
@@ -31,18 +30,23 @@ class Database():
             ''')
 
     def insert(self, value, table_name):
+        self.open_db()
         self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,))
+        self._conn.close()
 
     def insert(self,value1,value2,table_name):
+        self.open_db()
         self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, 0, 0)''', (value1,value2,))
+        self._conn.close()
 
     # Opens all db files and cursor attachments
-    def open_db():
+    def open_db(self):
         self._conn = sqlite3.connect(str(self._dbname))
         self._cur = self._conn.cursor()
         # Let rows be of dict/tuple type
         self._conn.row_factory = sqlite3.Row
         print ("Opened database %s as %r" % (self._dbname, self._conn))
+
 
     # returns the size of table
     def getTableSize(self, tablename):
