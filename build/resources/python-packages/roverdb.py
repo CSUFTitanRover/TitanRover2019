@@ -1,7 +1,7 @@
 import sqlite3
 
 class Database():
-    _dbname = "db.sql"
+    _dbname = "/home/nvidia/TitanRover2019/build/resources/python-packages/db.sql"
     _cur = None
     _conn = None
 
