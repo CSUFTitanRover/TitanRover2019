@@ -24,6 +24,10 @@
    Start onbord interface:
        1) `cd ~/TitanRover2019/userInterface/Cerium_Base_Station/`
        2) `python listener.py`
+       2a) If the port is already taken, find the PID and kill it: 
+           `sudo lsof -i:9600` 
+            and 
+           `sudo kill <PID>`
 
    Start base interface:
        1) `cd ~/TitanRover2019/userInterface/Cerium_Base_Station`

@@ -28,7 +28,7 @@ socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "03.26.19.21.10.44"
+version = "03.26.19.21.55.30"
 yaw = 0
 
 
@@ -54,7 +54,6 @@ class Nav_Arrow(Sprite):
         self.rect.centery = 419        
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
-        
         self.screen.blit(image, rect)
 
 
@@ -67,11 +66,8 @@ class Nav_Destination():
         self.update()
         self.screen.blit(self.high_score_image, self.high_score_rect)
     def update(self):
-        high_score = float(yaw)
-        high_score_str = "{:,}".format(high_score)
         high_score_str = new_destination
-        self.high_score_image = self.font.render(high_score_str, True, 
-                                self.color_text, color_background)
+        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.bottom = self.screen_rect.bottom
@@ -245,15 +241,10 @@ def check_keyup_events(event):
 
 
 
-def dispatch_destination(destination):
+def Attempt_Coordinate_Send():
     global new_destination_set
-
-    print("dispatch_destination("+destination+")")
-
-
-
     if len(new_destination_set) == 2:
-        print("dispatch_destination(): Ready to send")
+        print("Attempt_Coordinate_Send(): Ready to send")
         if mode == "prod":
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((socket_TCP_IP, socket_TCP_PORT))
@@ -261,7 +252,7 @@ def dispatch_destination(destination):
             dest_encoded = destination.encode()    
             s.send(dest_encoded)
             data = s.recv(1024)
-            print("dispatch_destination(): Received:",data)
+            print("Attempt_Coordinate_Send(): Received:",data)
             s.close()
         else:
             print("Did not send, mode set to dev")
@@ -269,6 +260,8 @@ def dispatch_destination(destination):
         print("Clearing new_destination_set")        
         del new_destination_set[:]
         print("new_destination_set = ", new_destination_set)
+    else:
+        print("Attempt_Coordinate_Send(): Failed, LAT & LON required")
 
 
 
@@ -292,8 +285,10 @@ def Remove_LAT_LON():
 
 
 def Queue_Coordinate():
+    global new_destination
     global new_destination_set
-    new_destination_set.append(destination)
+    new_destination_set.append(new_destination)
+    print("Queue_Coordinate(): new_destination_set: ",new_destination_set)
 
 
 
@@ -333,13 +328,22 @@ def Convert_Coordinates():
     
 
 
+def Add_LAT_LON():
+    global new_destination
+    new_destination = new_destination_LatLon + " "
+
+
+
 def process_destination():
     global new_destination
     global new_destination_type
     Remove_LAT_LON() # Strip away LAT/LON for conversion and add it back later
-    Convert_Coordinates()    
-    Flip_LAT_LON() # Flip LAT for LON or vice versa        
-    dispatch_destination(LAT_LON + " " + str(new_destination)) # TODO resune here
+    Convert_Coordinates() # Convert any format into decimal degrees
+    Queue_Coordinate() # Put this latest coordinate into temporary storage
+    Attempt_Coordinate_Send() # Try to send the coordinates to vehicle
+    Flip_LAT_LON() # Flip LAT for LON or vice versa
+    Add_LAT_LON() # Re-append LAT/LON
+    # TODO Resume here
 
 
 
