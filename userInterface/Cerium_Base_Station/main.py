@@ -17,7 +17,7 @@ import sys
 color_background = (0,0,0)
 color_text = (255, 255, 255)
 icon_arrow = "images/icon2.png"
-mode = "prod"                        # dev | prod
+mode = "prod"                       # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
 new_destination_LatLon = "LAT"      # LAT | LON
@@ -28,7 +28,7 @@ socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "03.26.19.21.55.30"
+version = "03.26.19.22.14.22"
 yaw = 0
 
 
@@ -152,10 +152,8 @@ def callback(data):
     global yaw
     if (mode == "prod"):
         yaw = data.yaw.yaw
-        #print("callback(): [PROD]: ", yaw)
     if (mode == "dev"):
         yaw = data.data
-        #print("callback(): [DEV]: ", yaw)
 
 
 
@@ -241,6 +239,14 @@ def check_keyup_events(event):
 
 
 
+def Get_Coordinate_Pair_String():
+    global new_destination_set
+    candidate = str(new_destination_set[0]) + " " + str(new_destination_set[1])
+    print("Get_Coordinate_Pair_String(): candidate: ",candidate)    
+    return candidate
+
+
+
 def Attempt_Coordinate_Send():
     global new_destination_set
     if len(new_destination_set) == 2:
@@ -248,21 +254,25 @@ def Attempt_Coordinate_Send():
         if mode == "prod":
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((socket_TCP_IP, socket_TCP_PORT))
-            destination = str(destination)
-            dest_encoded = destination.encode()    
+            destination = Get_Coordinate_Pair_String()
+            dest_encoded = destination.encode() 
+            print("Attempt_Coordinate_Send(): Sending: ",dest_encoded)   
             s.send(dest_encoded)
             data = s.recv(1024)
             print("Attempt_Coordinate_Send(): Received:",data)
             s.close()
         else:
-            print("Did not send, mode set to dev")
-        print("new_destination_set = ", new_destination_set)
-        print("Clearing new_destination_set")        
-        del new_destination_set[:]
-        print("new_destination_set = ", new_destination_set)
+            print("Attempt_Coordinate_Send(): Failed: dev mode enabled")
+        Clear_Destination_Set()
     else:
-        print("Attempt_Coordinate_Send(): Failed, LAT & LON required")
+        print("Attempt_Coordinate_Send(): Failed: Requires LAT & LON")
 
+
+
+def Clear_Destination_Set():
+    global new_destination_set
+    del new_destination_set[:]
+    print("Clear_Destination_Set(): new_destination_set: ",new_destination_set)
 
 
 def listener():
@@ -276,11 +286,10 @@ def listener():
 
 
 def Remove_LAT_LON():
-    global new_destination
-    print("Remove_LAT_LON("+new_destination+")")    
+    global new_destination    
     new_destination = new_destination.split(" ")    
     new_destination = new_destination[1]
-    print("Remove_LAT_LON(): new_destination set to: " + new_destination)
+    print("Remove_LAT_LON(): new_destination: ",new_destination)
 
 
 
