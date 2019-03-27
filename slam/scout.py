@@ -9,19 +9,13 @@ from gnss.msg import gps as msg
 
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
-from driver import Driver as myDriver
+#from driver import Driver as myDriver
 
 ######################################################################################
 # System Requirement of one argument for process instructions
 if len (sys.argv) != 2 :
     print("Usage: Run Command Missing ")
     sys.exit (1)
-
-#msg = gps()
-gps_pub = rospy.Publisher('/gnss', gps, queue_size=1)
-rospy.init_node('gnss')
-rate = rospy.Rate(100) # 10hz
-msg.header.frame_id = 'GNSS'
 
 mode_info = None
 acceleration = 0
@@ -138,14 +132,12 @@ def parse_map_file():
     location = f.readline()
     while not EOFError:
         myDriver.__gps = float(location.split(", "))
-        myDriver.__gps = myDriver.__nextWaypoint =  math.floor(myDriver.__gps(0) * 10 ** 5)/(10 ** 5) , 
-                                                    math.floor(myDriver.__gps(1) * 10 ** 5)/(10 ** 5)
+        myDriver.__gps = myDriver.__nextWaypoint =  (math.floor(myDriver.__gps(0) * 10 ** 5)/(10 ** 5) , math.floor(myDriver.__gps(1) * 10 ** 5)/(10 ** 5))
         myDriver.setDistance()
         while myDriver._distance < 300 and not EOFError:  #distance in cm
             location = f.readline()
             myDriver.__nextWaypoint = float(location.split(", "))
-            myDriver.__nextWaypoint =  math.floor(myDriver.__nextWaypoint(0) * 10 ** 5)/(10 ** 5) , 
-                                        math.floor(myDriver.__nextWaypoint(1) * 10 ** 5)/(10 ** 5)
+            myDriver.__nextWaypoint =  (math.floor(myDriver.__nextWaypoint(0) * 10 ** 5)/(10 ** 5) , math.floor(myDriver.__nextWaypoint(1) * 10 ** 5)/(10 ** 5))
             myDriver.setDistance()
 
         #write myDriver.__gps to db
@@ -155,13 +147,14 @@ def parse_map_file():
 #add button to catch tennis ball point
 def ballMotherFucker():
     while True:
+        pass
         
 
 
 if __name__ == '__main__':
     if sys.argv[1] == 'scout':
-        gps_data = threading.Thread(target= connect)
-        gps_data.start()
+        # gps_data = threading.Thread(target= connect)
+        # gps_data.start()
         
         scoutfile = open("scoutfile.txt", "w")
         start_scouting(scoutfile)
