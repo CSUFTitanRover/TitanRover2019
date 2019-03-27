@@ -1,6 +1,8 @@
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
+
+
 from finalimu.msg import fimu
 from pygame.sprite import Sprite
 from std_msgs.msg import String
@@ -9,6 +11,7 @@ import rospy
 import socket
 import sqlite3
 import sys
+
 
 
 color_background = (0,0,0)
@@ -25,8 +28,9 @@ socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "3.20.19.23.03.10"
+version = "03.26.19.21.55.30"
 yaw = 0
+
 
 
 # Object for displaying the heading arrow on the map.
@@ -50,8 +54,8 @@ class Nav_Arrow(Sprite):
         self.rect.centery = 419        
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
-        
         self.screen.blit(image, rect)
+
 
 
 # Object for displaying the new destination coordinates users can type into
@@ -62,11 +66,8 @@ class Nav_Destination():
         self.update()
         self.screen.blit(self.high_score_image, self.high_score_rect)
     def update(self):
-        high_score = float(yaw)
-        high_score_str = "{:,}".format(high_score)
         high_score_str = new_destination
-        self.high_score_image = self.font.render(high_score_str, True, 
-                                self.color_text, color_background)
+        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.bottom = self.screen_rect.bottom
@@ -76,6 +77,7 @@ class Nav_Destination():
         self.color_text = color_text
         self.font = pygame.font.SysFont(None, 48)
         self.update()
+
 
 
 # Object for displaying the map.
@@ -99,6 +101,7 @@ class Nav_Background_Image(Sprite):
         self.screen.blit(image, rect)
 
 
+
 # Object for displaying rover's current heading at the top of the screen.
 class Nav_Text():
     def blitme(self):
@@ -120,6 +123,7 @@ class Nav_Text():
         self.update()
 
 
+
 # This is the application entry point.
 def run():
     global new_destination
@@ -127,7 +131,7 @@ def run():
     pygame.init()
     listener() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption('Titan Rover - Heading - ' + version)
+    pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
@@ -143,6 +147,7 @@ def run():
         pygame.display.flip()
 
 
+
 def callback(data):
     global yaw
     if (mode == "prod"):
@@ -151,6 +156,7 @@ def callback(data):
     if (mode == "dev"):
         yaw = data.data
         #print("callback(): [DEV]: ", yaw)
+
 
 
 # Respond to keypress and mouse events.
@@ -164,6 +170,18 @@ def check_control_events():
             check_keyup_events(event)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
+
+
+
+def Flip_LAT_LON():
+    global new_destination_LatLon
+    if new_destination_LatLon == "LAT":           
+        new_destination_LatLon = "LON"
+        print("Flip_LAT_LON(): new_destination_LatLon set to LON")
+    else:
+        new_destination_LatLon = "LAT"
+        print("Flip_LAT_LON(): new_destination_LatLon set to LAT")
+
 
 
 def check_keydown_events(event):
@@ -182,23 +200,19 @@ def check_keydown_events(event):
         new_destination += "-"
     elif event.key == pygame.K_RETURN:
         process_destination()
-        if new_destination_LatLon == "LAT":           
-            new_destination_LatLon = "LON"
-            print("check_keydown_events(): new_destination_LatLon set to LON")
-        else:
-            new_destination_LatLon = "LAT"
-            print("check_keydown_events(): new_destination_LatLon set to LAT")
-        new_destination = new_destination_LatLon + " "
         new_destination_type = ""
     elif event.key == pygame.K_d:
         new_destination += "°"
         new_destination_type += "deg"
+        print("check_keydown_events(): new_destination_type: ",new_destination_type)
     elif event.key == pygame.K_m:
         new_destination += "\'"
         new_destination_type += "min"
+        print("check_keydown_events(): new_destination_type: ",new_destination_type)
     elif event.key == pygame.K_s:
         new_destination += "\""
-        new_destination_type += "sec"   
+        new_destination_type += "sec"
+        print("check_keydown_events(): new_destination_type: ",new_destination_type)   
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -221,19 +235,16 @@ def check_keydown_events(event):
         new_destination += "9"
 
 
+
 def check_keyup_events(event):
     pass
 
 
-def dispatch_destination(destination):
+
+def Attempt_Coordinate_Send():
     global new_destination_set
-
-    print("dispatch_destination("+destination+")")
-
-    new_destination_set.append(destination)
-
     if len(new_destination_set) == 2:
-        print("dispatch_destination(): Ready to send")
+        print("Attempt_Coordinate_Send(): Ready to send")
         if mode == "prod":
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((socket_TCP_IP, socket_TCP_PORT))
@@ -241,7 +252,7 @@ def dispatch_destination(destination):
             dest_encoded = destination.encode()    
             s.send(dest_encoded)
             data = s.recv(1024)
-            print("dispatch_destination(): Received:",data)
+            print("Attempt_Coordinate_Send(): Received:",data)
             s.close()
         else:
             print("Did not send, mode set to dev")
@@ -249,6 +260,9 @@ def dispatch_destination(destination):
         print("Clearing new_destination_set")        
         del new_destination_set[:]
         print("new_destination_set = ", new_destination_set)
+    else:
+        print("Attempt_Coordinate_Send(): Failed, LAT & LON required")
+
 
 
 def listener():
@@ -260,20 +274,29 @@ def listener():
         rospy.Subscriber("chatter", String, callback)
 
 
-def process_destination():
+
+def Remove_LAT_LON():
+    global new_destination
+    print("Remove_LAT_LON("+new_destination+")")    
+    new_destination = new_destination.split(" ")    
+    new_destination = new_destination[1]
+    print("Remove_LAT_LON(): new_destination set to: " + new_destination)
+
+
+
+def Queue_Coordinate():
+    global new_destination
+    global new_destination_set
+    new_destination_set.append(new_destination)
+    print("Queue_Coordinate(): new_destination_set: ",new_destination_set)
+
+
+
+def Convert_Coordinates():
     global new_destination
     global new_destination_type
-    print("process_destination(): Input Type: ", new_destination_type)
-    print("process_destination(): Input Value:", new_destination)
-
-    # Strip away prepended LAT or LON for conversion and prepend it again after
-    # conversion.
-    new_destination = new_destination.split(" ")
-    print("process_destination(): new_destination = ")
-    print(new_destination)
-    LAT_LON = new_destination[0]
-    new_destination = new_destination[1]
-
+    print("Convert_Coordinates(): Input Type:  ", new_destination_type)
+    print("Convert_Coordinates(): Input Value: ", new_destination)
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
     elif (new_destination_type == "degmin"):
@@ -300,9 +323,28 @@ def process_destination():
     else:
         new_destination_type = "Invalid"
         new_destination = "Invalid"
-    print("process_destination(): Output Type: ", new_destination_type)
-    print("process_destination(): Output Value:", new_destination)
-    dispatch_destination(LAT_LON + " " + str(new_destination))
+    print("Convert_Coordinates(): Output Type:  ", new_destination_type)
+    print("Convert_Coordinates(): Output Value: ", new_destination)
+    
+
+
+def Add_LAT_LON():
+    global new_destination
+    new_destination = new_destination_LatLon + " "
+
+
+
+def process_destination():
+    global new_destination
+    global new_destination_type
+    Remove_LAT_LON() # Strip away LAT/LON for conversion and add it back later
+    Convert_Coordinates() # Convert any format into decimal degrees
+    Queue_Coordinate() # Put this latest coordinate into temporary storage
+    Attempt_Coordinate_Send() # Try to send the coordinates to vehicle
+    Flip_LAT_LON() # Flip LAT for LON or vice versa
+    Add_LAT_LON() # Re-append LAT/LON
+    # TODO Resume here
+
 
 
 # Start the application uo
