@@ -7,7 +7,7 @@ class Database():
 
     def __init__(self):
         _dbname = "rover"
-        open_db()
+        self.open_db()
         # self.create_rover_tables() Only needs to run on first call
 
     def create_rover_tables(self):
