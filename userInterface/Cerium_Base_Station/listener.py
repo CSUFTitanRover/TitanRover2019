@@ -50,7 +50,6 @@ def new_socket():
     while 1:
         data = conn.recv(256).decode()
 	       print("new_socket() Received: ", data)
-        
         db.insert(data, "map")
 	       print(db.l("map"))
         if not data: break
