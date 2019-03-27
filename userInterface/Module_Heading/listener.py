@@ -41,7 +41,7 @@ def new_socket():
     print 'Connection address:', addr
     while 1:
         data = conn.recv(256).decode()
-	print("new_socket() Received: " data)
+	print("new_socket() Received: ", data)
         db.insert(data, "map")
 	print(db.getTableSize("map"))
         if not data: break
