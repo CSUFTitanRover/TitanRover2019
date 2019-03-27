@@ -1,15 +1,23 @@
 #!/usr/bin/env python
 
+
+
 # Feinzimer, David. dfeinzimer@csu.fullerton.edu
 # Updated 3/14/19
+
+
 
 import socket
 import sys
 import subprocess
 
+
+
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from roverdb import Database
+
+
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -22,8 +30,8 @@ def create_connection(db_file):
         return conn
     except Error as e:
         print(e)
-
     return None
+
 
 
 def new_socket():
@@ -41,9 +49,10 @@ def new_socket():
     print('Connection address:', addr)
     while 1:
         data = conn.recv(256).decode()
-	print("new_socket() Received: ", data)
+	       print("new_socket() Received: ", data)
+        
         db.insert(data, "map")
-	print(db.getTableSize("map"))
+	       print(db.l("map"))
         if not data: break
         print("received data: ", data)
         conn.send(data)  # echo
