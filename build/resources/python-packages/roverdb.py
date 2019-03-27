@@ -33,7 +33,7 @@ class Database():
         self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,))
 
     # Opens all db files and cursor attachments
-    def open_db(self):
+    def open_db():
         self._conn = sqlite3.connect(str(self._dbname))
         self._cur = self._conn.cursor()
         # Let rows be of dict/tuple type
