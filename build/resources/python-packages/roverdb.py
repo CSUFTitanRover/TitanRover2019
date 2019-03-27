@@ -1,7 +1,7 @@
 import sqlite3
 
 class Database():
-    _dbname = None
+    _dbname = "db.sql"
     _cur = None
     _conn = None
 
@@ -10,7 +10,7 @@ class Database():
         self.create_rover_tables()
 
     def create_rover_tables(self):
-        self.open_db()
+        self.open_db(self)
         self._cur.execute('''CREATE TABLE IF NOT EXISTS map (
             item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
             lat	        REAL NOT NULL,
@@ -30,7 +30,7 @@ class Database():
             ''')
 
     def insert(self, value, table_name):
-	self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,)) 
+        self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,))
 
     # Opens all db files and cursor attachments
     def open_db(self):
