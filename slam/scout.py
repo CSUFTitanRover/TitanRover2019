@@ -9,7 +9,7 @@ from gnss.msg import gps as msg
 
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
-#from driver import Driver as myDriver
+from driver import Driver as myDriver
 
 ######################################################################################
 # System Requirement of one argument for process instructions
@@ -17,13 +17,6 @@ if len (sys.argv) != 2 :
     print("Usage: Run Command Missing ")
     sys.exit (1)
 
-<<<<<<< HEAD
-#msg = gps()
-rospy.init_node('listener', anonymous=True)
-rospy.Subscriber('/gnss', gps, queue_size=1)
-
-=======
->>>>>>> 02382a5d61417c46e1cf860bb0e3e9c89ecb7f30
 mode_info = None
 acceleration = 0
 curr_pos = {0,0}
@@ -139,20 +132,12 @@ def parse_map_file():
     location = f.readline()
     while not EOFError:
         myDriver.__gps = float(location.split(", "))
-<<<<<<< HEAD
-        myDriver.__gps = myDriver.__nextWaypoint =  (math.floor(myDriver.__gps(0) * 10 ** 5)/(10 ** 5) ,math.floor(myDriver.__gps(1) * 10 ** 5)/(10 ** 5))
-=======
         myDriver.__gps = myDriver.__nextWaypoint =  (math.floor(myDriver.__gps(0) * 10 ** 5)/(10 ** 5) , math.floor(myDriver.__gps(1) * 10 ** 5)/(10 ** 5))
->>>>>>> 02382a5d61417c46e1cf860bb0e3e9c89ecb7f30
         myDriver.setDistance()
         while myDriver._distance < 300 and not EOFError:  #distance in cm
             location = f.readline()
             myDriver.__nextWaypoint = float(location.split(", "))
-<<<<<<< HEAD
-            myDriver.__nextWaypoint =  (math.floor(myDriver.__nextWaypoint(0) * 10 ** 5)/(10 ** 5) ,math.floor(myDriver.__nextWaypoint(1) * 10 ** 5)/(10 ** 5))
-=======
             myDriver.__nextWaypoint =  (math.floor(myDriver.__nextWaypoint(0) * 10 ** 5)/(10 ** 5) , math.floor(myDriver.__nextWaypoint(1) * 10 ** 5)/(10 ** 5))
->>>>>>> 02382a5d61417c46e1cf860bb0e3e9c89ecb7f30
             myDriver.setDistance()
 
         #write myDriver.__gps to db
@@ -163,10 +148,7 @@ def parse_map_file():
 def ballMotherFucker():
     while True:
         pass
-<<<<<<< HEAD
-=======
         
->>>>>>> 02382a5d61417c46e1cf860bb0e3e9c89ecb7f30
 
 
 if __name__ == '__main__':
