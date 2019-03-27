@@ -7,7 +7,7 @@ class Database():
 
     def __init__(self):
         _dbname = "rover"
-        self.create_rover_tables()
+        # self.create_rover_tables() Only needs to run on first call
 
     def create_rover_tables(self):
         self.open_db(self)
@@ -31,6 +31,9 @@ class Database():
 
     def insert(self, value, table_name):
         self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,))
+
+    def insert(self,value1,value2,table_name):
+        self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, 0, 0)''', (value1,value2,))
 
     # Opens all db files and cursor attachments
     def open_db():
