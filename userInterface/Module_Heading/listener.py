@@ -38,7 +38,7 @@ def new_socket():
 
     db = Database()
     conn, addr = sock.accept()
-    print 'Connection address:', addr
+    print('Connection address:', addr)
     while 1:
         data = conn.recv(256).decode()
 	print("new_socket() Received: ", data)
