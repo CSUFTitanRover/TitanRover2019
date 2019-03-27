@@ -3,7 +3,7 @@ import sys
 import subprocess
 import threading, keyboard
 import sys, time, signal, socket, rospy
-from gnss.msg import gps as msg
+from gnss.msg import gps
 #from sensor_msgs.msg import LaserScan
 #from finalimu.msg import fimu
 
@@ -62,7 +62,7 @@ class Job(threading.Thread):
         self.shutdown_flag = threading.Event()
         rospy.init_node('listener', anonymous=True)
 
-    def callback(data):
+    def callback(self, data):
 
         if keyboard.is_pressed('q'):
             curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'primary'
@@ -78,7 +78,7 @@ class Job(threading.Thread):
         print('Thread #%s started' % self.ident)
  
         while not self.shutdown_flag.is_set():            
-            rospy.Subscriber("gnss", gps, callback)
+            rospy.Subscriber("gnss", gps, self.callback)
             time.sleep(0.5)
  
         print('Thread #%s stopped' % self.ident)
