@@ -36,7 +36,7 @@ class Database():
 
     def insert(self,value1,value2,table_name):
         self.open_db()
-        self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, 0, 0)''', (value1,value2,))
+        self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, '0', 0)''', (value1,value2,))
         self._conn.close()
 
     # Opens all db files and cursor attachments
