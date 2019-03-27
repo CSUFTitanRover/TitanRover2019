@@ -38,6 +38,8 @@ def Split_Coordinates(data):
 
 
 def new_socket():
+    global LAT
+    global LON
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind the socket to the port
@@ -52,6 +54,8 @@ def new_socket():
         data = conn.recv(256).decode()
         print("new_socket(): Received: ", data)
         Split_Coordinates(data)
+        print("new_socket(): LAT: ",LAT)
+        print("new_socket(): LON: ",LON)
         db.insert(LAT,LON, "map")
 	       #print(db.l("map"))
         if not data: break
