@@ -1,16 +1,16 @@
 import sqlite3
 
 class Database():
-    _dbname = None
+    _dbname = "/home/nvidia/TitanRover2019/build/resources/python-packages/db.sql"
     _cur = None
     _conn = None
 
     def __init__(self):
         _dbname = "rover"
-        self.create_rover_tables()
+        # self.create_rover_tables() Only needs to run on first call
 
     def create_rover_tables(self):
-        self.open_db()
+        self.open_db(self)
         self._cur.execute('''CREATE TABLE IF NOT EXISTS map (
             item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
             lat	        REAL NOT NULL,
@@ -30,7 +30,14 @@ class Database():
             ''')
 
     def insert(self, value, table_name):
-	self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,)) 
+        self.open_db()
+        self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, 0, 0, 0)''', (value,))
+        self._conn.close()
+
+    def insert(self,value1,value2,table_name):
+        self.open_db()
+        self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, '0', 0)''', (value1,value2,))
+        self._conn.close()
 
     # Opens all db files and cursor attachments
     def open_db(self):
@@ -39,6 +46,7 @@ class Database():
         # Let rows be of dict/tuple type
         self._conn.row_factory = sqlite3.Row
         print ("Opened database %s as %r" % (self._dbname, self._conn))
+
 
     # returns the size of table
     def getTableSize(self, tablename):

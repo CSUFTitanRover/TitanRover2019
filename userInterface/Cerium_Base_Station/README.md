@@ -17,6 +17,10 @@
 
   
 ## Usage
+   Make sure onboard software is up to date:
+       1) `cd ~/TitanRover2019/`
+       2) `git pull`
+
    Start onboard IMU: 
        1) `cd ~/catkin_ws/src/finalimu/src/`
        2) `python cal_run_Imu.py`
