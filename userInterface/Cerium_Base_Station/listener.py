@@ -53,7 +53,7 @@ def new_socket():
         print("new_socket(): Received: ", data)
         Split_Coordinates(data)
         db.insert(LAT,LON, "map")
-	print(db.l("map"))
+	       #print(db.l("map"))
         if not data: break
         print("new_socket(): Received Data: ", data)
         conn.send(data)
