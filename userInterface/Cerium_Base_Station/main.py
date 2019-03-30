@@ -30,7 +30,7 @@ socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "03.30.19.11.51.00"
+version = "03.30.19.13.09.20"
 yaw = 0
 
 
@@ -94,7 +94,6 @@ class Nav_Background_Image(Sprite):
     def blitme(self):
         rect = self.image.get_rect()
         image = self.image
-
         rect = image.get_rect(center=rect.center)
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -112,6 +111,7 @@ class Nav_Text():
     def update(self):
         high_score = float(yaw)
         high_score_str = "{:,}".format(high_score)
+        high_score_str = Append_Cardinal_Information(high_score_str)
         self.high_score_image = self.font.render(high_score_str, True, 
                                 self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
@@ -126,8 +126,37 @@ class Nav_Text():
 
 
 
+def Append_Cardinal_Information(data):
+    #print("Append_Cardinal_Information("+data+")")    
+    numerical_data = float(data)
+    #print("Append_Cardinal_Information(): numerical_data:",numerical_data)
+    data = data + "° "
+    if(numerical_data > 270):
+        data = data + "NW"
+    elif(numerical_data == 270):
+        data = data + "W"
+    elif(numerical_data > 180):
+        data = data + "SW"
+    elif(numerical_data == 180):
+        data = data + "S"
+    elif(numerical_data > 90):
+        data = data + "SE"
+    elif(numerical_data == 90):
+        data = data + "E"
+    elif(numerical_data > 0):
+        data = data + "NE"
+    elif(numerical_data == 0):
+        data = data + "N"
+    return data
+
+
+
 # This is the application entry point.
 def run():
+    if (mode == "dev"):
+        print("run(): mode: dev")
+    else:
+        print("run(): mode: prod")
     global new_destination
     global new_destination_LatLon
     pygame.init()
