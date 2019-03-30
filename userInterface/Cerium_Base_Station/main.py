@@ -17,18 +17,20 @@ import sys
 color_background = (0,0,0)
 color_text = (255, 255, 255)
 icon_arrow = "images/icon2.png"
-mode = "prod"                       # dev | prod
+mode = "dev"                       # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
 new_destination_LatLon = "LAT"      # LAT | LON
-new_destination_set = []            # A LAT/LON set 
+new_destination_set = []            # A LAT/LON set
+roverlat = ""
+roverlon = ""
 screen_height = 500
 screen_width = 500
 socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "03.26.19.22.14.22"
+version = "03.30.19.11.51.00"
 yaw = 0
 
 
@@ -129,7 +131,10 @@ def run():
     global new_destination
     global new_destination_LatLon
     pygame.init()
-    listener() # Start listening to ROS
+    status = rospy.init_node('listener', anonymous=True)
+    print("run(): ROS Status:", status)
+    listener_imu() # Start listening to ROS
+    listener_gnss() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
     nav_arrow = Nav_Arrow(screen)
@@ -148,12 +153,24 @@ def run():
 
 
 
-def callback(data):
+def callback_imu(data):
     global yaw
     if (mode == "prod"):
         yaw = data.yaw.yaw
     if (mode == "dev"):
         yaw = data.data
+
+
+
+# Collect data.roverlat & data.roverlon
+def callback_gnss(data):
+    global roverlat
+    global roverlon
+    if (mode == "prod"):
+        roverlat = data.roverlat
+        roverlon = data.roverlon
+    if (mode == "dev"):
+        print("callback_gnss(): mode: dev: No gnss available.")
 
 
 
@@ -265,7 +282,7 @@ def Attempt_Coordinate_Send():
             print("Attempt_Coordinate_Send(): Failed: dev mode enabled")
         Clear_Destination_Set()
     else:
-        print("Attempt_Coordinate_Send(): Failed: Requires LAT & LON")
+        print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
 
 
 
@@ -275,13 +292,22 @@ def Clear_Destination_Set():
     print("Clear_Destination_Set(): new_destination_set: ",new_destination_set)
 
 
-def listener():
-    status = rospy.init_node('listener', anonymous=True)
-    print("listener(): ROS Status:", status)
+
+def listener_imu():
     if mode == "prod":
-        rospy.Subscriber("imu", fimu, callback)
+        rospy.Subscriber("imu", fimu, callback_imu)
     elif mode == "dev":
-        rospy.Subscriber("chatter", String, callback)
+        print("listener_imu(): mode: dev: heading is simulated")
+        rospy.Subscriber("chatter", String, callback_imu)
+
+
+
+# For accessing data.roverlat & data.roverlon
+def listener_gnss():
+    if mode == "prod":
+        rospy.Subscriber("gnss", gps, callback_gnss) # TODO change this callback
+    elif mode == "dev":
+        print("listener_gnss(): mode: dev: no gnss available")
 
 
 
