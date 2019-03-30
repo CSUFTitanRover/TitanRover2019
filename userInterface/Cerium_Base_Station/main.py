@@ -4,6 +4,7 @@
 
 
 from finalimu.msg import fimu
+from gnss.msg import gps
 from pygame.sprite import Sprite
 from std_msgs.msg import String
 import pygame
@@ -16,21 +17,27 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
+display_LAT_TL = 34.586220 # Upper left of map view
+display_LON_TL = -117.268741 # Upper left of map view
+display_LAT_BR = 34.579036 # Bottom right of map view
+display_LON_BR = -117.259951 # Bottom right of map view
 icon_arrow = "images/icon2.png"
-mode = "dev"                       # dev | prod
+mode = "prod"                       # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
 new_destination_LatLon = "LAT"      # LAT | LON
 new_destination_set = []            # A LAT/LON set
-roverlat = ""
-roverlon = ""
+roverLat = ""
+roverLon = ""
 screen_height = 500
 screen_width = 500
 socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-version = "03.30.19.13.09.20"
+vehicle_x = 0 # The x offset for the vehicle to be plotted on the map
+vehicle_y = 0 # The y offset for the vehicle to be plotted on the map
+version = "03.30.19.15.04.06"
 yaw = 0
 
 
@@ -38,6 +45,8 @@ yaw = 0
 # Object for displaying the heading arrow on the map.
 class Nav_Arrow(Sprite):
     global yaw
+    global vehicle_x
+    global vehicle_y
     def __init__(self, screen):
         super(Nav_Arrow, self).__init__()
         self.screen = screen
@@ -52,8 +61,10 @@ class Nav_Arrow(Sprite):
         if (mode == "dev"):
             image = pygame.transform.rotate(image, float(yaw) * -1)
         rect = image.get_rect(center=self.rect.center)
-        self.rect.centerx = 81
-        self.rect.centery = 419        
+        #self.rect.centerx = 81  #TODO Clean this up
+        #self.rect.centery = 419 #TODO Clean this up
+        self.rect.centerx = vehicle_x
+        self.rect.centery = vehicle_y       
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
         self.screen.blit(image, rect)
@@ -87,7 +98,7 @@ class Nav_Background_Image(Sprite):
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/SETTING_CSUF.png')
+        self.image = pygame.image.load('images/SETTING_VICT.png')
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -162,7 +173,9 @@ def run():
     pygame.init()
     status = rospy.init_node('listener', anonymous=True)
     print("run(): ROS Status:", status)
+    print("run(): Starting IMU subscriber")
     listener_imu() # Start listening to ROS
+    print("run(): Starting GPS subscriber")
     listener_gnss() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
@@ -191,15 +204,38 @@ def callback_imu(data):
 
 
 
-# Collect data.roverlat & data.roverlon
+def Calculate_Vehicle_X_Y():
+    # LAT is up and down
+    # LON is side to side
+    #print("Calculate_Vehicle_X_Y()")
+    global roverLat
+    global roverLon
+    global vehicle_x
+    global vehicle_y
+    global screen_height
+    global screen_width
+    global display_LAT_TL
+    global display_LON_TL
+    global display_LAT_BR
+    global display_LON_BR
+    print("Calculate_Vehicle_X_Y(): roverLon:",roverLon)
+    print("Calculate_Vehicle_X_Y(): roverLat:",roverLat)
+    vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR)) * abs(roverLon-display_LON_TL)
+    vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR)) * abs(roverLat-display_LAT_TL) * -1
+    print("Calculate_Vehicle_X_Y(): X:",vehicle_x)
+    print("Calculate_Vehicle_X_Y(): Y:",vehicle_y)    
+
+
+
 def callback_gnss(data):
     global roverlat
     global roverlon
     if (mode == "prod"):
-        roverlat = data.roverlat
-        roverlon = data.roverlon
-    if (mode == "dev"):
+        roverLat = data.roverLat
+        roverLon = data.roverLon
+    if (mode == "dev"):  # TODO Try elif here during refactoring
         print("callback_gnss(): mode: dev: No gnss available.")
+    Calculate_Vehicle_X_Y()
 
 
 
@@ -331,7 +367,7 @@ def listener_imu():
 
 
 
-# For accessing data.roverlat & data.roverlon
+# For accessing data.roverLat & data.roverLon
 def listener_gnss():
     if mode == "prod":
         rospy.Subscriber("gnss", gps, callback_gnss) # TODO change this callback
