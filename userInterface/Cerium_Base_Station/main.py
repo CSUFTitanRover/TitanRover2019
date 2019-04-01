@@ -17,10 +17,10 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-display_LAT_TL = 34.586220 # Upper left of map view
-display_LON_TL = -117.268741 # Upper left of map view
-display_LAT_BR = 34.579036 # Bottom right of map view
-display_LON_BR = -117.259951 # Bottom right of map view
+display_LAT_TL = 34.586260 # Upper left of map view
+display_LON_TL = -117.268806 # Upper left of map view
+display_LAT_BR = 34.579012 # Bottom right of map view
+display_LON_BR = -117.259833 # Bottom right of map view
 icon_arrow = "images/icon2.png"
 mode = "prod"                       # dev | prod
 new_destination = ""
@@ -220,8 +220,17 @@ def Calculate_Vehicle_X_Y():
     global display_LON_BR
     print("Calculate_Vehicle_X_Y(): roverLon:",roverLon)
     print("Calculate_Vehicle_X_Y(): roverLat:",roverLat)
-    vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR)) * abs(roverLon-display_LON_TL)
-    vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR)) * abs(roverLat-display_LAT_TL) * -1
+
+    if((roverLon != "") and (roverLat != "")):    
+        vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
+        vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
+
+
+        vehicle_x = vehicle_x * (float(roverLon)-display_LON_TL)
+        vehicle_y = vehicle_y * (float(roverLat)-display_LAT_TL) * -1
+    else:
+        print("Calculate: RoverLot and/or Lon empty")
+
     print("Calculate_Vehicle_X_Y(): X:",vehicle_x)
     print("Calculate_Vehicle_X_Y(): Y:",vehicle_y)    
 
@@ -232,7 +241,7 @@ def callback_gnss(data):
     global roverlon
     if (mode == "prod"):
         roverLat = data.roverLat
-        roverLon = data.roverLon
+        roverLon = data.roverLon     
     if (mode == "dev"):  # TODO Try elif here during refactoring
         print("callback_gnss(): mode: dev: No gnss available.")
     Calculate_Vehicle_X_Y()
