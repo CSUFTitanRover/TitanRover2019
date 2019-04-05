@@ -43,10 +43,13 @@ class Database():
         self._conn.commit()
         self._conn.close()
 
-    def insertMap(self, table_name, value1 = 0, value2 = 0, value3 = 0, value4 = 0):
-        self.open_db()
-        self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, ?, ?)''', (value1, value2, value3, value4)) 
-        self.close_db()
+    def insertMap(self, table_name, lat = 0, lon = 0, gps_type = 0, accel = 0):
+        #self.open_db()
+        if self.getAccelValue(lat, lon) == 0:
+            self.open_db()
+            self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, ?, ?)''', (lat, lon, gps_type, accel)) 
+            self.close_db()
+        
 
     # returns the size of table
     def getTableSize(self, tablename):
@@ -84,7 +87,7 @@ class Database():
 # This class is ment for import design test scripts are below and do not affect imports
 if __name__ == '__main__':
     # Testing the file
-    dbexist = True
+    dbexist = False
     if not dbexist:
         db = Database()
         db.insertMap(map,50.47643, -117.23244,'primary', -3.44)
