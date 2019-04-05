@@ -71,7 +71,7 @@ if __name__ == '__main__':
     dbexist = True
     if not dbexist:
         db = Database()
-        db.insertMap(map,34.43443, -117.23243,'primary', -3.44)
+        db.insertMap(map,34.43443, -117.23244,'primary', -3.44)
         print(db.getAccelValue(34.43443, -117.23243))
     else:
         pass
