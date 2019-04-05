@@ -59,11 +59,12 @@ class Database():
         self.open_db()
         lookup = 'SELECT lat, lon, acc_data FROM map WHERE lat =' + str(lat) + ' AND lon = ' + str(lon)
         val = self._cur.execute(lookup)
-        found = val.fetchone()[2]
-        self.close_db()
-        if found:
+        try:
+            found = val.fetchone()[2]
+            self.close_db()
             return found
-        else:
+        except TypeError as e:
+            self.close_db()
             return 0
 
     def updateMapAccel(self, lat, lon, Accel):
