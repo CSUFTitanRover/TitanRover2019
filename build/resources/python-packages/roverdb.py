@@ -10,7 +10,7 @@ class Database():
         self.create_rover_tables()
 
     def create_rover_tables(self):
-        self.open_db(self)
+        self.open_db()
         self._cur.execute('''CREATE TABLE IF NOT EXISTS map (
             item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
             lat	        REAL NOT NULL,
@@ -37,7 +37,7 @@ class Database():
         self._cur = self._conn.cursor()
         # Let rows be of dict/tuple type
         #self._conn.row_factory = sqlite3.Row
-        print ("Opened database %s as %r" % (self._dbname, self._conn))
+        #print ("Opened database %s as %r" % (self._dbname, self._conn))
 
     def close_db(self):
         self._conn.commit()
@@ -65,13 +65,28 @@ class Database():
             return found
         else:
             return 0
-    
+
+    def updateMapAccel(self, lat, lon, Accel):
+        self.open_db()
+        lookup = 'SELECT item_id, lat, lon, acc_data FROM map WHERE lat =' + str(lat) + ' AND lon = ' + str(lon)
+        val = self._cur.execute(lookup)
+        try:
+            found = val.fetchone()[0] 
+            self._cur.execute('UPDATE map SET acc_data = ' + str(Accel) + ' WHERE item_id = ' + str(found))
+            self.close_db()
+            return found
+        except TypeError as e:
+            self.close_db()
+            return 0
+
+
+# This class is ment for import design test scripts are below and do not affect imports
 if __name__ == '__main__':
     # Testing the file
     dbexist = True
     if not dbexist:
         db = Database()
-        db.insertMap(map,34.43443, -117.23244,'primary', -3.44)
-        print(db.getAccelValue(34.43443, -117.23243))
+        db.insertMap(map,50.47643, -117.23244,'primary', -3.44)
+        print(db.updateMapAccel(50.47643, -117.23244, 5.0))
     else:
         pass
