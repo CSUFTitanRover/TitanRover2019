@@ -48,6 +48,7 @@
        3) In main.py set value: `display_LAT_BR`
        4) In main.py set value: `display_LON_BR`
        5) In main.py set value: `mode` to `prod`
+       6) In main.py set value: `map_image` to `SETTING_CSUF` or `SETTING_VICT`
 
    Start base interface:
 

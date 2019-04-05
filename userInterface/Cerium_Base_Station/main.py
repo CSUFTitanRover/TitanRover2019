@@ -17,12 +17,13 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-display_LAT_TL = 34.586260 # Upper left of map view
-display_LON_TL = -117.268806 # Upper left of map view
-display_LAT_BR = 34.579012 # Bottom right of map view
-display_LON_BR = -117.259833 # Bottom right of map view
+display_LAT_TL = 34.586260          # Upper left of map view
+display_LON_TL = -117.268806        # Upper left of map view
+display_LAT_BR = 34.579012          # Bottom right of map view
+display_LON_BR = -117.259833        # Bottom right of map view
 icon_arrow = "images/icon2.png"
-mode = "prod"                       # dev | prod
+map_image = "SETTING_CSUF"          # map image "SETTING_CSUF" || "SETTING_VICT"
+mode = "dev"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
 new_destination_LatLon = "LAT"      # LAT | LON
@@ -35,9 +36,9 @@ socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
-vehicle_x = 0 # The x offset for the vehicle to be plotted on the map
-vehicle_y = 0 # The y offset for the vehicle to be plotted on the map
-version = "03.30.19.15.04.06"
+vehicle_x = 0                       # x offset of vehicle plotted on map
+vehicle_y = 0                       # y offset of vehicle plotted on map
+version = "04.04.19.23.05.26"
 yaw = 0
 
 
@@ -61,8 +62,6 @@ class Nav_Arrow(Sprite):
         if (mode == "dev"):
             image = pygame.transform.rotate(image, float(yaw) * -1)
         rect = image.get_rect(center=self.rect.center)
-        #self.rect.centerx = 81  #TODO Clean this up
-        #self.rect.centery = 419 #TODO Clean this up
         self.rect.centerx = vehicle_x
         self.rect.centery = vehicle_y       
         self.centerx = float(self.rect.centerx)
@@ -80,7 +79,8 @@ class Nav_Destination():
         self.screen.blit(self.high_score_image, self.high_score_rect)
     def update(self):
         high_score_str = new_destination
-        self.high_score_image = self.font.render(high_score_str, True, self.color_text, color_background)
+        self.high_score_image = self.font.render(high_score_str, 
+                                True, self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.bottom = self.screen_rect.bottom
@@ -98,7 +98,7 @@ class Nav_Background_Image(Sprite):
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/SETTING_VICT.png')
+        self.image = pygame.image.load('images/'+map_image+'.png')
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -293,15 +293,18 @@ def check_keydown_events(event):
     elif event.key == pygame.K_d:
         new_destination += "°"
         new_destination_type += "deg"
-        print("check_keydown_events(): new_destination_type: ",new_destination_type)
+        print("check_keydown_events(): new_destination_type: ",
+              new_destination_type)
     elif event.key == pygame.K_m:
         new_destination += "\'"
         new_destination_type += "min"
-        print("check_keydown_events(): new_destination_type: ",new_destination_type)
+        print("check_keydown_events(): new_destination_type: ",
+              new_destination_type)
     elif event.key == pygame.K_s:
         new_destination += "\""
         new_destination_type += "sec"
-        print("check_keydown_events(): new_destination_type: ",new_destination_type)   
+        print("check_keydown_events(): new_destination_type: ",
+              new_destination_type)   
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -367,6 +370,7 @@ def Clear_Destination_Set():
 
 
 
+
 def listener_imu():
     if mode == "prod":
         rospy.Subscriber("imu", fimu, callback_imu)
@@ -379,7 +383,7 @@ def listener_imu():
 # For accessing data.roverLat & data.roverLon
 def listener_gnss():
     if mode == "prod":
-        rospy.Subscriber("gnss", gps, callback_gnss) # TODO change this callback
+        rospy.Subscriber("gnss", gps, callback_gnss)
     elif mode == "dev":
         print("listener_gnss(): mode: dev: no gnss available")
 
