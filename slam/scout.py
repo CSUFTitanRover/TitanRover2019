@@ -1,15 +1,23 @@
-#!/usr/bin/env python
-import sys
-import subprocess
-import threading, keyboard
+#!/usr/bin/env python3.5
+import sys, subprocess, sqlite3
+import threading #, keyboard
 import sys, time, signal, socket, rospy
-from gnss.msg import gps
+from math import floor
+import math
+#from gnss.msg import gps
 #from sensor_msgs.msg import LaserScan
 #from finalimu.msg import fimu
+from fake_sensor_test.msg import gps
+from fake_sensor_test.msg import imu
 
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
-from driver import Driver as myDriver
+#from driver import Driver as myDriver
+from roverdb import Database
+
+__gps = (0.00, 0.00)
+__nextWaypoint = (0.00, 0.00)
+__distance = 0.0
 
 ######################################################################################
 # System Requirement of one argument for process instructions
@@ -19,7 +27,7 @@ if len (sys.argv) != 2 :
 
 mode_info = None
 acceleration = 0
-curr_pos = {0,0}
+curr_pos = (0,0,'0',0)
 
 # def connect():
 #     #msg = gps()
@@ -63,22 +71,34 @@ class Job(threading.Thread):
         rospy.init_node('listener', anonymous=True)
 
     def callback(self, data):
+        global db, curr_pos, acceleration
 
+        curr_position = str(gps_trunc(data.roverLat)) + ', ' + str(gps_trunc(data.roverLon)) + ', primary, ' + str(acceleration) + '\n'
+        curr_pos = gps_trunc(data.roverLat), gps_trunc(data.roverLon), 'primary', acceleration
+        '''
         if keyboard.is_pressed('q'):
-            curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'primary'
+            curr_pos = gps_trunc(data.roverLat) + ', ' + gps_trunc(data.roverLon) + ', primary, ' + acceleration
         else:
-            curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'breadcrumb'
+            curr_pos = gps_trunc(data.roverLat) + ', ' + gps_trunc(data.roverLon) + ', breadcrumb' + acceleration
+        '''
 
-        self._file.write(str(curr_pos) + "\n")
-        
+        self._file.write(curr_position)
+        db.insertMap(map, curr_pos[0], curr_pos[1], curr_pos[2], curr_pos[3])
 
-  
+    def update_acceleration(self, data):
+        global acceleration
+        #acceleration = data.accel
+        acceleration = data.pitch
+         
     def run(self):
         global curr_pos
         print('Thread #%s started' % self.ident)
  
         while not self.shutdown_flag.is_set():            
+            #rospy.Subscriber("gnss", gps, self.callback)
+            #rospy.Subscriber("imu", fimu, update_acceleration)
             rospy.Subscriber("gnss", gps, self.callback)
+            rospy.Subscriber("imu", imu, self.update_acceleration)
             time.sleep(0.5)
  
         print('Thread #%s stopped' % self.ident)
@@ -116,32 +136,65 @@ def start_scouting(sf):
                 
     print('Exiting main program')
 
-def update_acceleration(data):
-    global acceleration
-    acceleration = data.accel
+def gps_trunc(coord):
+    return floor(coord * 10 ** 5)/(10 ** 5)
+
+
 
 def mode_update(data):
     global mode_info
     mode_info = data.data
 
 def parse_map_file():
+    global __gps, __nextWaypoint
+    pathfile = open("pathfile.txt", "w")
     print('Parsing the Scout file')
     #erase dup and 5 dec
     #use distance between points and remove 3m
-    f = open("scoutfile","r")
-    location = f.readline()
-    while not EOFError:
-        myDriver.__gps = float(location.split(", "))
-        myDriver.__gps = myDriver.__nextWaypoint =  (math.floor(myDriver.__gps(0) * 10 ** 5)/(10 ** 5) , math.floor(myDriver.__gps(1) * 10 ** 5)/(10 ** 5))
-        myDriver.setDistance()
-        while myDriver._distance < 300 and not EOFError:  #distance in cm
+    f = open("scoutfile.txt","r")
+    try:
+        while True: #not EOFError:
             location = f.readline()
-            myDriver.__nextWaypoint = float(location.split(", "))
-            myDriver.__nextWaypoint =  (math.floor(myDriver.__nextWaypoint(0) * 10 ** 5)/(10 ** 5) , math.floor(myDriver.__nextWaypoint(1) * 10 ** 5)/(10 ** 5))
-            myDriver.setDistance()
+            location = location.split(", ")
+            __gps = float(location[0]), float(location[1])
+            __gps = __nextWaypoint =  (floor(__gps[0] * 10 ** 5)/(10 ** 5) , floor(__gps[1] * 10 ** 5)/(10 ** 5))
+            pathfile.write(str(__gps[0]) + ', ' + str(__gps[1]) + '\n')
+            setDistance()
+            while __distance < 300: #and not EOFError:  #distance in cm
+                location = f.readline()
+                location = location.split(", ")
+                __nextWaypoint = float(location[0]), float(location[1])
+                __nextWaypoint =  (floor(__nextWaypoint[0] * 10 ** 5)/(10 ** 5) , floor(__nextWaypoint[1] * 10 ** 5)/(10 ** 5))
+                setDistance()
 
-        #write myDriver.__gps to db
-    #write myDriver.__nextWaypoint to db
+            #write __gps to db
+        #write __nextWaypoint to db
+    except:
+        print('Closing pathfile.txt')
+        pathfile.close()
+
+def setDistance():
+    global __nextWaypoint, __gps, __distance
+    '''
+    Description:
+        Haversine formula - Calculates and sets self.__distance (in cm) given self.__gps 
+        and self.__nextWaypoint
+    Args:
+        None
+    Returns:
+        Nothing
+    '''
+    a1, b1 = __gps
+    a2, b2 = __nextWaypoint
+    radius = 6371 # km
+
+    da = math.radians(a2-a1)
+    dc = math.radians(b2-b1)
+    a = math.sin(da/2) * math.sin(da/2) + math.cos(math.radians(a1)) \
+        * math.cos(math.radians(a2)) * math.sin(dc/2) * math.sin(dc/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = radius * c
+    __distance = d * 100000
 
 
 #add button to catch tennis ball point
@@ -152,6 +205,7 @@ def ballMotherFucker():
 
 
 if __name__ == '__main__':
+    db = Database()
     if sys.argv[1] == 'scout':
         # gps_data = threading.Thread(target= connect)
         # gps_data.start()

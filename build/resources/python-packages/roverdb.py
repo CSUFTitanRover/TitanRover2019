@@ -1,7 +1,7 @@
 import sqlite3
 
 class Database():
-    _dbname = 'rover.sqlite3'
+    _dbname = '/home/skrapmi/TitanRover2019/slam/rover.sqlite3'
     _cur = None
     _conn = None
 
@@ -70,6 +70,19 @@ class Database():
             self.close_db()
             return 0
 
+    def getLatLonValue(self, item_id):
+        try:
+            self.open_db()
+            lookup = 'SELECT lat, lon FROM map WHERE item_id =' + str(item_id)
+            val = self._cur.execute(lookup)
+            coords = val.fetchall()
+            self.close_db()
+            return coords[0]
+        except TypeError as e:
+            self.close_db()
+            return 0, 0
+
+
     def updateMapAccel(self, lat, lon, Accel):
         self.open_db()
         lookup = 'SELECT item_id, lat, lon, acc_data FROM map WHERE lat =' + str(lat) + ' AND lon = ' + str(lon)
@@ -87,10 +100,12 @@ class Database():
 # This class is ment for import design test scripts are below and do not affect imports
 if __name__ == '__main__':
     # Testing the file
-    dbexist = False
+    dbexist = True
     if not dbexist:
         db = Database()
         db.insertMap(map,50.47643, -117.23244,'primary', -3.44)
         print(db.updateMapAccel(50.47643, -117.23244, 5.0))
     else:
+        db = Database()
+        print(db.getLatLonValue(5))
         pass

@@ -5,26 +5,24 @@
 # 2d array 1000 x 1000 m
 # precision to 0.00001 about 1m
 
-import sys , subprocess  
+import sys , subprocess, rospy, threading
+import random, time, math, re
+import numpy as np
+
 # To import packages from different Directories
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
-
-import random, time, math, re
-import numpy as np
-from geopy.distance import geodesic
-from geopy.distance import distance
-
+from roverdb import Database
 
 ## Global Variables
 measurement_array = []
 
 class slam():
-    from driver import Driver as myDriver
+    #from driver import Driver as myDriver
     from gnss.msg import gps as msg
-    from finalimu import fimu as imu
-    from mode.msg import mode as mode
-    import threading, rospy
+    from finalimu.msg import fimu as imu
+    #from mode.msg import mode as mode
+    
 
     global measurement_array
     _dimx = 0
@@ -36,6 +34,7 @@ class slam():
     _heading = 0
     fill_val = np.int8(-1)
     #myDriver = Driver()
+    db = Database()
     slam_map = []
     scan = []
     current_pos_gps = {'lat':0 ,'long': 0}  #(Latitude, Longitude)
@@ -61,17 +60,17 @@ class slam():
 
         ## Grid Offset start location latitude
         if current_lat > 0:
-            self.org_offset_gps['lat'] = truncate(current_lat,5) + (((self._dimx - 1.0)/2.0) * self._precision) #float(format(current_lat + ((self._dimx - 1)/2) * self._precision,'.5f')) 
+            self.org_offset_gps['lat'] = self.truncate(current_lat,5) + (((self._dimx - 1.0)/2.0) * self._precision) #float(format(current_lat + ((self._dimx - 1)/2) * self._precision,'.5f')) 
         else:
-            self.org_offset_gps['lat'] = truncate(current_lat,5) - (((self._dimx - 1.0)/2.0) * self._precision)  #float(format(current_lat - ((self._dimx - 1)/2) * self._precision,'.5f')) 
+            self.org_offset_gps['lat'] = self.truncate(current_lat,5) - (((self._dimx - 1.0)/2.0) * self._precision)  #float(format(current_lat - ((self._dimx - 1)/2) * self._precision,'.5f')) 
 
         ## Grid Offset start location longitude
-        self.org_offset_gps['long'] = truncate(current_long,5) - (((self._dimy - 1.0)/2.0) * self._precision)  #float(format(current_long - ((self._dimy - 1)/2) * self._precision,'.5f')) 
+        self.org_offset_gps['long'] = self.truncate(current_long,5) - (((self._dimy - 1.0)/2.0) * self._precision)  #float(format(current_long - ((self._dimy - 1)/2) * self._precision,'.5f')) 
 
         #ROS startup functions
         rospy.init_node('listener', anonymous=True)
-        auto_sensors = threading.Thread(target=update_sensors)
-        auto_sensors.start()
+        # auto_sensors = threading.Thread(target=update_sensors)
+        # auto_sensors.start()
     ###################################################################################
     ######## numpy made readible
     def fillMap(self):
@@ -141,14 +140,16 @@ class slam():
             [-1 -1 -1]]
         '''
     def expand_map(self):
-        import sqlite3
-        logindbfile = 'sql_file_name.db'
-        conn = sqlite3.connect(logindbfile)
-        cur = conn.cursor()
-        num_coords = sql size
+        # import sqlite3
+        # logindbfile = 'rover.sqlite3'
+        # conn = sqlite3.connect(logindbfile)
+        # cur = conn.cursor()
+        num_coords = self.db.getTableSize('map')
         for x in range(num_coords):
+            newpoints = self.db.getLatLonValue(num_coords)
+            print(newpoints)
             sql_lat, sql_lon = float(newpoints[0]), float(newpoints[1])
-            newgps = gps_trunc(sql_lat, sql_lon)
+            newgps = self.gps_trunc(sql_lat, sql_lon)
             
             # widen the x_plane
             if (newgps[0] - self._boarder) > (self.org_offset_gps['lat'] - (self._dimx * self._precision)):
@@ -182,14 +183,37 @@ class slam():
             '''
     ######################################################################################
     ####### math Truncating to 5 decimal positions without rounding
-    def truncate(f, n):
+    def truncate(self, f, n):
         return math.floor(f * 10 ** n) / 10 ** n
 
     ######################################################################################
     ####### math Truncating to 5 decimal positions without rounding
-    def gps_trunc(f_lat, f_lon)
+    def gps_trunc(self, f_lat, f_lon):
         import math
         return math.floor(f_lat * 10 ** 5)/(10 ** 5) , math.floor(f_lon * 10 ** 5)/(10 ** 5)
+
+    def setDistance():
+        global __nextWaypoint, __gps, __distance
+        '''
+        Description:
+            Haversine formula - Calculates and sets self.__distance (in cm) given self.__gps 
+            and self.__nextWaypoint
+        Args:
+            None
+        Returns:
+            Nothing
+        '''
+        a1, b1 = __gps
+        a2, b2 = __nextWaypoint
+        radius = 6371 # km
+
+        da = math.radians(a2-a1)
+        dc = math.radians(b2-b1)
+        a = math.sin(da/2) * math.sin(da/2) + math.cos(math.radians(a1)) \
+            * math.cos(math.radians(a2)) * math.sin(dc/2) * math.sin(dc/2)
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+        d = radius * c
+        __distance = d * 100000
 
     #Other 2D array design
     # gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
@@ -250,10 +274,11 @@ class slam():
 
         
     def update_sensors(self):
-        rospy.Subscriber("mode", mobility, update_mode)
-        rospy.Subscriber("imu", fimu, update_acceleration)
-        rospy.Subscriber("gnss", gps_position, update_gnss)
-        rospy.Subscriber("ce30", ce30, update_lidar)
+        pass
+        # rospy.Subscriber("mode", mobility, self.update_mode)
+        # rospy.Subscriber("imu", fimu, self.update_acceleration)
+        # rospy.Subscriber("gnss", gps_position, self.update_gnss)
+        # rospy.Subscriber("ce30", ce30, self.update_lidar)
         
     def update_lidar(self):
         pass
@@ -317,7 +342,7 @@ def main():
     slamit.scan = measurement_array
     slamit.fill_val = 2
     slamit.curr_dir = 45 
-    slamit.gps_to_map()
+    slamit.expand_map()
     print(slamit.slam_map)
 
     '''
