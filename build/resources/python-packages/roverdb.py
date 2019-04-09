@@ -101,6 +101,7 @@ class Database():
 if __name__ == '__main__':
     # Testing the file
     dbexist = True
+    
     if not dbexist:
         db = Database()
         db.insertMap(map,50.47643, -117.23244,'primary', -3.44)
