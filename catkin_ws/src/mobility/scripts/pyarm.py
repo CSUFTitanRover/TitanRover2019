@@ -1,9 +1,5 @@
 import serial
-import time
-import rospy
-from multijoy.msg import MultiJoy
-from sensor_msgs.msg import Joy
-
+ser = serial.Serial("/dev/serial/by-id/usb-Silicon_Labs_reach_9000-if00-port0", baudrate=115200)
 
 mapAxes = { 'J1' : {-1 : ('s05e', 's07e'), 1 : ('s04e', 's07e'), 0 : ('s06e', 's06e')},
             'J2' : {-1 : ('s15e', 's17e'), 1 : ('s14e', 's17e'), 0 : ('s16e', 's16e')}
@@ -61,33 +57,3 @@ def armData(data):
         ser.write("s36e")
         stat52 = False
     
-
-def main():
-    rospy.Subscriber('/multijoy', MultiJoy, armData)
-    rospy.spin()
-
-if __name__ == "__main__":
-    ser = serial.Serial("/dev/serial/by-id/usb-Silicon_Labs_reach_9000-if00-port0", baudrate=115200)
-    rospy.init_node("listener")
-    main()
-
-
-'''
-while True:
-    print("left")
-    #ser.write('s05e')
-    #time.sleep()
-    ser.write('s07e')
-    time.sleep(.5)
-
-    print("stop")
-    ser.write('s06e')
-    time.sleep(1)
-    
-    print("right")
-    ser.write('s04e')
-    ser.write('s07e')
-    time.sleep(1)
-    print("stop")
-    ser.write('s06e')
-    '''

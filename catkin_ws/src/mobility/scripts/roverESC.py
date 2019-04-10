@@ -6,7 +6,6 @@ Authors:      Georden Grabuskie / Shripal Rawal / Timothy Parks
 Emails:       ggrabuskie@csu.fullerton.edu / rawalshreepal000@gmail.com / parkstimothyj@gmail.com
 Description:  sends movement commands to ESC's and updates telemetry data node
 '''
-
 import rospy, subprocess, sys
 from multijoy.msg import MultiJoy
 from mobility.msg import Status
@@ -16,13 +15,13 @@ from sensor_msgs.msg import Joy
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from pysaber import DriveEsc
+import pyarm
+
 
 
 # Instantiating The Class Object For PySabertooth
 wheels = DriveEsc(128, "mixed")
 armMix = DriveEsc(129, "notMixed")
-
-
 
 IDLE_TIMEOUT = 15 #seconds
 #use actual button numbers instead of 0-indexed array
@@ -156,6 +155,7 @@ def main(data):
 
                 if telem.armAttached and telem.mode in {BOTH, ARM}:
                     armMix.driveBoth(int(127*data.joys[0].axes[2]),int(127*data.joys[0].axes[3]))#j2, j3
+                    pyarm.armData(data) #j1, j4, j51, j52
             except:
                 print("Mobility-main-drive error")
 
