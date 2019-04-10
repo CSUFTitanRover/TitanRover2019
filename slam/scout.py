@@ -5,7 +5,7 @@ import threading, keyboard
 import sys, time, signal, socket, rospy
 from gnss.msg import gps
 #from sensor_msgs.msg import LaserScan
-#from finalimu.msg import fimu
+from finalimu.msg import fimu
 
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
@@ -55,6 +55,9 @@ curr_pos = {0,0}
 #####################################################################################
 class Job(threading.Thread):
     _file = None
+    pitch = ""
+    lat = ""
+    lon = ""
 
     def __init__(self, sf):
         self._file = sf
@@ -62,24 +65,29 @@ class Job(threading.Thread):
         self.shutdown_flag = threading.Event()
         rospy.init_node('listener', anonymous=True)
 
-    def callback(self, data):
+    def getGps(self, data):
+        self.lat = str(data.roverLat)
+        self.lon = str(data.roverLon)
 
-        if keyboard.is_pressed('q'):
-            curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'primary'
-        else:
-            curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'breadcrumb'
+        #if keyboard.is_pressed('q'):
+        #curr_pos = str(data.roverLat) + ', ' + str(data.roverLon) + ', ' + str(gps_accel) + ', ' + 'primary'
+        #else:
+            #curr_pos = data.roverLat + ', ' + data.roverLon + ', ' + gps_accel + ', ' + 'breadcrumb'
 
-        self._file.write(str(curr_pos) + "\n")
-        
-
+    def getPitch(self, data):
+        self.pitch = str(data.yaw.pitch)
   
+
     def run(self):
         global curr_pos
         print('Thread #%s started' % self.ident)
  
         while not self.shutdown_flag.is_set():            
-            rospy.Subscriber("gnss", gps, self.callback)
-            time.sleep(0.5)
+            rospy.Subscriber("gnss", gps, self.getGps)
+            rospy.Subscriber("imu", fimu, self.getPitch)
+            curr_pos = '(' + self.lat + ", " + self.lon + ", " + self.pitch + '),' # + ", " + "primary"
+            self._file.write(str(curr_pos) ) # + "\n")
+            time.sleep(5)
  
         print('Thread #%s stopped' % self.ident)
 
@@ -128,7 +136,7 @@ def parse_map_file():
     print('Parsing the Scout file')
     #erase dup and 5 dec
     #use distance between points and remove 3m
-    f = open("scoutfile","r")
+    f = open("scoutfile.txt","r")
     location = f.readline()
     while not EOFError:
         myDriver.__gps = float(location.split(", "))

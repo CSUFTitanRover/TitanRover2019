@@ -15,7 +15,7 @@ from driver import Driver
 myDriver = Driver()
 
 # List with CSUF test coordinates
-points = [(33.882292,-117.884238)] #, (33.881974,-117.883981), (33.882292,-117.884238)]
+points = [(34.58380, -117.26050)]
 
 # Drives to each point in a list
 for point in points:
