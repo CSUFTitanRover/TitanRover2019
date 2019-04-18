@@ -443,6 +443,7 @@ def Convert_Coordinates():
 
 def Add_LAT_LON():
     global new_destination
+    #new_destination = new_destination_LatLon + " "
     new_destination = new_destination_LatLon + " "
 
 
