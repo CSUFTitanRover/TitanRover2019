@@ -35,7 +35,9 @@ ROS Kinetic or ROS Melodic
 
 ### Start onboard GPS:
 
-1) TBD
+1) `~/catkin_ws/src/gnss/src/`
+
+2) `python reach.py`
 
 
 ### Start onboard communication interface:
