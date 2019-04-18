@@ -56,7 +56,7 @@ def new_socket():
         Split_Coordinates(data)
         print("new_socket(): LAT: ",LAT)
         print("new_socket(): LON: ",LON)
-        db.insert(LAT,LON, "map")
+        db.insertMap("map",LAT,LON)
         conn.send(data)
     conn.close()
     return
