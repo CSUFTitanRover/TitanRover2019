@@ -27,13 +27,13 @@ global LON
 def Split_Coordinates(data):
     global LAT
     global LON
-    print("Split_Coordinates("+data+")")
+    print "Split_Coordinates("+data+")"
     data = data.split(" ")
-    print("Split_Coordinates(): data: ",data)
+    print "Split_Coordinates(): data: ",data
     LAT = float(data[0])
     LON = float(data[1])
-    print("Split_Coordinates(): LAT: ",LAT)
-    print("Split_Coordinates(): LON: ",LON)
+    print "Split_Coordinates(): LAT: ",LAT
+    print "Split_Coordinates(): LON: ",LON
 
 
 
@@ -50,16 +50,17 @@ def new_socket():
     db = Database()
     conn, addr = sock.accept()
     print('Connection address:', addr)
-    while 1:
-        data = conn.recv(256).decode()
-        print "new_socket(): Received: ", data
-        Split_Coordinates(data)
-        print ""
-        data = conn.recv(256)
-        print "new_socket(): LAT: ",LAT
-        print "new_socket(): LON: ",LON
-        db.insertMap("map",LAT,LON)
-        #conn.send(data)
+
+    data = conn.recv(256).decode()
+    print "new_socket(): Received: ", data
+    Split_Coordinates(data)
+    print ""
+    data = conn.recv(256)
+    print "new_socket(): LAT: ",LAT
+    print "new_socket(): LON: ",LON
+    db.insertMap("map",LAT,LON)
+    #conn.send(data)
+
     conn.close()
     return
 
