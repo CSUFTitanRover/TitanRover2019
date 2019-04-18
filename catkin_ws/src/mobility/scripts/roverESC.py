@@ -25,8 +25,6 @@ armMix = DriveEsc(129, "notMixed")
 
 IDLE_TIMEOUT = 15 #seconds
 #use actual button numbers instead of 0-indexed array
-b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12 = range(12)
-a1, a2, a3 = range(3)
 
 #comms source for reference (variables not used)
 ERROR = -1
@@ -50,9 +48,9 @@ telem.armAttached = True
 
 #global variables
 last_mode = telem.mode
-last_active
+last_active = 0
 #axes and buttons
-a1, a2, a3, a4, a5, a6, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12
+a1, a2, a3, a4, a5, a6, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12 = range(18)
 def setStop(joy_data):
     joy_data.joys[0].axes[0] = 0 
     joy_data.joys[0].axes[1] = 0 
