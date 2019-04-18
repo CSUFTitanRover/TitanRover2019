@@ -54,7 +54,7 @@ def new_socket():
         data = conn.recv(256).decode()
         print "new_socket(): Received: ", data
         Split_Coordinates(data)
-        print "\n"
+        print ""
         data = conn.recv(256)
         print "new_socket(): LAT: ",LAT
         print "new_socket(): LON: ",LON
