@@ -1,7 +1,7 @@
 import sqlite3
 
 class Database():
-    _dbname = '/home/skrapmi/TitanRover2019/slam/rover.sqlite3'
+    _dbname = 'rover.sqlite3'
     _cur = None
     _conn = None
 
@@ -19,7 +19,7 @@ class Database():
             acc_data    REAL NOT NULL
             )
             ''')
-        
+
         self._cur.execute('''CREATE TABLE IF NOT EXISTS pictures (
             item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
             pict_name   TEXT NOT NULL,
@@ -47,9 +47,9 @@ class Database():
         #self.open_db()
         if self.getAccelValue(lat, lon) == 0:
             self.open_db()
-            self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, ?, ?)''', (lat, lon, gps_type, accel)) 
+            self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, ?, ?)''', (lat, lon, gps_type, accel))
             self.close_db()
-        
+
 
     # returns the size of table
     def getTableSize(self, tablename):
@@ -88,7 +88,7 @@ class Database():
         lookup = 'SELECT item_id, lat, lon, acc_data FROM map WHERE lat =' + str(lat) + ' AND lon = ' + str(lon)
         val = self._cur.execute(lookup)
         try:
-            found = val.fetchone()[0] 
+            found = val.fetchone()[0]
             self._cur.execute('UPDATE map SET acc_data = ' + str(Accel) + ' WHERE item_id = ' + str(found))
             self.close_db()
             return found
@@ -101,7 +101,7 @@ class Database():
 if __name__ == '__main__':
     # Testing the file
     dbexist = True
-    
+
     if not dbexist:
         db = Database()
         db.insertMap(map,50.47643, -117.23244,'primary', -3.44)
