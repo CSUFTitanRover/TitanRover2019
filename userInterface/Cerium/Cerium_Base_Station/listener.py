@@ -52,10 +52,10 @@ def new_socket():
     print('Connection address:', addr)
     while 1:
         data = conn.recv(256).decode()
-        print("new_socket(): Received: ", data)
+        print "new_socket(): Received: ", data
         Split_Coordinates(data)
-        print("new_socket(): LAT: ",LAT)
-        print("new_socket(): LON: ",LON)
+        print "new_socket(): LAT: ",LAT
+        print "new_socket(): LON: ",LON
         db.insertMap("map",LAT,LON)
         #conn.send(data)
     conn.close()

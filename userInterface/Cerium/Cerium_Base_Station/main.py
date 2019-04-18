@@ -63,7 +63,7 @@ class Nav_Arrow(Sprite):
             image = pygame.transform.rotate(image, float(yaw) * -1)
         rect = image.get_rect(center=self.rect.center)
         self.rect.centerx = vehicle_x
-        self.rect.centery = vehicle_y       
+        self.rect.centery = vehicle_y
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
         self.screen.blit(image, rect)
@@ -79,7 +79,7 @@ class Nav_Destination():
         self.screen.blit(self.high_score_image, self.high_score_rect)
     def update(self):
         high_score_str = new_destination
-        self.high_score_image = self.font.render(high_score_str, 
+        self.high_score_image = self.font.render(high_score_str,
                                 True, self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
@@ -123,7 +123,7 @@ class Nav_Text():
         high_score = float(yaw)
         high_score_str = "{:,}".format(high_score)
         high_score_str = Append_Cardinal_Information(high_score_str)
-        self.high_score_image = self.font.render(high_score_str, True, 
+        self.high_score_image = self.font.render(high_score_str, True,
                                 self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
         self.high_score_rect.centerx = self.screen_rect.centerx
@@ -138,7 +138,7 @@ class Nav_Text():
 
 
 def Append_Cardinal_Information(data):
-    #print("Append_Cardinal_Information("+data+")")    
+    #print("Append_Cardinal_Information("+data+")")
     numerical_data = float(data)
     #print("Append_Cardinal_Information(): numerical_data:",numerical_data)
     data = data + "° "
@@ -221,7 +221,7 @@ def Calculate_Vehicle_X_Y():
     print("Calculate_Vehicle_X_Y(): roverLon:",roverLon)
     print("Calculate_Vehicle_X_Y(): roverLat:",roverLat)
 
-    if((roverLon != "") and (roverLat != "")):    
+    if((roverLon != "") and (roverLat != "")):
         vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
         vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
 
@@ -232,7 +232,7 @@ def Calculate_Vehicle_X_Y():
         print("Calculate: RoverLot and/or Lon empty")
 
     print("Calculate_Vehicle_X_Y(): X:",vehicle_x)
-    print("Calculate_Vehicle_X_Y(): Y:",vehicle_y)    
+    print("Calculate_Vehicle_X_Y(): Y:",vehicle_y)
 
 
 
@@ -241,7 +241,7 @@ def callback_gnss(data):
     global roverlon
     if (mode == "prod"):
         roverLat = data.roverLat
-        roverLon = data.roverLon     
+        roverLon = data.roverLon
     if (mode == "dev"):  # TODO Try elif here during refactoring
         print("callback_gnss(): mode: dev: No gnss available.")
     Calculate_Vehicle_X_Y()
@@ -264,7 +264,7 @@ def check_control_events():
 
 def Flip_LAT_LON():
     global new_destination_LatLon
-    if new_destination_LatLon == "LAT":           
+    if new_destination_LatLon == "LAT":
         new_destination_LatLon = "LON"
         print("Flip_LAT_LON(): new_destination_LatLon set to LON")
     else:
@@ -304,7 +304,7 @@ def check_keydown_events(event):
         new_destination += "\""
         new_destination_type += "sec"
         print("check_keydown_events(): new_destination_type: ",
-              new_destination_type)   
+              new_destination_type)
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -336,7 +336,7 @@ def check_keyup_events(event):
 def Get_Coordinate_Pair_String():
     global new_destination_set
     candidate = str(new_destination_set[0]) + " " + str(new_destination_set[1])
-    print("Get_Coordinate_Pair_String(): candidate: ",candidate)    
+    print("Get_Coordinate_Pair_String(): candidate: ",candidate)
     return candidate
 
 
@@ -349,11 +349,11 @@ def Attempt_Coordinate_Send():
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((socket_TCP_IP, socket_TCP_PORT))
             destination = Get_Coordinate_Pair_String()
-            dest_encoded = destination.encode() 
-            print("Attempt_Coordinate_Send(): Sending: ",dest_encoded)   
+            dest_encoded = destination.encode()
+            print("Attempt_Coordinate_Send(): Sending: ",dest_encoded)
             s.send(dest_encoded)
-            data = s.recv(1024)
-            print("Attempt_Coordinate_Send(): Received:",data)
+            #data = s.recv(1024)
+            #print("Attempt_Coordinate_Send(): Received:",data)
             s.close()
         else:
             print("Attempt_Coordinate_Send(): Failed: dev mode enabled")
@@ -390,8 +390,8 @@ def listener_gnss():
 
 
 def Remove_LAT_LON():
-    global new_destination    
-    new_destination = new_destination.split(" ")    
+    global new_destination
+    new_destination = new_destination.split(" ")
     new_destination = new_destination[1]
     print("Remove_LAT_LON(): new_destination: ",new_destination)
 
@@ -438,7 +438,7 @@ def Convert_Coordinates():
         new_destination = "Invalid"
     print("Convert_Coordinates(): Output Type:  ", new_destination_type)
     print("Convert_Coordinates(): Output Value: ", new_destination)
-    
+
 
 
 def Add_LAT_LON():
