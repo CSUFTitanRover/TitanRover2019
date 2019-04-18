@@ -42,7 +42,7 @@ ROS Kinetic or ROS Melodic
 
 ### Start onboard communication interface:
 
-1) `cd ~/TitanRover2019/userInterface/Cerium_Base_Station/`
+1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/`
 
 2) `python listener.py`
 
@@ -69,7 +69,7 @@ ROS Kinetic or ROS Melodic
 
 ### Start the base station interface:
 
-1) `cd ~/TitanRover2019/userInterface/Cerium_Base_Station`
+1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station`
 
 2) `source ~/catkin_ws/devel/setup.bash`
 
