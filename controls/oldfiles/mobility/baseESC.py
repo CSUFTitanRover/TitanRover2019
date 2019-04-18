@@ -15,6 +15,7 @@ Description: Mobility script reads in a text file with configuration for various
 #import roslib
 import rospy
 from mobility_topic.msg import joystick
+from sensor_msgs.msg import Joy
 
 import sys
 import os
@@ -27,6 +28,10 @@ import pygame
 import numpy as np
 import subprocess
 import serial
+
+#global variables
+throttle = .3
+
 
 global armAttached
 armAttached = False
@@ -81,7 +86,7 @@ else:
 try:    
     # For 433 Mhz Communication
     #/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0
-    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0', 19200, timeout=None)
+    rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0', 19200, timeout=None)
 except:
     print("433 Not Connected")
     sleep(3)
@@ -98,7 +103,6 @@ wheels = DriveEsc(128, "mixed")
 armMix = DriveEsc(129, "notMixed")
 
 # Instantiating The Class Object For LED Lights
-#led = Rover_Status_Lights(60)
 
 '''
 def runPwmPi():
@@ -155,7 +159,7 @@ def getRF(size_of_payload=2):                           #added argument to make 
             n = rf_uart.read(1)                         #the following byte should be the stop byte
             if n == b'f':
                 data = struct.unpack('2b', data)
-                #print(data)
+                print(data)
                 
                 # Publishing to ROS From Base Station
                 msg.header.stamp = rospy.Time.now()
@@ -188,19 +192,26 @@ def putRF(): #arguments to make function more self-contained and function-like
         rf_uart.flush() #waits until all data is written
         sleep(20)
 
-
 def main(data):
+    global throttle
+    if(data.buttons[3] and throttle < 1):
+        throttle += .1
+    if(data.buttons[1] and throttle > .3):
+        throttle -= .1
     try:
-        wheels.driveBoth(data.mobility.ForwardY, data.mobility.TurningX)
+        #wheels.driveBoth(data.mobility.ForwardY, data.mobility.TurningX)
+        wheels.driveBoth(int(throttle*127*data.axes[1]),int(throttle*127*data.axes[0]))
+        print('Wheels = ',int(throttle*127*data.axes[1]), ' ' , int(throttle*127*data.axes[0]))
+        print('Arm    = ',int(127*data.axes[2]), ' ' ,int(127*data.axes[3]))
+        #armMix.driveBoth(int(127*data.arm.J2),int(127*data.arm.J3))
+        armMix.driveBoth(int(127*data.axes[2]),int(127*data.axes[3]))
         #led.update(msg.mode.mode)
-        '''
         if armAttached:
-            moveJoints([data.arm.J1, data.arm.J4, data.arm.J51, data.arm.J52])
+            #moveJoints([data.arm.J1, data.arm.J4, data.arm.J51, data.arm.J52])
             if outVals[-1] != '4':
                 armMix.driveBoth(data.arm.J2, data.arm.J3)                        
             else:
                 armMix.driveBoth(-data.arm.J3, data.arm.J3)    
-        '''        
     except:
         print("Mobility-main-drive error")
 
@@ -221,16 +232,17 @@ if __name__ == '__main__':
         '''
 
         # Initialize for Publish
-        joy = rospy.Publisher('joystick', joystick, queue_size=10)
+        #joy = rospy.Publisher('joystick', joystick, queue_size=10)
         rospy.init_node('talker_base_mobility', anonymous=True)
         msg = joystick()
         
-        threading.Thread(target=getRF).start()
+        #threading.Thread(target=getRF).start()
         #threading.Thread(target=putRF).start()
 
         # Initialize for Subscribe
         #rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("joystick", joystick, main)
+        #rospy.Subscriber("joystick", joystick, main)
+        rospy.Subscriber("joy/0", Joy, main)
         rospy.spin()                                                  # Start the main loop
 
     except (KeyboardInterrupt, SystemExit):
