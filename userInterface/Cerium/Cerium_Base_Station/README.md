@@ -42,11 +42,13 @@ ROS Kinetic or ROS Melodic
 
 ### Start onboard communication interface:
 
-1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/`
+1. `source ~/catkin_ws/devel/setup.bash`
 
-2) `python listener.py`
+2. `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/`
 
-2a) If the port is already taken, find the PID and kill it:
+3. `python listener.py`
+
+4. If the port is already taken, find the PID and kill it:
   `sudo lsof -i:9600`
    and
   `sudo kill <PID>`
