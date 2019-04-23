@@ -21,7 +21,7 @@ from finalimu.msg import fimu
 wheels = DriveEsc(128, "mixed")
 
 MINFORWARDSPEED = 20
-MAXFORWARDSPEED = 70
+MAXFORWARDSPEED = 30
 TARGETTHRESHOLD = 40  # In cm
 CORRECTIONTHRESHOLD = 10  # In degrees
 HEADINGTHRESHOLD = 15 # In degrees
@@ -231,7 +231,7 @@ class Driver:
         try:
             rospy.Subscriber("imu", fimu, self.calculatePitch)
             #print(self.__pitch, int(self.__motor1 + self.__pitch * self.__motor1 / 50), int(self.__motor2 + self.__pitch * self.__motor2 / 50))
-            wheels.driveBoth(int(self.__motor1 + self.__pitch * self.__motor1 / 60), int(self.__motor2 + self.__pitch * self.__motor2 / 60))
+            wheels.driveBoth(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2 , int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2)
         except:
             print("Error Sending to PySaber")
 
