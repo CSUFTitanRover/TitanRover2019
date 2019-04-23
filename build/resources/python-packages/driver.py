@@ -23,7 +23,7 @@ wheels = DriveEsc(128, "mixed")
 MINFORWARDSPEED = 20
 MAXFORWARDSPEED = 70
 TARGETTHRESHOLD = 40  # In cm
-CORRECTIONTHRESHOLD = 90  # In degrees
+CORRECTIONTHRESHOLD = 10  # In degrees
 HEADINGTHRESHOLD = 15 # In degrees
 
 class Driver:
