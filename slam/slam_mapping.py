@@ -5,31 +5,36 @@
 # 2d array 1000 x 1000 m
 # precision to 0.00001 about 1m
 
-import sys , subprocess  
+import sys , subprocess, rospy, threading
+import random, time, math, re
+import numpy as np
+
 # To import packages from different Directories
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
-
-from driver import Driver
-import random, time, math, re
-import numpy as np
-from geopy.distance import geodesic
-from geopy.distance import distance
-
-def truncate(f, n):
-    return math.floor(f * 10 ** n) / 10 ** n
+from roverdb import Database
 
 ## Global Variables
 measurement_array = []
 
 class slam():
+    #from driver import Driver as myDriver
+    from gnss.msg import gps as msg
+    from finalimu.msg import fimu as imu
+    #from mode.msg import mode as mode
+    
+
     global measurement_array
     _dimx = 0
     _dimy = 0
     _precision = 0
-    _boarder = 10 # padded edge for map
+    _boarder = 0.00009 # padded edge for map
+    _acceleration = 0
+    _mode_info = 0
+    _heading = 0
     fill_val = np.int8(-1)
-    myDriver = Driver()
+    #myDriver = Driver()
+    db = Database()
     slam_map = []
     scan = []
     current_pos_gps = {'lat':0 ,'long': 0}  #(Latitude, Longitude)
@@ -38,6 +43,10 @@ class slam():
     #augments the gps after 5 decimal cut
     curr_dir = 0
     
+
+    
+
+
     ###################################################################################
     ######## Start the slam object this specific settings
     def __init__(self, dimx, dimy, precision, current_lat, current_long):
@@ -51,13 +60,17 @@ class slam():
 
         ## Grid Offset start location latitude
         if current_lat > 0:
-            self.org_offset_gps['lat'] = truncate(current_lat,5) + (((self._dimx - 1.0)/2.0) * self._precision) #float(format(current_lat + ((self._dimx - 1)/2) * self._precision,'.5f')) 
+            self.org_offset_gps['lat'] = self.truncate(current_lat,5) + (((self._dimx - 1.0)/2.0) * self._precision) #float(format(current_lat + ((self._dimx - 1)/2) * self._precision,'.5f')) 
         else:
-            self.org_offset_gps['lat'] = truncate(current_lat,5) - (((self._dimx - 1.0)/2.0) * self._precision)  #float(format(current_lat - ((self._dimx - 1)/2) * self._precision,'.5f')) 
+            self.org_offset_gps['lat'] = self.truncate(current_lat,5) - (((self._dimx - 1.0)/2.0) * self._precision)  #float(format(current_lat - ((self._dimx - 1)/2) * self._precision,'.5f')) 
 
         ## Grid Offset start location longitude
-        self.org_offset_gps['long'] = truncate(current_long,5) - (((self._dimy - 1.0)/2.0) * self._precision)  #float(format(current_long - ((self._dimy - 1)/2) * self._precision,'.5f')) 
-    
+        self.org_offset_gps['long'] = self.truncate(current_long,5) - (((self._dimy - 1.0)/2.0) * self._precision)  #float(format(current_long - ((self._dimy - 1)/2) * self._precision,'.5f')) 
+
+        #ROS startup functions
+        rospy.init_node('listener', anonymous=True)
+        # auto_sensors = threading.Thread(target=update_sensors)
+        # auto_sensors.start()
     ###################################################################################
     ######## numpy made readible
     def fillMap(self):
@@ -98,6 +111,7 @@ class slam():
         '''
 
     def insert_x(self):
+        self.org_offset_gps['long'] = (math.floor((self.org_offset_gps['long'] - self._precision) * 10 ** 5)) / 10 ** 5
         self.slam_map = np.insert(self.slam_map, 0, self.fill_val, axis=1)
         self._dimx += 1
         '''
@@ -111,6 +125,7 @@ class slam():
         '''
 
     def insert_y(self):
+        self.org_offset_gps['lat'] = (math.floor((self.org_offset_gps['lat'] + self._precision) * 10 ** 5)) / 10 ** 5
         temp_arr = np.full((1, self._dimx), self.fill_val, dtype=np.int8)
         self.slam_map = np.insert(temp_arr, 1, self.slam_map, axis=0)
         self._dimy += 1
@@ -125,35 +140,80 @@ class slam():
             [-1 -1 -1]]
         '''
     def expand_map(self):
-        import sqlite3
-        logindbfile = 'sql_file_name.db'
-        conn = sqlite3.connect(logindbfile)
-        cur = conn.cursor()
-        num_coords = sql size
+        # import sqlite3
+        # logindbfile = 'rover.sqlite3'
+        # conn = sqlite3.connect(logindbfile)
+        # cur = conn.cursor()
+        num_coords = self.db.getTableSize('map')
         for x in range(num_coords):
+            newpoints = self.db.getLatLonValue(num_coords)
+            print(newpoints)
+            sql_lat, sql_lon = float(newpoints[0]), float(newpoints[1])
+            newgps = self.gps_trunc(sql_lat, sql_lon)
             
-            newgps = gps_trunc(sql_lat, sql_lon)
             # widen the x_plane
-            if newgps[0] > org_offset_gps['lat'] + (self._dimx * self._precision * self._boarder):
-                for i in range(int(newgps[0] - (org_offset_gps['lat'] + (self._dimx * self._precision)) / self._precision) + self._boarder):
-                    append_x() #append difference amount
-            elif newgps[0] < org_offset_gps['lat'] - (self._precision * self._boarder):
-                for i in range(int((org_offset_gps['lat'] - (self._precision * self._boarder)) - newgps[0])):
-                    insert_x() #insert difference amount
+            if (newgps[0] - self._boarder) > (self.org_offset_gps['lat'] - (self._dimx * self._precision)):
+                #print('in first y appending ' + str(int(math.floor((newgps[0] - (org_offset_gps['lat'] -  (_dimy * _precision + _boarder))) * 10 ** 5))))
+                for i in range(int(math.floor((newgps[0] - (self.org_offset_gps['lat'] -  (self._dimy * self._precision + self._boarder))) * 10 ** 5))):
+                    self.append_x() #append difference amount
             
-            # widen the y-plane
-            if newgps[1] > org_offset_gps['long'] + (self._dimy * self._precision * self._boarder):
-                for i in range(int(newgps[1] - (org_offset_gps['long'] + (self._dimy * self._precision * self._boarder)))):
-                    append_y() #append difference amount
-            elif newgps[1] < org_offset_gps['long'] - (self._dimy * self._precision * self._boarder):
-                for i in range(int((org_offset_gps['long'] - (self._dimy * self._precision * self._boarder) - newgps[1]))):
-                    insert_y() #insert difference amount
+            if (newgps[0] + self._boarder) > self.org_offset_gps['lat']:
+                #print('in second y inserting ' + str(int(math.floor((newgps[0] + _boarder - org_offset_gps['lat'])* 10 ** 5))) + '\n')
+                for i in range(int(math.floor((newgps[0] + self._boarder - self.org_offset_gps['lat'])* 10 ** 5))):
+                    self.insert_y() #insert difference amount
+
+            # widen the x-plane
+            if (newgps[1] + self._boarder) > (self.org_offset_gps['long'] + (self._dimx * self._precision)):
+                #print('in first x appending ' + str(int(math.floor(((newgps[1] + _boarder) - (org_offset_gps['long'] + (_dimx * _precision))) * 10 ** 5))))
+                for i in range(int(math.floor(((newgps[1] + self._boarder) - (self.org_offset_gps['long'] + (self._dimx * self._precision))) * 10 ** 5))):
+                    self.append_x() #append difference amount
+            
+            if (newgps[1] - self._boarder) < self.org_offset_gps['long']:
+                #print('in second x inserting ' + str(int(math.floor((org_offset_gps['long'] - (newgps[1] - _boarder)) * 10 ** 5))) + '\n')
+                for i in range(int(math.floor((self.org_offset_gps['long'] - (newgps[1] - self._boarder)) * 10 ** 5))):
+                    self.insert_x() #insert difference amount
+            '''
+            if x == 0: #3400:
+                print('final info')
+                print('gps offset start is ' + str(org_offset_gps))
+                print('with a height of ' + str(_dimy) + ' and a width of ' + str(_dimx))
+                print('final lat is ' + str(org_offset_gps['lat'] - (_dimy * _precision)))
+                print('final long is ' + str(org_offset_gps['long'] + (_dimx * _precision)))
+                break #exit()
+            '''
+    ######################################################################################
+    ####### math Truncating to 5 decimal positions without rounding
+    def truncate(self, f, n):
+        return math.floor(f * 10 ** n) / 10 ** n
 
     ######################################################################################
     ####### math Truncating to 5 decimal positions without rounding
-    def gps_trunc(f_lat, f_lon)
+    def gps_trunc(self, f_lat, f_lon):
         import math
         return math.floor(f_lat * 10 ** 5)/(10 ** 5) , math.floor(f_lon * 10 ** 5)/(10 ** 5)
+
+    def setDistance():
+        global __nextWaypoint, __gps, __distance
+        '''
+        Description:
+            Haversine formula - Calculates and sets self.__distance (in cm) given self.__gps 
+            and self.__nextWaypoint
+        Args:
+            None
+        Returns:
+            Nothing
+        '''
+        a1, b1 = __gps
+        a2, b2 = __nextWaypoint
+        radius = 6371 # km
+
+        da = math.radians(a2-a1)
+        dc = math.radians(b2-b1)
+        a = math.sin(da/2) * math.sin(da/2) + math.cos(math.radians(a1)) \
+            * math.cos(math.radians(a2)) * math.sin(dc/2) * math.sin(dc/2)
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+        d = radius * c
+        __distance = d * 100000
 
     #Other 2D array design
     # gps_arr = [[0 for x in range(1000)] for y in range(1000)] 
@@ -214,12 +274,28 @@ class slam():
 
         
     def update_sensors(self):
-        
-        #get IMU
-        #get current GPS
-        #get lidar scan
         pass
-    
+        # rospy.Subscriber("mode", mobility, self.update_mode)
+        # rospy.Subscriber("imu", fimu, self.update_acceleration)
+        # rospy.Subscriber("gnss", gps_position, self.update_gnss)
+        # rospy.Subscriber("ce30", ce30, self.update_lidar)
+        
+    def update_lidar(self):
+        pass
+
+    def update_acceleration(data):
+        self._acceleration = data.yaw.pitch
+        self._heading = data.yaw.yaw
+
+    def update_mode(data):
+        self._mode_info = data.data
+
+    def update_gnss(data):
+        self.current_pos_gps['lat'] = data.roverLat
+        self.current_pos_gps['long'] = data.roverLong
+
+
+
 #######################################################################################
 def start_init():
     global measurement_array
@@ -266,7 +342,7 @@ def main():
     slamit.scan = measurement_array
     slamit.fill_val = 2
     slamit.curr_dir = 45 
-    slamit.gps_to_map()
+    slamit.expand_map()
     print(slamit.slam_map)
 
     '''
