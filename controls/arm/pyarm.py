@@ -70,24 +70,3 @@ if __name__ == "__main__":
     ser = serial.Serial("/dev/serial/by-id/usb-Silicon_Labs_reach_9000-if00-port0", baudrate=115200)
     rospy.init_node("listener")
     main()
-
-
-'''
-while True:
-    print("left")
-    #ser.write('s05e')
-    #time.sleep()
-    ser.write('s07e')
-    time.sleep(.5)
-
-    print("stop")
-    ser.write('s06e')
-    time.sleep(1)
-    
-    print("right")
-    ser.write('s04e')
-    ser.write('s07e')
-    time.sleep(1)
-    print("stop")
-    ser.write('s06e')
-    '''
