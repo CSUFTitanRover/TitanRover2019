@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
@@ -16,10 +18,10 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-display_LAT_TL = 34.586260          # Upper left of map view
-display_LON_TL = -117.268806        # Upper left of map view
-display_LAT_BR = 34.579012          # Bottom right of map view
-display_LON_BR = -117.259833        # Bottom right of map view
+display_LAT_TL = 33.890544          # Upper left of map view
+display_LON_TL = -117.892198        # Upper left of map view
+display_LAT_BR = 33.877529          # Bottom right of map view
+display_LON_BR = -117.876634        # Bottom right of map view
 icon_arrow = "images/icon2.png"
 map_image = "SETTING_CSUF"          # map image "SETTING_CSUF" || "SETTING_VICT"
 mode = "prod"                        # dev | prod
@@ -27,8 +29,10 @@ new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
 new_destination_LatLon = "LAT"      # LAT | LON
 new_destination_set = []            # A LAT/LON set
-roverLat = ""
-roverLon = ""
+global roverLat
+global roverLon
+roverLat = None
+roverLon = None
 screen_height = 500
 screen_width = 500
 socket_TCP_IP = '192.168.1.2'
@@ -220,13 +224,12 @@ def Calculate_Vehicle_X_Y():
     print("Calculate_Vehicle_X_Y(): roverLon:",roverLon)
     print("Calculate_Vehicle_X_Y(): roverLat:",roverLat)
 
-    if((roverLon != "") and (roverLat != "")):
+    if((roverLon != None) and (roverLat != None)):
         vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
         vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
 
-
-        vehicle_x = vehicle_x * (float(roverLon)-display_LON_TL)
-        vehicle_y = vehicle_y * (float(roverLat)-display_LAT_TL) * -1
+	vehicle_x = vehicle_x * (roverLon-display_LON_TL)
+        vehicle_y = vehicle_y * (roverLat-display_LAT_TL) * -1
     else:
         print("Calculate: RoverLot and/or Lon empty")
 
@@ -236,11 +239,13 @@ def Calculate_Vehicle_X_Y():
 
 
 def callback_gnss(data):
-    global roverlat
-    global roverlon
+    global roverLat
+    global roverLon
     if (mode == "prod"):
-        roverLat = data.roverLat
-        roverLon = data.roverLon
+        roverLat = float(data.roverLat)
+        roverLon = float(data.roverLon)
+	print("callback_gnss",roverLat)
+	print("callback_gnss",roverLon)
     if (mode == "dev"):  # TODO Try elif here during refactoring
         print("callback_gnss(): mode: dev: No gnss available.")
     Calculate_Vehicle_X_Y()

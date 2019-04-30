@@ -6,14 +6,14 @@ from math import floor
 import math
 from gnss.msg import gps
 #from sensor_msgs.msg import LaserScan
-from finalimu.msg import fimu
-#from fake_sensor_test.msg import gps
-#from fake_sensor_test.msg import imu
+#from finalimu.msg import fimu
+from fake_sensor_test.msg import gps
+from fake_sensor_test.msg import imu
 
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from driver import Driver as myDriver
-#from roverdb import Database
+from roverdb import Database
 
 __gps = (0.00, 0.00)
 __nextWaypoint = (0.00, 0.00)
@@ -73,7 +73,7 @@ class Job(threading.Thread):
     def callback(self, data):
         global db, curr_pos, acceleration
 
-        curr_position = str(gps_trunc(float(data.roverLat))) + ', ' + str(gps_trunc(float(data.roverLon))) + ', primary, ' + str(acceleration) + '\n'
+        curr_position = str(gps_trunc(float(data.roverLat))) + ', ' + str(gps_trunc(float(data.roverLon))) + ', breadcrumb, ' + str(acceleration) + '\n'
         curr_pos = gps_trunc(float(data.roverLat)), gps_trunc(float(data.roverLon)), 'primary', acceleration
         '''
         if keyboard.is_pressed('q'):
@@ -98,7 +98,7 @@ class Job(threading.Thread):
             #rospy.Subscriber("gnss", gps, self.callback)
             #rospy.Subscriber("imu", fimu, update_acceleration)
             rospy.Subscriber("gnss", gps, self.callback)
-            rospy.Subscriber("imu", fimu, self.update_acceleration)
+            rospy.Subscriber("imu", imu, self.update_acceleration)
             time.sleep(0.5)
  
         print('Thread #%s stopped' % self.ident)
@@ -115,10 +115,10 @@ def service_shutdown(signum, frame):
 
 def start_scouting(sf):
     print("Scouting has begun")
-    #rospy.init_node('listener', anonymous=True)
+    rospy.init_node('listener', anonymous=True)
     #rospy.Subscriber("mode", mobility, mode_update)
-    #rospy.Subscriber("imu", fimu, update_acceleration)
-    #rospy.Subscriber("gnss", gps_position, store_info)
+    rospy.Subscriber("imu", fimu, update_acceleration)
+    rospy.Subscriber("gnss", gps_position, store_info)
     signal.signal(signal.SIGTERM, service_shutdown)
     signal.signal(signal.SIGINT, service_shutdown)
     print('Starting main program')
@@ -205,10 +205,10 @@ def ballMotherFucker():
 
 
 if __name__ == '__main__':
-    #db = Database()
+    db = Database()
     if sys.argv[1] == 'scout':
-        # gps_data = threading.Thread(target= connect)
-        # gps_data.start()
+        #gps_data = threading.Thread(target= connect)
+        #gps_data.start()
         
         scoutfile = open("scoutfile.txt", "w")
         start_scouting(scoutfile)
