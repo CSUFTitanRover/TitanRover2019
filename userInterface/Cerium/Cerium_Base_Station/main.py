@@ -2,7 +2,6 @@
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
 
-
 from finalimu.msg import fimu
 from gnss.msg import gps
 from pygame.sprite import Sprite
@@ -141,7 +140,7 @@ def Append_Cardinal_Information(data):
     #print("Append_Cardinal_Information("+data+")")
     numerical_data = float(data)
     #print("Append_Cardinal_Information(): numerical_data:",numerical_data)
-    data = data + "° "
+    data = data + "* "
     if(numerical_data > 270):
         data = data + "NW"
     elif(numerical_data == 270):
@@ -291,7 +290,7 @@ def check_keydown_events(event):
         process_destination()
         new_destination_type = ""
     elif event.key == pygame.K_d:
-        new_destination += "°"
+        new_destination += "*"
         new_destination_type += "deg"
         print("check_keydown_events(): new_destination_type: ",
               new_destination_type)
@@ -413,7 +412,7 @@ def Convert_Coordinates():
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
     elif (new_destination_type == "degmin"):
-        d = new_destination.split("°")
+        d = new_destination.split("*")
         m = d[1]
         d = d[0]
         m = m[:-1]
@@ -423,7 +422,7 @@ def Convert_Coordinates():
         new_destination = DD
     elif (new_destination_type == "degminsec"):
         d = new_destination
-        d = d.split("°")
+        d = d.split("*")
         m = d[1]
         d = d[0]
         m = m.split("\'")
