@@ -22,7 +22,7 @@ display_LAT_TL = 33.890544          # Upper left of map view
 display_LON_TL = -117.892198        # Upper left of map view
 display_LAT_BR = 33.877529          # Bottom right of map view
 display_LON_BR = -117.876634        # Bottom right of map view
-icon_arrow = "images/icon2.png"
+icon_arrow = "/home/roverbase/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/images/icon2.png"
 map_image = "SETTING_CSUF"          # map image "SETTING_CSUF" || "SETTING_VICT"
 mode = "prod"                        # dev | prod
 new_destination = ""
@@ -101,7 +101,7 @@ class Nav_Background_Image(Sprite):
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/'+map_image+'.png')
+        self.image = pygame.image.load('/home/roverbase/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/images/'+map_image+'.png')
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -168,13 +168,14 @@ def Append_Cardinal_Information(data):
 # This is the application entry point.
 def run():
     if (mode == "dev"):
-        print("run(): mode: dev")
+    	print("run(): mode: dev")
     else:
         print("run(): mode: prod")
     global new_destination
     global new_destination_LatLon
     pygame.init()
     status = rospy.init_node('listener', anonymous=True)
+    print("Cannot connect")
     print("run(): ROS Status:", status)
     print("run(): Starting IMU subscriber")
     listener_imu() # Start listening to ROS
@@ -377,17 +378,22 @@ def Clear_Destination_Set():
 
 def listener_imu():
     if mode == "prod":
-        rospy.Subscriber("imu", fimu, callback_imu)
+	try:
+		rospy.Subscriber("imu", fimu, callback_imu)
+	except:
+		print("IMU subscriber error")		
     elif mode == "dev":
         print("listener_imu(): mode: dev: heading is simulated")
         rospy.Subscriber("chatter", String, callback_imu)
 
 
-
 # For accessing data.roverLat & data.roverLon
 def listener_gnss():
     if mode == "prod":
-        rospy.Subscriber("gnss", gps, callback_gnss)
+	try:
+        	rospy.Subscriber("gnss", gps, callback_gnss)
+	except:
+		print("GNSS subscriber error")
     elif mode == "dev":
         print("listener_gnss(): mode: dev: no gnss available")
 
