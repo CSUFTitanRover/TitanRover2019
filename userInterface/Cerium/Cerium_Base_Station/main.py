@@ -3,7 +3,7 @@
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
-
+import conf.coords as coords
 from finalimu.msg import fimu
 from gnss.msg import gps
 from pygame.sprite import Sprite
@@ -171,6 +171,7 @@ def run():
     	print func_name,"mode: dev"
     else:
         print func_name,"mode: prod"
+    print "A_TL_LAT",coords.F_DESC
     global new_destination
     global new_destination_LatLon
     pygame.init()
