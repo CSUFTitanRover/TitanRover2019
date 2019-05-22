@@ -15,7 +15,6 @@ import sqlite3
 import sys
 
 
-
 color_background = (0,0,0)
 color_text = (255, 255, 255)
 display_LAT_TL = 33.890544          # Upper left of map view
@@ -41,7 +40,7 @@ socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "04.04.19.23.05.26"
+version = "05.20.19.19.56"
 yaw = 0
 
 
@@ -167,19 +166,19 @@ def Append_Cardinal_Information(data):
 
 # This is the application entry point.
 def run():
+    func_name = "run()\t"
     if (mode == "dev"):
-    	print("run(): mode: dev")
+    	print func_name,"mode: dev"
     else:
-        print("run(): mode: prod")
+        print func_name,"mode: prod"
     global new_destination
     global new_destination_LatLon
     pygame.init()
     status = rospy.init_node('listener', anonymous=True)
-    print("Cannot connect")
-    print("run(): ROS Status:", status)
-    print("run(): Starting IMU subscriber")
+    print func_name, "ROS Status:", status
+    print func_name, "Starting IMU subscriber"
     listener_imu() # Start listening to ROS
-    print("run(): Starting GPS subscriber")
+    print func_name, "Starting GPS subscriber"
     listener_gnss() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
