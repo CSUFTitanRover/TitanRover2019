@@ -17,12 +17,12 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
-display_LAT_TL = 33.890544          # Upper left of map view
-display_LON_TL = -117.892198        # Upper left of map view
-display_LAT_BR = 33.877529          # Bottom right of map view
-display_LON_BR = -117.876634        # Bottom right of map view
+display_LAT_TL = 33.882568          # Upper left of map view
+display_LON_TL = -117.884696        # Upper left of map view
+display_LAT_BR = 33.881175          # Bottom right of map view
+display_LON_BR = -117.881258        # Bottom right of map view
 icon_arrow = "images/icon2.png"
-map_image = "SETTING_CSUF"          # map image "SETTING_CSUF" || "SETTING_VICT"
+map_image = "A"          # map image "SETTING_CSUF" || "SETTING_VICT"
 mode = "prod"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
@@ -32,8 +32,8 @@ global roverLat
 global roverLon
 roverLat = None
 roverLon = None
-screen_height = 500
-screen_width = 500
+screen_height = 530
+screen_width = 1070
 socket_TCP_IP = '192.168.1.2'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
@@ -384,7 +384,7 @@ def listener_imu():
 		print("IMU subscriber error")
     elif mode == "dev":
         print("listener_imu(): mode: dev: heading is simulated")
-        rospy.Subscriber("chatter", String, callback_imu)
+        rospy.Subscriber("imu", imu, callback_imu)
 
 
 # For accessing data.roverLat & data.roverLon
