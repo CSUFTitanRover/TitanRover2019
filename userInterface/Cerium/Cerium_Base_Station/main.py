@@ -44,7 +44,7 @@ socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.22.2019.19.00"
+version = "05.22.2019.19.04"
 yaw = 0
 
 
