@@ -17,12 +17,12 @@ import sys
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
+display_image = None
 display_LAT_TL = 33.882568          # Upper left of map view
 display_LON_TL = -117.884696        # Upper left of map view
 display_LAT_BR = 33.881175          # Bottom right of map view
 display_LON_BR = -117.881258        # Bottom right of map view
 icon_arrow = "images/icon2.png"
-map_image = "A"                     # map image "SETTING_CSUF" || "SETTING_VICT"
 mode = "dev"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
@@ -38,7 +38,7 @@ socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.22.2019.19.04"
+version = "05.22.2019.21.45"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -55,9 +55,9 @@ class Nav_Arrow(Sprite):
         self.centery = float(self.rect.centery)
     def blitme(self):
         image = self.image
-        if (mode == "prod"):
+        if mode == "prod":
             image = pygame.transform.rotate(image, yaw * -1)
-        if (mode == "dev"):
+        if mode == "dev":
             image = pygame.transform.rotate(image, float(yaw) * -1)
         rect = image.get_rect(center=self.rect.center)
         self.rect.centerx = vehicle_x
@@ -71,7 +71,7 @@ class Nav_Background_Image(Sprite):
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/'+map_image+'.png')
+        self.image = pygame.image.load('images/'+display_image+'.png')
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -343,17 +343,14 @@ def Get_Coordinate_Pair_String():
 
 # Application entry point
 def Launch_Application():
+    Set_Display_Data("A")
     func_name = "Launch_Application()\t"
-    print func_name,"mode: prod"
-    print "A_DESC",coords.A_DESC
     global new_destination
     global new_destination_LatLon
     pygame.init()
     status = rospy.init_node('listener', anonymous=True)
     print func_name, "ROS Status:", status
-    print func_name, "Starting IMU subscriber"
     Subscribe_To_IMU() # Start listening to ROS
-    print func_name, "Starting GPS subscriber"
     Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
@@ -393,6 +390,22 @@ def Remove_LAT_LON():
     new_destination = new_destination.split(" ")
     new_destination = new_destination[1]
     print("Remove_LAT_LON(): new_destination: ",new_destination)
+
+def Set_Display_Data(ID):
+    global display_image
+    global display_LAT_TL
+    global display_LON_TL
+    global display_LAT_BR
+    global display_LON_BR
+    TL_LAT = ID + "_TL_LAT"
+    TL_LON = ID + "_TL_LON"
+    BR_LAT = ID + "_BR_LAT"
+    BR_LON = ID + "_BR_LON"
+    display_image = ID
+    display_LAT_TL = coords.coords[TL_LAT]
+    display_LON_TL = coords.coords[TL_LON]
+    display_LAT_BR = coords.coords[BR_LAT]
+    display_LON_BR = coords.coords[BR_LON]
 
 def Subscribe_To_GNSS():
     function_name = "Subscribe_To_GNSS()\t"
