@@ -28,7 +28,7 @@ display_LON_TL = -117.884696        # Upper left of map view
 display_LAT_BR = 33.881175          # Bottom right of map view
 display_LON_BR = -117.881258        # Bottom right of map view
 icon_arrow = "images/icon2.png"
-map_image = "A"          # map image "SETTING_CSUF" || "SETTING_VICT"
+map_image = "A"                     # map image "SETTING_CSUF" || "SETTING_VICT"
 mode = "dev"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
@@ -44,7 +44,7 @@ socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.22.19.17.45"
+version = "05.22.2019.19.00"
 yaw = 0
 
 
@@ -169,14 +169,11 @@ def Append_Cardinal_Information(data):
 
 
 
-# This is the application entry point.
+# Application entry point
 def run():
     func_name = "run()\t"
-    if (mode == "dev"):
-    	print func_name,"mode: dev"
-    else:
-        print func_name,"mode: prod"
-    print "A_TL_LAT",coords.F_DESC
+    print func_name,"mode: prod"
+    print "A_DESC",coords.A_DESC
     global new_destination
     global new_destination_LatLon
     pygame.init()
@@ -235,11 +232,11 @@ def callback_gnss(data):
     if mode == "prod":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-        print function_name,"MODE",mode,"GNSS TRUE",roverLat,roverLon
+        print function_name,"\tMODE",mode,"\tGNSS TRUE\t",roverLat,roverLon
     if mode == "dev":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-        print function_name,"MODE",mode,"GNSS SIMULATED",roverLat,roverLon
+        print function_name,"\tMODE",mode,"\tGNSS SIMULATED\t\t",roverLat,roverLon
     Calculate_Vehicle_X_Y()
 
 
@@ -249,12 +246,10 @@ def callback_imu(data):
     global yaw
     if mode == "prod":
         yaw = data.yaw.yaw
-        print function_name,"MODE",mode,"HEADING TRUE",yaw
+        print function_name,"\tMODE",mode,"\tHEADING TRUE\t",yaw
     if mode == "dev":
-        #yaw = data.data
         yaw = data.yaw
-        #yaw = data.yaw.yaw
-        print function_name,"MODE",mode,"HEADING SIMULATED",yaw
+        print function_name,"\tMODE",mode,"\tHEADING SIMULATED\t",yaw
 
 
 
