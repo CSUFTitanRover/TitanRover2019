@@ -41,9 +41,11 @@ ROS Kinetic or ROS Melodic
 
 ### 2) [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
 
-1) `cd ~/catkin_ws/src/fake_sensor_test/launch`
+1) `source ~/catkin_ws/devel/setup.bash`
 
-2) `roslaunch fake.launch`
+2) `cd ~/catkin_ws/src/fake_sensor_test/launch`
+
+3) `roslaunch fake.launch`
 
 
 ### 3) Start the onboard communication interface (development or production mode):
