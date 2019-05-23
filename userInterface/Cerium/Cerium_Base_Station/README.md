@@ -28,7 +28,7 @@ ROS Kinetic or ROS Melodic
 3) `git pull`
 
 
-### 2 OPTION A) If desired mode is production, start the onboard IMU and GNSS
+### 2) [OPTION A] If the desired mode is production, start the onboard IMU and GNSS
 
 1) `cd ~/catkin_ws/src/finalimu/src/`
 
@@ -39,14 +39,14 @@ ROS Kinetic or ROS Melodic
 4) `python reach.py`
 
 
-### 2 OPTION B) If desired mode is development, start the simulated IMU and GNSS publisher:
+### 2 [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
 
 1) `~/catkin_ws/src/fake_sensor_test/launch`
 
 2) `roslaunch fake.launch`
 
 
-### 3) Start onboard communication interface (development or production mode):
+### 3) Start the onboard communication interface (development or production mode):
 
 1. `source ~/catkin_ws/devel/setup.bash`
 
@@ -54,10 +54,11 @@ ROS Kinetic or ROS Melodic
 
 3. `python listener.py`
 
-4. If the port is already taken, find the PID and kill it:
-  `sudo lsof -i:9600`
-   and
-  `sudo kill <PID>`
+4. If the port is already taken, find the PID and kill it with steps 5 and 6
+  
+5. `sudo lsof -i:9600`
+   
+6. `sudo kill <PID>`
 
 
 ### 4) Prepare the base station interface:
