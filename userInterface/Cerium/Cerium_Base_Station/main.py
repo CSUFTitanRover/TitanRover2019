@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
+
+
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
+
+
 
 import conf.coords as coords
 from finalimu.msg import fimu
@@ -13,6 +17,7 @@ import rospy
 import socket
 import sqlite3
 import sys
+
 
 
 color_background = (0,0,0)
@@ -140,9 +145,9 @@ class Nav_Text():
 
 
 def Append_Cardinal_Information(data):
-    #print("Append_Cardinal_Information("+data+")")
+    function_name = "Append_Cardinal_Information("
+    print function_name
     numerical_data = float(data)
-    #print("Append_Cardinal_Information(): numerical_data:",numerical_data)
     data = data + "* "
     if(numerical_data > 270):
         data = data + "NW"
@@ -375,7 +380,6 @@ def Clear_Destination_Set():
 
 
 
-
 def listener_imu():
     if mode == "prod":
 	try:
@@ -385,6 +389,7 @@ def listener_imu():
     elif mode == "dev":
         print("listener_imu(): mode: dev: heading is simulated")
         rospy.Subscriber("imu", imu, callback_imu)
+
 
 
 # For accessing data.roverLat & data.roverLon
