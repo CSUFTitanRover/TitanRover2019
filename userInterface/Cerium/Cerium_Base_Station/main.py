@@ -18,10 +18,10 @@ import sys
 color_background = (0,0,0)
 color_text = (255, 255, 255)
 display_image = None
-display_LAT_TL = 33.882568          # Upper left of map view
-display_LON_TL = -117.884696        # Upper left of map view
-display_LAT_BR = 33.881175          # Bottom right of map view
-display_LON_BR = -117.881258        # Bottom right of map view
+display_LAT_TL = None
+display_LON_TL = None
+display_LAT_BR = None
+display_LON_BR = None
 icon_arrow = "images/icon2.png"
 mode = "dev"                        # dev | prod
 new_destination = ""
@@ -76,8 +76,8 @@ class Nav_Background_Image(Sprite):
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
     def blitme(self):
+        image = pygame.image.load('images/'+display_image+'.png')
         rect = self.image.get_rect()
-        image = self.image
         rect = image.get_rect(center=rect.center)
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -175,6 +175,22 @@ def Attempt_Coordinate_Send():
         Clear_Destination_Set()
     else:
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
+
+# Determines which map tile to display
+def Calculate_Display():
+    function_name = "Calculate_Display()"
+    global roverLat
+    global roverLon
+    result = "_"
+    for x in coords.coords_list:
+        if (roverLat <= coords.coords_data[x+"_TL_LAT"] and
+            roverLat >= coords.coords_data[x+"_BR_LAT"]):
+            if (roverLon <= coords.coords_data[x+"_BR_LON"] and
+                roverLon >= coords.coords_data[x+"_TL_LON"]):
+                result = x
+                print function_name,"ANSWER",result
+                Set_Display_Data(result)
+                return
 
 def Calculate_Vehicle_X_Y():
     function_name = "Calculate_Vehicle_X_Y()"
@@ -362,6 +378,7 @@ def Launch_Application():
     while True:
         screen.fill(color_background)
         Check_Control_Events()
+        Calculate_Display()
         nav_bkgd.blitme()
         nav_arrow.blitme()
         nav_destination.blitme()
@@ -402,10 +419,10 @@ def Set_Display_Data(ID):
     BR_LAT = ID + "_BR_LAT"
     BR_LON = ID + "_BR_LON"
     display_image = ID
-    display_LAT_TL = coords.coords[TL_LAT]
-    display_LON_TL = coords.coords[TL_LON]
-    display_LAT_BR = coords.coords[BR_LAT]
-    display_LON_BR = coords.coords[BR_LON]
+    display_LAT_TL = coords.coords_data[TL_LAT]
+    display_LON_TL = coords.coords_data[TL_LON]
+    display_LAT_BR = coords.coords_data[BR_LAT]
+    display_LON_BR = coords.coords_data[BR_LON]
 
 def Subscribe_To_GNSS():
     function_name = "Subscribe_To_GNSS()\t"
