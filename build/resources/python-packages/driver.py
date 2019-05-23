@@ -15,10 +15,13 @@ import math
 import numpy as np # remove if no longer needed
 from decimal import Decimal
 import rospy
-from pysaber import DriveEsc
+#from pysaber import DriveEsc
 from gnss.msg import gps
 from finalimu.msg import fimu
-wheels = DriveEsc(128, "mixed")
+#wheels = DriveEsc(128, "mixed")
+from multijoy.msg import MultiJoy
+from sensor_msgs.msg import Joy
+from time import time
 
 MINFORWARDSPEED = 20
 MAXFORWARDSPEED = 30
@@ -230,10 +233,29 @@ class Driver:
         '''
         try:
             rospy.Subscriber("imu", fimu, self.calculatePitch)
+            rospy.init_node('driver', anonymous=True)
+            driver_pub=rospy.Publisher('/multijoy', MultiJoy, queue_size=1)   #publisher for multijoy
+            telecommand = Multijoy()
+            telecommand.header.stamp.secs = int(time())             #set multijoy timestamp
+            telecommand.header.stamp.nsecs = time() - int(time())
+            telecommand.source = 3
+            telecommand.njoys = 1
+            t_joy = Joy()
+            t_joy.header = telecommand.header   #copy multijoy timestamp
+            t_joy.axes.append(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2)        #only set the motors for driving
+            t_joy.axes.append(int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2))
+            for i in range(4):          #all other values set to 0
+                t_joy.axes.append(0)
+            for i in range(18):
+                t_joy.buttons.append(0)
+            telecommand.joys.append(t_joy)
+            driver_pub.publish(telecommand)
+            
             #print(self.__pitch, int(self.__motor1 + self.__pitch * self.__motor1 / 50), int(self.__motor2 + self.__pitch * self.__motor2 / 50))
-            wheels.driveBoth(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2 , int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2)
-        except:
-            print("Error Sending to PySaber")
+            #wheels.driveBoth(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2 , int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2)
+            except(KeyboardInterrupt, SystemExit):
+                rospy.signal_shutdown("scheduled")
+                raise
 
     def setGps(self, data):
         '''
