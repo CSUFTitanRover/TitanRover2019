@@ -39,7 +39,7 @@ ROS Kinetic or ROS Melodic
 4) `python reach.py`
 
 
-### 2 [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
+### 2) [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
 
 1) `~/catkin_ws/src/fake_sensor_test/launch`
 
