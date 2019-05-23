@@ -55,24 +55,24 @@ ROS Kinetic or ROS Melodic
 3. `python listener.py`
 
 4. If the port is already taken, find the PID and kill it with steps 5 and 6
-  
+
 5. `sudo lsof -i:9600`
-   
+
 6. `sudo kill <PID>`
 
 
 ### 4) Prepare the base station interface:
-  
+
 1) In main.py set value: `display_LAT_TL`
-  
+
 2) In main.py set value: `display_LON_TL`
-  
+
 3) In main.py set value: `display_LAT_BR`
-  
+
 4) In main.py set value: `display_LON_BR`
-  
+
 5) In main.py set value: `mode` to `prod`
-  
+
 6) In main.py set value: `map_image` to `SETTING_CSUF` or `SETTING_VICT`
 
 
@@ -87,4 +87,5 @@ ROS Kinetic or ROS Melodic
 4) `export ROS_IP="192.168.1.204"` # Connecting machine
 
 5) `export ROS_HOSTNAME="192.168.1.204"` # Connecting machine
- 5) `python3 main.py`
+
+6) `python main.py`
