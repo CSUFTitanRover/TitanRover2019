@@ -57,3 +57,15 @@ def armData(a5, a6, b5, b6, b7, b8):
         ser.write("s36e")
         stat52 = False
     
+<<<<<<< HEAD:controls/arm/pyarm.py
+
+def main():
+    rospy.Subscriber('/multijoy', MultiJoy, armData)
+    rospy.spin()
+
+if __name__ == "__main__":
+    ser = serial.Serial("/dev/serial/by-id/usb-Silicon_Labs_reach_9000-if00-port0", baudrate=115200)
+    rospy.init_node("listener")
+    main()
+=======
+>>>>>>> 2360eff60b483e42c42da46a62158f3b89abca17:catkin_ws_OLD/src/mobility/scripts/pyarm.py
