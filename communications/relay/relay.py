@@ -100,10 +100,7 @@ def getRF():
 '''
 def getSock():
     try:
-        #s.listen(1)
-        #client_socket, addr = s.accept()
         while True:
-            #data = client_socket.recv(128)
             data, addr = s.recvfrom(128) # buffer size is 1024 bytes
             if data:
                 return data

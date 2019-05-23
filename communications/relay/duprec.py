@@ -1,8 +1,6 @@
 #!/usr/bin/env python3.5
-import socket
-import serial
+import socket, serial
 from time import time, sleep
-import socket
 from struct import pack, unpack
 rf_uart = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_Rover433_0001-if00-port0', 19200, timeout=10)
 rf_uart.setDTR(True) #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
@@ -44,7 +42,8 @@ def getRF():
                 return (op, data)
             else: #if that last byte wasn't the stop byte then something is out of sync
                 print("BAD ENDS")
-                return -1
+                return -1    
+
 
 gps_flag = True
 while True:
