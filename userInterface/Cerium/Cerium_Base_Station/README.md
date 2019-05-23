@@ -26,18 +26,25 @@ ROS Kinetic or ROS Melodic
 2) `git pull`
 
 
-### Start the onboard IMU:
+### If desired mode is production, start the onboard IMU:
 
 1) `cd ~/catkin_ws/src/finalimu/src/`
 
 2) `python cal_run_Imu.py`
 
 
-### Start onboard GPS:
+### If desired mode is production, start the onboard GPS:
 
 1) `~/catkin_ws/src/gnss/src/`
 
 2) `python reach.py`
+
+
+### If desired mode is development, start the simulated IMU and GNSS publisher:
+
+1) `~/catkin_ws/src/fake_sensor_test/launch`
+
+2) `roslaunch fake.launch`
 
 
 ### Start onboard communication interface:
