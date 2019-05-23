@@ -10,6 +10,7 @@
 import conf.coords as coords
 from finalimu.msg import fimu
 from gnss.msg import gps
+from fake_sensor_test.msg import imu
 from pygame.sprite import Sprite
 from std_msgs.msg import String
 import pygame
@@ -28,13 +29,11 @@ display_LAT_BR = 33.881175          # Bottom right of map view
 display_LON_BR = -117.881258        # Bottom right of map view
 icon_arrow = "images/icon2.png"
 map_image = "A"          # map image "SETTING_CSUF" || "SETTING_VICT"
-mode = "prod"                        # dev | prod
+mode = "dev"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
 new_destination_LatLon = "LAT"      # LAT | LON
 new_destination_set = []            # A LAT/LON set
-global roverLat
-global roverLon
 roverLat = None
 roverLon = None
 screen_height = 530
@@ -184,9 +183,9 @@ def run():
     status = rospy.init_node('listener', anonymous=True)
     print func_name, "ROS Status:", status
     print func_name, "Starting IMU subscriber"
-    listener_imu() # Start listening to ROS
+    Subscribe_To_IMU() # Start listening to ROS
     print func_name, "Starting GPS subscriber"
-    listener_gnss() # Start listening to ROS
+    Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
     nav_arrow = Nav_Arrow(screen)
@@ -202,15 +201,6 @@ def run():
         nav_destination.blitme()
         nav_text.blitme()
         pygame.display.flip()
-
-
-
-def callback_imu(data):
-    global yaw
-    if (mode == "prod"):
-        yaw = data.yaw.yaw
-    if (mode == "dev"):
-        yaw = data.data
 
 
 
@@ -239,15 +229,32 @@ def Calculate_Vehicle_X_Y():
 
 
 def callback_gnss(data):
-    function_name = "callback_gnss()"
+    function_name = "callback_gnss()\t"
     global roverLat
     global roverLon
-    if (mode == "prod"):
+    if mode == "prod":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-    if (mode == "dev"):  # TODO Try elif here during refactoring
-        print function_name, "mode: dev: No gnss available."
+        print function_name,"MODE",mode,"GNSS TRUE",roverLat,roverLon
+    if mode == "dev":
+        roverLat = float(data.roverLat)
+        roverLon = float(data.roverLon)
+        print function_name,"MODE",mode,"GNSS SIMULATED",roverLat,roverLon
     Calculate_Vehicle_X_Y()
+
+
+
+def callback_imu(data):
+    function_name = "callback_imu()\t"
+    global yaw
+    if mode == "prod":
+        yaw = data.yaw.yaw
+        print function_name,"MODE",mode,"HEADING TRUE",yaw
+    if mode == "dev":
+        #yaw = data.data
+        yaw = data.yaw
+        #yaw = data.yaw.yaw
+        print function_name,"MODE",mode,"HEADING SIMULATED",yaw
 
 
 
@@ -373,27 +380,32 @@ def Clear_Destination_Set():
 
 
 
-def listener_imu():
+def Subscribe_To_IMU():
+    function_name = "Subscribe_To_IMU()\t"
+    connection_status = False
     if mode == "prod":
-	try:
-		rospy.Subscriber("imu", fimu, callback_imu)
-	except:
-		print("IMU subscriber error")
+        connection_status = rospy.Subscriber("imu", fimu, callback_imu)
     elif mode == "dev":
-        print("listener_imu(): mode: dev: heading is simulated")
-        rospy.Subscriber("imu", imu, callback_imu)
+        connection_status = rospy.Subscriber("imu", imu, callback_imu)
+    if connection_status == False:
+        print function_name,"SUBSCRIPTION FAILURE"
+    else:
+        print function_name,"SUBSCRIPTION SUCCESS"
 
 
 
 # For accessing data.roverLat & data.roverLon
-def listener_gnss():
+def Subscribe_To_GNSS():
+    function_name = "Subscribe_To_GNSS()\t"
+    connection_status = False
     if mode == "prod":
-	try:
-        	rospy.Subscriber("gnss", gps, callback_gnss)
-	except:
-		print("GNSS subscriber error")
+        connection_status = rospy.Subscriber("gnss", gps, callback_gnss)
     elif mode == "dev":
-        print("listener_gnss(): mode: dev: no gnss available")
+        connection_status = rospy.Subscriber("gnss", gps, callback_gnss)
+    if connection_status == False:
+        print function_name,"SUBSCRIPTION FAILURE"
+    else:
+        print function_name,"SUBSCRIPTION SUCCESS"
 
 
 
