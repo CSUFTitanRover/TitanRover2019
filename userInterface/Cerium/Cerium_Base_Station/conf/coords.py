@@ -1,4 +1,4 @@
-coords = {
+coords_data = {
     "A_DESC":"E-21",
     "B_DESC":"Campus Drive",
     "C_DESC":"Intramural Fields",
@@ -30,3 +30,4 @@ coords = {
     "F_BR_LAT":38.375195,
     "F_BR_LON":-110.706477,
 }
+coords_list = ["A","B","C","D","E","F"]
