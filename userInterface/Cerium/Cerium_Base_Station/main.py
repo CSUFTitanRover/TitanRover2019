@@ -45,7 +45,7 @@ socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.20.19.19.56"
+version = "05.22.19.17.45"
 yaw = 0
 
 
@@ -144,9 +144,10 @@ class Nav_Text():
 
 
 
+# Takes numerical vehicle heading value and appends a degree symbol and a
+# a cardinal direction abbreviation.
 def Append_Cardinal_Information(data):
     function_name = "Append_Cardinal_Information()"
-    print function_name
     numerical_data = float(data)
     data = data + "* "
     if(numerical_data > 270):
@@ -225,17 +226,15 @@ def Calculate_Vehicle_X_Y():
     global display_LON_TL
     global display_LAT_BR
     global display_LON_BR
-    print function_name, roverLon
-    print function_name, roverLat
     if((roverLon != None) and (roverLat != None)):
         vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
         vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
         vehicle_x = vehicle_x * (roverLon-display_LON_TL)
         vehicle_y = vehicle_y * (roverLat-display_LAT_TL) * -1
     else:
-        print("Calculate: RoverLot and/or Lon empty")
-    print function_name, vehicle_x
-    print function_name, vehicle_y
+        print function_name,"roverLon and/or roverLat empty"
+    print function_name,"Vehicle is at:",roverLat,roverLon
+    print function_name,"Plot vehicle at:",vehicle_x,vehicle_y
 
 
 
