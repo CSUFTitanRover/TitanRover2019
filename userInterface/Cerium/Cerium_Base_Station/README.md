@@ -19,14 +19,16 @@ ROS Kinetic or ROS Melodic
 
 ## Usage
 
-### Make sure the onboard software is up to date:
+### 1) Make sure the onboard and base station software is up to date:
 
-1) `cd ~/TitanRover2019/`
+1) On both machines, perform the following commands:
 
-2) `git pull`
+2) `cd ~/TitanRover2019/`
+
+3) `git pull`
 
 
-### If desired mode is production, start the onboard IMU and GNSS
+### 2 OPTION A) If desired mode is production, start the onboard IMU and GNSS
 
 1) `cd ~/catkin_ws/src/finalimu/src/`
 
@@ -37,14 +39,14 @@ ROS Kinetic or ROS Melodic
 4) `python reach.py`
 
 
-### If desired mode is development, start the simulated IMU and GNSS publisher:
+### 2 OPTION B) If desired mode is development, start the simulated IMU and GNSS publisher:
 
 1) `~/catkin_ws/src/fake_sensor_test/launch`
 
 2) `roslaunch fake.launch`
 
 
-### Start onboard communication interface (development or production mode):
+### 3) Start onboard communication interface (development or production mode):
 
 1. `source ~/catkin_ws/devel/setup.bash`
 
@@ -58,7 +60,7 @@ ROS Kinetic or ROS Melodic
   `sudo kill <PID>`
 
 
-### Prepare the base station interface:
+### 4) Prepare the base station interface:
   
 1) In main.py set value: `display_LAT_TL`
   
@@ -73,7 +75,7 @@ ROS Kinetic or ROS Melodic
 6) In main.py set value: `map_image` to `SETTING_CSUF` or `SETTING_VICT`
 
 
-### Start the base station interface:
+### 5) Start the base station interface:
 
 1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station`
 
