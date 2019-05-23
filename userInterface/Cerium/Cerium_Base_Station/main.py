@@ -145,7 +145,7 @@ class Nav_Text():
 
 
 def Append_Cardinal_Information(data):
-    function_name = "Append_Cardinal_Information("
+    function_name = "Append_Cardinal_Information()"
     print function_name
     numerical_data = float(data)
     data = data + "* "
@@ -214,9 +214,7 @@ def callback_imu(data):
 
 
 def Calculate_Vehicle_X_Y():
-    # LAT is up and down
-    # LON is side to side
-    #print("Calculate_Vehicle_X_Y()")
+    function_name = "Calculate_Vehicle_X_Y()"
     global roverLat
     global roverLon
     global vehicle_x
@@ -227,33 +225,29 @@ def Calculate_Vehicle_X_Y():
     global display_LON_TL
     global display_LAT_BR
     global display_LON_BR
-    print("Calculate_Vehicle_X_Y(): roverLon:",roverLon)
-    print("Calculate_Vehicle_X_Y(): roverLat:",roverLat)
-
+    print function_name, roverLon
+    print function_name, roverLat
     if((roverLon != None) and (roverLat != None)):
         vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
         vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
-
-	vehicle_x = vehicle_x * (roverLon-display_LON_TL)
+        vehicle_x = vehicle_x * (roverLon-display_LON_TL)
         vehicle_y = vehicle_y * (roverLat-display_LAT_TL) * -1
     else:
         print("Calculate: RoverLot and/or Lon empty")
-
-    print("Calculate_Vehicle_X_Y(): X:",vehicle_x)
-    print("Calculate_Vehicle_X_Y(): Y:",vehicle_y)
+    print function_name, vehicle_x
+    print function_name, vehicle_y
 
 
 
 def callback_gnss(data):
+    function_name = "callback_gnss()"
     global roverLat
     global roverLon
     if (mode == "prod"):
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-	print("callback_gnss",roverLat)
-	print("callback_gnss",roverLon)
     if (mode == "dev"):  # TODO Try elif here during refactoring
-        print("callback_gnss(): mode: dev: No gnss available.")
+        print function_name, "mode: dev: No gnss available."
     Calculate_Vehicle_X_Y()
 
 
