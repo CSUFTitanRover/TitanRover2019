@@ -6,6 +6,7 @@
 from finalimu.msg import fimu
 from gnss.msg import gps
 from fake_sensor_test.msg import imu
+from conf.landmarks import LandmarkManager
 from pygame.sprite import Sprite
 from std_msgs.msg import String
 import conf.coords as coords
@@ -23,6 +24,7 @@ display_LON_TL = None
 display_LAT_BR = None
 display_LON_BR = None
 icon_arrow = "images/vehicle_icon.png"
+landmarks = LandmarkManager()
 mode = "dev"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
@@ -37,7 +39,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.23.2019.19.34"
+version = "05.23.2019.21.10"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -355,8 +357,9 @@ def Get_Coordinate_Pair_String():
 
 # Application entry point
 def Launch_Application():
-    Set_Display_Data("A")
     func_name = "Launch_Application()"
+    Set_Display_Data("A") # TODO Remove this, should no longer be necessary
+    global landmarks
     global new_destination
     global new_destination_LatLon
     pygame.init()
@@ -366,6 +369,8 @@ def Launch_Application():
     Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
+    LandmarkManager.Add_Landmark(landmarks,0,0,"BALL")
+    print LandmarkManager.Get_Landmarks(landmarks)
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
