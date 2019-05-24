@@ -303,6 +303,9 @@ def Check_Keydown_Events(event):
     elif event.key == pygame.K_9:
         new_destination += "9"
 
+def Check_Keyup_Events(event):
+    pass
+
 def Clear_Destination_Set():
     global new_destination_set
     del new_destination_set[:]
@@ -353,7 +356,7 @@ def Flip_LAT_LON():
 
 def Get_Coordinate_Pair_String():
     global new_destination_set
-    candidate = str(new_destination_set[0]) + " " + str(new_destination_set[1])
+    candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
     print("Get_Coordinate_Pair_String(): candidate: ",candidate)
     return candidate
 
