@@ -22,7 +22,7 @@ display_LAT_TL = None
 display_LON_TL = None
 display_LAT_BR = None
 display_LON_BR = None
-icon_arrow = "images/icon2.png"
+icon_arrow = "images/vehicle_icon.png"
 mode = "dev"                        # dev | prod
 new_destination = ""
 new_destination_type = ""           # DD | DDM | DMS
@@ -35,10 +35,9 @@ screen_width = 1070
 socket_TCP_IP = '192.168.1.237'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
-socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.23.2019.19.30"
+version = "05.23.2019.19.34"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -129,7 +128,6 @@ class Nav_Text():
 
 def Add_LAT_LON():
     global new_destination
-    #new_destination = new_destination_LatLon + " "
     new_destination = new_destination_LatLon + " "
 
 # Takes numerical vehicle heading value and appends a degree symbol and a
