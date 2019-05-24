@@ -210,28 +210,28 @@ def Calculate_Vehicle_X_Y():
     print function_name,"Plot vehicle at:",vehicle_x,vehicle_y
 
 def Callback_GNSS(data):
-    function_name = "Callback_GNSS()\t"
+    function_name = "Callback_GNSS()"
     global roverLat
     global roverLon
     if mode == "prod":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-        print function_name,"\tMODE",mode,"\tGNSS TRUE\t",roverLat,roverLon
+        print function_name,"MODE",mode,"GNSS TRUE",roverLat,roverLon
     if mode == "dev":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-        print function_name,"\tMODE",mode,"\tGNSS SIMULATED\t\t",roverLat,roverLon
+        print function_name,"MODE",mode,"GNSS SIMULATED",roverLat,roverLon
     Calculate_Vehicle_X_Y()
 
 def Callback_IMU(data):
-    function_name = "Callback_IMU()\t"
+    function_name = "Callback_IMU()"
     global yaw
     if mode == "prod":
         yaw = data.yaw.yaw
-        print function_name,"\tMODE",mode,"\tHEADING TRUE\t",yaw
+        print function_name,"MODE",mode,"HEADING TRUE",yaw
     if mode == "dev":
         yaw = data.yaw
-        print function_name,"\tMODE",mode,"\tHEADING SIMULATED\t",yaw
+        print function_name,"MODE",mode,"HEADING SIMULATED",yaw
 
 # Respond to keypress and mouse events.
 def Check_Control_Events():
@@ -358,7 +358,7 @@ def Get_Coordinate_Pair_String():
 # Application entry point
 def Launch_Application():
     Set_Display_Data("A")
-    func_name = "Launch_Application()\t"
+    func_name = "Launch_Application()"
     global new_destination
     global new_destination_LatLon
     pygame.init()
@@ -423,7 +423,7 @@ def Set_Display_Data(ID):
     display_LON_BR = coords.coords_data[BR_LON]
 
 def Subscribe_To_GNSS():
-    function_name = "Subscribe_To_GNSS()\t"
+    function_name = "Subscribe_To_GNSS()"
     connection_status = False
     if mode == "prod":
         connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
@@ -435,7 +435,7 @@ def Subscribe_To_GNSS():
         print function_name,"SUBSCRIPTION SUCCESS"
 
 def Subscribe_To_IMU():
-    function_name = "Subscribe_To_IMU()\t"
+    function_name = "Subscribe_To_IMU()"
     connection_status = False
     if mode == "prod":
         connection_status = rospy.Subscriber("imu", fimu, Callback_IMU)
