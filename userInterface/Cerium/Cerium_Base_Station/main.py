@@ -6,10 +6,10 @@
 from finalimu.msg import fimu
 from gnss.msg import gps
 from fake_sensor_test.msg import imu
-from conf.landmarks import LandmarkManager
+from res.landmarks import LandmarkManager
 from pygame.sprite import Sprite
 from std_msgs.msg import String
-import conf.coords as coords
+import res.coords as coords
 import pygame
 import rospy
 import socket
@@ -39,7 +39,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.23.2019.21.10"
+version = "05.23.2019.21.43"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -370,6 +370,8 @@ def Launch_Application():
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
     LandmarkManager.Add_Landmark(landmarks,0,0,"BALL")
+    LandmarkManager.Add_Landmark(landmarks,0,0,"HINT")
+    LandmarkManager.Add_Landmark(landmarks,0,0,"TEST")
     print LandmarkManager.Get_Landmarks(landmarks)
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
