@@ -65,9 +65,9 @@ ROS Kinetic or ROS Melodic
 
 ### 4) Start the base station interface:
 
-1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station`
+1) `source ~/catkin_ws/devel/setup.bash`
 
-2) `source ~/catkin_ws/devel/setup.bash`
+2) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station`
 
 3) `export ROS_MASTER_URI="http://192.168.1.2:11311/"` # Vehicle's IP
 
