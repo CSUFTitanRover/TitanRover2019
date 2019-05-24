@@ -38,7 +38,7 @@ socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.23.2019.18.55"
+version = "05.23.2019.19.30"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
