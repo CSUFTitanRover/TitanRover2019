@@ -32,13 +32,13 @@ roverLat = None
 roverLon = None
 screen_height = 530
 screen_width = 1070
-socket_TCP_IP = '192.168.1.2'
+socket_TCP_IP = '192.168.1.237'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 socket_message = "SOCKET TEST"
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.22.2019.21.45"
+version = "05.23.2019.18.55"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -160,18 +160,13 @@ def Attempt_Coordinate_Send():
     global new_destination_set
     if len(new_destination_set) == 2:
         print("Attempt_Coordinate_Send(): Ready to send")
-        if mode == "prod":
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((socket_TCP_IP, socket_TCP_PORT))
-            destination = Get_Coordinate_Pair_String()
-            dest_encoded = destination.encode()
-            print("Attempt_Coordinate_Send(): Sending: ",dest_encoded)
-            s.send(dest_encoded)
-            #data = s.recv(1024)
-            #print("Attempt_Coordinate_Send(): Received:",data)
-            s.close()
-        else:
-            print("Attempt_Coordinate_Send(): Failed: dev mode enabled")
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((socket_TCP_IP, socket_TCP_PORT))
+        destination = Get_Coordinate_Pair_String()
+        dest_encoded = destination.encode()
+        print("Attempt_Coordinate_Send(): Sending: ",dest_encoded)
+        s.send(dest_encoded)
+        s.close()
         Clear_Destination_Set()
     else:
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
