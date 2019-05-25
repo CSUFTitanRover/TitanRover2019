@@ -41,7 +41,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.24.2019.19.06"
+version = "05.24.2019.19.58"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -361,8 +361,8 @@ def Launch_Application():
     Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
-    LandmarkManager.Add_Landmark(landmarks,33.88160,-117.883147,"BALL",icon_ball,screen)
-    LandmarkManager.Add_Landmark(landmarks,33.88165,-117.883149,"HINT",icon_hint,screen)
+    LandmarkManager.Add_Landmark(landmarks,33.881698, -117.882716,"BALL",icon_ball,screen)
+    LandmarkManager.Add_Landmark(landmarks,33.881644, -117.883808,"HINT",icon_hint,screen)
     lm =  LandmarkManager.Get_Landmarks(landmarks)
     for x in range(0,len(lm)):
         print "LANDMARK",lm[x].id
@@ -375,7 +375,8 @@ def Launch_Application():
         screen.fill(color_background)
         Check_Control_Events()
         Calculate_Display()
-        nav_bkgd.blitme()
+        nav_bkgd.blitme() # Always blit the background first
+        LandmarkManager.Blit_Landmarks(landmarks,screen_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
         nav_destination.blitme()
         nav_text.blitme()

@@ -12,15 +12,16 @@ class Landmark(object):
         self.type = type # BALL | HINT | VEHICLE
         self.x = None
         self.y = None
-    def blitme(self):
-        Calculate_Landmark_X_Y()
+        self.yaw = 0
+    def blitme(self,screen_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR):
+        self.Calculate_Landmark_X_Y(screen_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         image = self.image
-        image = pygame.transform.rotate(image, yaw * -1)
+        image = pygame.transform.rotate(image, self.yaw * -1)
         rect = image.get_rect(center=self.rect.center)
-        self.rect.centerx = vehicle_x
-        self.rect.centery = vehicle_y
+        self.rect.centerx = self.x
+        self.rect.centery = self.y
         self.screen.blit(image, rect)
-    def Calculate_Landmark_X_Y():
+    def Calculate_Landmark_X_Y(self,screen_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR):
         function_name = "Calculate_Landmark_X_Y()"
         if((self.lat != None) and (self.lon != None)):
             self.x = (screen_width  / abs(display_LON_TL-display_LON_BR))
@@ -29,5 +30,3 @@ class Landmark(object):
             self.y = self.y * (self.lat-display_LAT_TL) * -1
         else:
             print function_name,"ERROR: lat and/or lon empty"
-        print function_name,"landmark lat/lon:",self.lat,self.lon
-        print function_name,"landmarl x/y:",self.x,self.y
