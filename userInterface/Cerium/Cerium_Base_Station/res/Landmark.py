@@ -6,12 +6,12 @@ class Landmark(object):
         self.screen = screen
         self.image = pygame.image.load(image)
         self.rect = self.image.get_rect()
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
         self.lat = lat
         self.lon = lon
         self.id = id
-        self.type = type # BALL | HINT
+        self.type = type # BALL | HINT | VEHICLE
+        self.x = None
+        self.y = None
     def blitme(self):
         Calculate_Landmark_X_Y()
         image = self.image
@@ -19,17 +19,15 @@ class Landmark(object):
         rect = image.get_rect(center=self.rect.center)
         self.rect.centerx = vehicle_x
         self.rect.centery = vehicle_y
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
         self.screen.blit(image, rect)
     def Calculate_Landmark_X_Y():
         function_name = "Calculate_Landmark_X_Y()"
-        if((roverLon != None) and (roverLat != None)):
-            vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
-            vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
-            vehicle_x = vehicle_x * (roverLon-display_LON_TL)
-            vehicle_y = vehicle_y * (roverLat-display_LAT_TL) * -1
+        if((self.lat != None) and (self.lon != None)):
+            self.x = (screen_width  / abs(display_LON_TL-display_LON_BR))
+            self.y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
+            self.x = self.x * (self.lon-display_LON_TL)
+            self.y = self.y * (self.lat-display_LAT_TL) * -1
         else:
-            print function_name,"roverLon and/or roverLat empty"
-        print function_name,"Vehicle is at:",roverLat,roverLon
-        print function_name,"Plot vehicle at:",vehicle_x,vehicle_y
+            print function_name,"ERROR: lat and/or lon empty"
+        print function_name,"landmark lat/lon:",self.lat,self.lon
+        print function_name,"landmarl x/y:",self.x,self.y
