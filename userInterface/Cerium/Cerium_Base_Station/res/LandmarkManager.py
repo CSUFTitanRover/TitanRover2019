@@ -1,4 +1,4 @@
-import Landmark
+from Landmark import Landmark
 
 class LandmarkManager(object):
     def __init__(self):
