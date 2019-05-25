@@ -24,6 +24,8 @@ display_LON_TL = None
 display_LAT_BR = None
 display_LON_BR = None
 icon_arrow = "images/vehicle_icon.png"
+icon_ball = "images/ball.png"
+icon_hint = "images/hint.png"
 landmarks = LandmarkManager()
 mode = "dev"                        # dev | prod
 new_destination = ""
@@ -39,7 +41,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0                       # x offset of vehicle plotted on map
 vehicle_y = 0                       # y offset of vehicle plotted on map
-version = "05.23.2019.21.45"
+version = "05.24.2019.18.05"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -366,9 +368,8 @@ def Launch_Application():
     Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
-    LandmarkManager.Add_Landmark(landmarks,0,0,"BALL")
-    LandmarkManager.Add_Landmark(landmarks,0,0,"HINT")
-    LandmarkManager.Add_Landmark(landmarks,0,0,"TEST")
+    LandmarkManager.Add_Landmark(landmarks,0,0,"BALL",icon_ball,screen)
+    LandmarkManager.Add_Landmark(landmarks,0,0,"HINT",icon_ball,screen)
     lm =  LandmarkManager.Get_Landmarks(landmarks)
     for x in range(0,len(lm)):
         print "LANDMARK",lm[x].id

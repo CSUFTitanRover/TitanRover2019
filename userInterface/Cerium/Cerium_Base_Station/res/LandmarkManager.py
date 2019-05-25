@@ -5,6 +5,6 @@ class LandmarkManager(object):
         self.landmarks = []
     def Get_Landmarks(self):
         return self.landmarks
-    def Add_Landmark(self,lat,lon,type):
-        landmark = Landmark(lat,lon,len(self.landmarks),type)
+    def Add_Landmark(self,lat,lon,type,image,screen):
+        landmark = Landmark(lat,lon,len(self.landmarks),type,image,screen)
         self.landmarks.append(landmark)
