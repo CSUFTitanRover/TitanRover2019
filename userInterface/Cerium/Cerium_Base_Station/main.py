@@ -46,24 +46,17 @@ yaw = 0
 
 # Object for displaying the heading arrow on the map.
 class Nav_Arrow(Sprite):
-    global yaw
-    global vehicle_x
-    global vehicle_y
     def __init__(self, screen):
         super(Nav_Arrow, self).__init__()
         self.screen = screen
         self.image = pygame.image.load(icon_arrow)
         self.rect = self.image.get_rect()
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
     def blitme(self):
         image = self.image
         image = pygame.transform.rotate(image, yaw * -1)
         rect = image.get_rect(center=self.rect.center)
         self.rect.centerx = vehicle_x
         self.rect.centery = vehicle_y
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
         self.screen.blit(image, rect)
 
 # Object for displaying the map.
