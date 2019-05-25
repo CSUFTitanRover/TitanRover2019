@@ -27,7 +27,7 @@ icon_arrow = "images/vehicle.png"
 icon_ball = "images/ball.png"
 icon_hint = "images/hint.png"
 landmarks = LandmarkManager()
-LOG_LEVEL = "INFO" # ALL | INFO | ERROR
+LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
 mode = "dev" # dev | prod
 new_destination = ""
 new_destination_type = "" # DD | DDM | DMS
@@ -35,6 +35,7 @@ new_destination_LatLon = "LAT" # LAT | LON
 new_destination_set = [] # A LAT/LON set
 roverLat = None
 roverLon = None
+screen = None
 screen_height = 530
 screen_width = 1070
 socket_TCP_IP = '192.168.1.237'
@@ -150,14 +151,16 @@ def Append_Cardinal_Information(data):
     return data
 
 def Attempt_Coordinate_Send():
+    function_name = "Attempt_Coordinate_Send()"
     global new_destination_set
     if len(new_destination_set) == 2:
+        Log_It_V2("INFO",function_name,"READY TO SEND")
         print("Attempt_Coordinate_Send(): Ready to send")
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((socket_TCP_IP, socket_TCP_PORT))
         destination = Get_Coordinate_Pair_String()
         dest_encoded = destination.encode()
-        print("Attempt_Coordinate_Send(): Sending: ",dest_encoded)
+        Log_It_V2("INFO",function_name,"SENDING")
         s.send(dest_encoded)
         s.close()
         Clear_Destination_Set()
@@ -209,8 +212,8 @@ def Callback_GNSS(data):
     if mode == "dev":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-    Log_It("INFO",function_name+str(roverLat))
-    Log_It("INFO",function_name+str(roverLon))
+    Log_It_V2("INFO",function_name,str(roverLat))
+    Log_It_V2("INFO",function_name,str(roverLon))
     Calculate_Vehicle_X_Y()
 
 def Callback_IMU(data):
@@ -220,7 +223,7 @@ def Callback_IMU(data):
         yaw = data.yaw.yaw
     if mode == "dev":
         yaw = data.yaw
-    Log_It("INFO",function_name+str(yaw))
+    Log_It_V2("INFO",function_name,str(yaw))
 
 # Respond to keypress and mouse events.
 def Check_Control_Events():
@@ -341,6 +344,7 @@ def Flip_LAT_LON():
 def Get_Coordinate_Pair_String():
     global new_destination_set
     candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
+    LandmarkManager.Add_Landmark(landmarks,new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
     print("Get_Coordinate_Pair_String(): candidate: ",candidate)
     return candidate
 
@@ -353,7 +357,7 @@ def Launch_Application():
     global new_destination_LatLon
     pygame.init()
     status = rospy.init_node('listener', anonymous=True)
-    Log_It("INFO",func_name+"ROS Status:"+str(status))
+    Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
     Subscribe_To_IMU() # Start listening to ROS
     Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -361,9 +365,6 @@ def Launch_Application():
     LandmarkManager.Add_Landmark(landmarks,0,0,"VEHICLE",icon_arrow,screen)
     LandmarkManager.Add_Landmark(landmarks,33.881698, -117.882716,"BALL",icon_ball,screen)
     LandmarkManager.Add_Landmark(landmarks,33.881644, -117.883808,"HINT",icon_hint,screen)
-    lm =  LandmarkManager.Get_Landmarks(landmarks)
-    for x in range(0,len(lm)):
-        print "LANDMARK",lm[x].id
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
@@ -381,12 +382,21 @@ def Launch_Application():
         pygame.display.flip()
 
 def Log_It(level,message):
+    print "Log_It() is deprecated, please call Log_It_V2()"
     if LOG_LEVEL == "ALL":
         print message
     elif LOG_LEVEL == "INFO" and level == "INFO":
         print message
     elif LOG_LEVEL == "ERROR" and level == "ERROR":
         print "ERROR:",message
+
+def Log_It_V2(request_level,function,message):
+    if LOG_LEVEL == "ALL":
+        print function,message
+    elif LOG_LEVEL == "INFO" and request_level == "INFO":
+        print function,message
+    elif LOG_LEVEL == "ERROR" and request_level == "ERROR":
+        print function,"ERROR:",message
 
 # Re-append LAT/LON
 def Process_Destination():
@@ -435,9 +445,9 @@ def Subscribe_To_GNSS():
     elif mode == "dev":
         connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
     if connection_status == False:
-        Log_It("ERROR","GNSS SUBSCRIPTION FAILURE")
+        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
     else:
-        Log_It("INFO","SUBSCRIPTION SUCCESS")
+        Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
 
 def Subscribe_To_IMU():
     function_name = "Subscribe_To_IMU()"
@@ -447,8 +457,8 @@ def Subscribe_To_IMU():
     elif mode == "dev":
         connection_status = rospy.Subscriber("imu", imu, Callback_IMU)
     if connection_status == False:
-        Log_It("ERROR","SUBSCRIPTION FAILURE")
+        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
     else:
-        Log_It("INFO","SUBSCRIPTION SUCCESS")
+        Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
 
 Launch_Application()
