@@ -56,10 +56,7 @@ class Nav_Arrow(Sprite):
         self.centery = float(self.rect.centery)
     def blitme(self):
         image = self.image
-        if mode == "prod":
-            image = pygame.transform.rotate(image, yaw * -1)
-        if mode == "dev":
-            image = pygame.transform.rotate(image, float(yaw) * -1)
+        image = pygame.transform.rotate(image, yaw * -1)
         rect = image.get_rect(center=self.rect.center)
         self.rect.centerx = vehicle_x
         self.rect.centery = vehicle_y
@@ -372,7 +369,9 @@ def Launch_Application():
     LandmarkManager.Add_Landmark(landmarks,0,0,"BALL")
     LandmarkManager.Add_Landmark(landmarks,0,0,"HINT")
     LandmarkManager.Add_Landmark(landmarks,0,0,"TEST")
-    print LandmarkManager.Get_Landmarks(landmarks)
+    lm =  LandmarkManager.Get_Landmarks(landmarks)
+    for x in range(0,len(lm)):
+        print "LANDMARK",lm[x].id
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
