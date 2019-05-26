@@ -365,8 +365,7 @@ def Launch_Application():
     Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
-    icon = pygame.image.load(icon_arrow)
-    pygame.display.set_icon(icon)
+    Set_Application_Icon()
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
@@ -395,10 +394,13 @@ def Log_It(level,message):
 def Log_It_V2(request_level,function,message):
     if LOG_LEVEL == "ALL":
         print function,message
+        return
     elif LOG_LEVEL == "INFO" and request_level == "INFO":
         print function,message
+        return
     elif LOG_LEVEL == "ERROR" and request_level == "ERROR":
         print function,"ERROR:",message
+        return
 
 # Re-append LAT/LON
 def Process_Destination():
@@ -422,6 +424,15 @@ def Remove_LAT_LON():
     new_destination = new_destination.split(" ")
     new_destination = new_destination[1]
     print("Remove_LAT_LON(): new_destination: ",new_destination)
+
+def Set_Application_Icon():
+    function_name = "Set_Application_Icon()"
+    try:
+        icon = pygame.image.load(icon_arrow)
+        pygame.display.set_icon(icon)
+        Log_It_V2("INFO",function_name,"Set application icon")
+    except:
+        Log_It_V2("ERROR",function_name,"Cannot set application icon")
 
 def Set_Display_Data(ID):
     global display_image
