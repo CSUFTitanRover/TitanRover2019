@@ -43,7 +43,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.25.2019.17.38"
+version = "05.25.2019.18.14"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -299,10 +299,12 @@ def Clear_Destination_Set():
     print("Clear_Destination_Set(): new_destination_set: ",new_destination_set)
 
 def Convert_Coordinates():
+    function_name = "Convert_Coordinates()"
     global new_destination
     global new_destination_type
-    print("Convert_Coordinates(): Input Type:  ", new_destination_type)
-    print("Convert_Coordinates(): Input Value: ", new_destination)
+    print("Convert_Coordinates(): Input Type:  ", new_destination_type) # TODO Remove upon verifying Log_It_V2
+    print("Convert_Coordinates(): Input Value: ", new_destination) # TODO Remove upon verifying Log_It_V2
+    Log_It_V2(function_name,"Input Type:",new_destination_type,"Input Value:",new_destination)
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
     elif (new_destination_type == "degmin"):
@@ -363,9 +365,6 @@ def Launch_Application():
     Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
-    LandmarkManager.Add_Landmark(landmarks,"33.88165*","-117.883149*","VEHICLE",icon_arrow,screen)
-    LandmarkManager.Add_Landmark(landmarks,"33.881698*","-117.882716*","BALL",icon_ball,screen)
-    LandmarkManager.Add_Landmark(landmarks,"33.881644*","-117.883808*","HINT",icon_hint,screen)
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
