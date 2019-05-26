@@ -43,7 +43,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.15.00"
+version = "05.26.2019.15.43"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -160,13 +160,27 @@ def Attempt_Coordinate_Send():
         print "Get_Coordinate_Pair_String() returned", destination
         if destination == "Invalid":
             Log_It_V2("ERROR",function_name,"INVALID COORDINATES")
+        #else:
+        #    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #    s.connect((socket_TCP_IP, socket_TCP_PORT))
+        #    dest_encoded = destination.encode()
+        #    Log_It_V2("INFO",function_name,"SENDING")
+        #    s.send(dest_encoded)
+        #    s.close()
+
         else:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((socket_TCP_IP, socket_TCP_PORT))
-            dest_encoded = destination.encode()
-            Log_It_V2("INFO",function_name,"SENDING")
-            s.send(dest_encoded)
-            s.close()
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # If connection doesn't pickup within 1 seconds, kill the call
+                s.settimeout(1)
+                s.connect((socket_TCP_IP, socket_TCP_PORT))
+                dest_encoded = destination.encode()
+                Log_It_V2("INFO",function_name,"SENDING")
+                s.send(dest_encoded)
+                s.close()
+            except:
+                Log_It_V2("ERROR",function_name,"SEND FAILED")
+
         Clear_Destination_Set()
     else:
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
