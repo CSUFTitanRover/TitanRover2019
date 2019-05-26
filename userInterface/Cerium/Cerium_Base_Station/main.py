@@ -43,7 +43,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.14.42"
+version = "05.26.2019.15.00"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -156,16 +156,17 @@ def Attempt_Coordinate_Send():
     if len(new_destination_set) == 2:
         Log_It_V2("INFO",function_name,"READY TO SEND")
         print("Attempt_Coordinate_Send(): Ready to send")
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((socket_TCP_IP, socket_TCP_PORT))
         destination = Get_Coordinate_Pair_String()
-        if destination != "Invalid":
+        print "Get_Coordinate_Pair_String() returned", destination
+        if destination == "Invalid":
+            Log_It_V2("ERROR",function_name,"INVALID COORDINATES")
+        else:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((socket_TCP_IP, socket_TCP_PORT))
             dest_encoded = destination.encode()
             Log_It_V2("INFO",function_name,"SENDING")
             s.send(dest_encoded)
             s.close()
-        else:
-            Log_It_V2("ERROR",function_name,"INVALID COORDINATES")
         Clear_Destination_Set()
     else:
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
@@ -349,7 +350,7 @@ def Flip_LAT_LON():
 def Get_Coordinate_Pair_String():
     global new_destination_set
     if new_destination_set[0] == "Invalid" or new_destination_set[1] == "Invalid":
-        candidate = "Invalid"
+        return "Invalid"
     else:
         candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
         LandmarkManager.Add_Landmark(landmarks,new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
