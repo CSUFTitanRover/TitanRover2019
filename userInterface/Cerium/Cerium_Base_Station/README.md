@@ -9,7 +9,7 @@ David Feinzimer `dfeinzimer@csu.fullerton.edu`
 
 ## Requirements
 
-Python3
+Python 2.x
 
 Pygame 1.9.4
 
@@ -76,3 +76,32 @@ ROS Kinetic or ROS Melodic
 5) `export ROS_HOSTNAME="192.168.1.204"` # Connecting machine
 
 6) `python main.py`
+
+
+
+## Important Technical Notes
+
+1) Socket connections are currently killed if a connection fails after 1 second.
+
+
+
+## Engineering / Design Notes
+
+1) For Google Maps screenshots we're using the largest 100 zoom level with
+browser zoom set to 100%
+
+2) --- URGENT ISSUES ---
+
+ 2.1) If we try to send and socket is not open, program crashes.
+
+  2.1.1) Never let receiver socket close.
+
+3) --- NEXT DEVELOPMENTS ---
+
+ 3.1) Publish to mode topic/Stop publish to mode topic
+
+ 3.2) Expanded rostopic viewer
+
+4) Decide on final database file path.
+
+5) Routinely search for new ball records and add them as landmarks.
