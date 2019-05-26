@@ -26,7 +26,11 @@ class Landmark(object):
         if((self.lat != None) and (self.lon != None)):
             self.x = (screen_width  / abs(display_LON_TL-display_LON_BR))
             self.y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
-            self.x = self.x * (self.lon-float(display_LON_TL))
-            self.y = self.y * (self.lat-float(display_LAT_TL)) * -1
+            if self.lat[len(self.lat)-1] == "*":
+                self.lat = self.lat[:-1]
+            if self.lon[len(self.lon)-1] == "*":
+                self.lon = self.lon[:-1]
+            self.x = self.x * (float(self.lon)-float(display_LON_TL))
+            self.y = self.y * (float(self.lat)-float(display_LAT_TL)) * -1
         else:
             print function_name,"ERROR: lat and/or lon empty"
