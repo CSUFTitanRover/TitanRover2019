@@ -43,7 +43,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.25.2019.18.14"
+version = "05.26.2019.14.42"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -159,10 +159,13 @@ def Attempt_Coordinate_Send():
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((socket_TCP_IP, socket_TCP_PORT))
         destination = Get_Coordinate_Pair_String()
-        dest_encoded = destination.encode()
-        Log_It_V2("INFO",function_name,"SENDING")
-        s.send(dest_encoded)
-        s.close()
+        if destination != "Invalid":
+            dest_encoded = destination.encode()
+            Log_It_V2("INFO",function_name,"SENDING")
+            s.send(dest_encoded)
+            s.close()
+        else:
+            Log_It_V2("ERROR",function_name,"INVALID COORDINATES")
         Clear_Destination_Set()
     else:
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
@@ -345,8 +348,11 @@ def Flip_LAT_LON():
 
 def Get_Coordinate_Pair_String():
     global new_destination_set
-    candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
-    LandmarkManager.Add_Landmark(landmarks,new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
+    if new_destination_set[0] == "Invalid" or new_destination_set[1] == "Invalid":
+        candidate = "Invalid"
+    else:
+        candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
+        LandmarkManager.Add_Landmark(landmarks,new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
     print("Get_Coordinate_Pair_String(): candidate: ",candidate)
     return candidate
 
@@ -359,13 +365,14 @@ def Launch_Application():
     global new_destination_LatLon
     global screen
     pygame.init()
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
+    Set_Application_Icon()
     status = rospy.init_node('listener', anonymous=True)
     Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
     Subscribe_To_IMU() # Start listening to ROS
     Subscribe_To_GNSS() # Start listening to ROS
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
-    Set_Application_Icon()
+
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
