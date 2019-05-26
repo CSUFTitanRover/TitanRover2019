@@ -304,7 +304,7 @@ def Convert_Coordinates():
     global new_destination_type
     print("Convert_Coordinates(): Input Type:  ", new_destination_type) # TODO Remove upon verifying Log_It_V2
     print("Convert_Coordinates(): Input Value: ", new_destination) # TODO Remove upon verifying Log_It_V2
-    Log_It_V2(function_name,"Input Type:",new_destination_type,"Input Value:",new_destination)
+    Log_It_V2(function_name,"INFO","Input Type:"+new_destination_type+"Input Value:"+new_destination)
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
     elif (new_destination_type == "degmin"):
