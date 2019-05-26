@@ -63,26 +63,11 @@ ROS Kinetic or ROS Melodic
 6. `sudo kill <PID>`
 
 
-### 4) Prepare the base station interface:
+### 4) Start the base station interface:
 
-1) In main.py set value: `display_LAT_TL`
+1) `source ~/catkin_ws/devel/setup.bash`
 
-2) In main.py set value: `display_LON_TL`
-
-3) In main.py set value: `display_LAT_BR`
-
-4) In main.py set value: `display_LON_BR`
-
-5) In main.py set value: `mode` to `prod`
-
-6) In main.py set value: `map_image` to `SETTING_CSUF` or `SETTING_VICT`
-
-
-### 5) Start the base station interface:
-
-1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station`
-
-2) `source ~/catkin_ws/devel/setup.bash`
+2) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station`
 
 3) `export ROS_MASTER_URI="http://192.168.1.2:11311/"` # Vehicle's IP
 
