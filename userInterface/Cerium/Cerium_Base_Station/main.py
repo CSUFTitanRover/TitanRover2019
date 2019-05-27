@@ -11,6 +11,7 @@ from res.LandmarkManager import LandmarkManager
 from pygame.sprite import Sprite
 from std_msgs.msg import String
 import res.coords as coords
+import res.Text as Text
 import pygame
 import rospy
 import socket
@@ -47,7 +48,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.23.07"
+version = "05.26.2019.23.45"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -391,6 +392,7 @@ def Launch_Application():
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
     nav_text = Nav_Text(screen)
+    test = Text.Text(screen,"YES",color_text,color_background,30,0,None,50,None)
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
@@ -401,6 +403,7 @@ def Launch_Application():
         nav_arrow.blitme()
         nav_destination.blitme()
         nav_text.blitme()
+        test.blitme("TEST")
         pygame.display.flip()
 
 def Log_It(level,message):
