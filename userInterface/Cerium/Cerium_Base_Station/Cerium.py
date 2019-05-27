@@ -4,6 +4,7 @@
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
+from res.Append_Cardinal_Information import Append_Cardinal_Information
 from finalimu.msg import fimu
 from gnss.msg import gps
 from fake_sensor_test.msg import imu
@@ -110,30 +111,6 @@ class Nav_Text():
 def Add_LAT_LON():
     global new_destination
     new_destination = new_destination_LatLon + " "
-
-# Takes numerical vehicle heading value and appends a degree symbol and a
-# a cardinal direction abbreviation.
-def Append_Cardinal_Information(data):
-    function_name = "Append_Cardinal_Information()"
-    numerical_data = float(data)
-    data = data + u"\u00B0" +" "
-    if(numerical_data > 270):
-        data = data + "North West"
-    elif(numerical_data == 270):
-        data = data + "West"
-    elif(numerical_data > 180):
-        data = data + "South West"
-    elif(numerical_data == 180):
-        data = data + "South"
-    elif(numerical_data > 90):
-        data = data + "South East"
-    elif(numerical_data == 90):
-        data = data + "East"
-    elif(numerical_data > 0):
-        data = data + "North East"
-    elif(numerical_data == 0):
-        data = data + "North"
-    return data
 
 def Attempt_Coordinate_Send():
     function_name = "Attempt_Coordinate_Send()"
@@ -370,6 +347,7 @@ def Launch_Application():
     nav_arrow = Nav_Arrow(screen)
     nav_bkgd = Nav_Background_Image(screen)
     nav_text = Nav_Text(screen)
+    nav_text_2 = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
     nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
@@ -380,6 +358,7 @@ def Launch_Application():
         LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
         nav_destination.blitme(new_destination)
+        nav_text_2.blitme(yaw)
         nav_text.blitme()
         pygame.display.flip()
 

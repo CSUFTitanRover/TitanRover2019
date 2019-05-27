@@ -1,5 +1,7 @@
 # coding=utf-8
 
+from Append_Cardinal_Information import Append_Cardinal_Information
+
 import pygame
 
 class Text():
@@ -22,10 +24,18 @@ class Text():
         self.screen_rect = screen.get_rect()
         self.color_background = COLOR_BACKGROUND
         self.color_text = COLOR_TEXT
-        #self.font = pygame.font.SysFont(None, FONT_SIZE)
         self.font = pygame.font.Font("res/fonts/FreeSansBold.ttf", FONT_SIZE)
         self.LEFT = L
         self.RIGHT = R
         self.TOP = T
         self.BOTTOM = B
         self.update(NEW_TEXT)
+
+class YawText(Text):
+    def __init__(self,screen,yaw,COLOR_TEXT,COLOR_BACKGROUND,FONT_SIZE,L,R,T,B):
+        yaw = float(yaw)
+        yaw = round(yaw,1)
+        yaw = "{:,}".format(yaw)
+        yaw = Append_Cardinal_Information(yaw)
+        #yaw = str(yaw)
+        Text.__init__(self,screen,yaw,COLOR_TEXT,COLOR_BACKGROUND,FONT_SIZE,L,R,T,B)

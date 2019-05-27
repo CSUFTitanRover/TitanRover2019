@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 
-
-
 # Feinzimer, David. dfeinzimer@csu.fullerton.edu
 # Updated 3/14/19
-
-
 
 import socket
 import sys
