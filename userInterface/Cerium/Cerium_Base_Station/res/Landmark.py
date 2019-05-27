@@ -26,10 +26,10 @@ class Landmark(object):
         if((self.lat != None) and (self.lon != None)):
             self.x = (map_width  / abs(display_LON_TL-display_LON_BR))
             self.y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
-            if self.lat[len(self.lat)-1] == "*":
-                self.lat = self.lat[:-1]
-            if self.lon[len(self.lon)-1] == "*":
-                self.lon = self.lon[:-1]
+            #if self.lat[len(self.lat)-1] == u"\u00B0":
+            #    self.lat = self.lat[:-1]
+            #if self.lon[len(self.lon)-1] == u"\u00B0":
+            #    self.lon = self.lon[:-1]
             self.x = self.x * (float(self.lon)-float(display_LON_TL))
             self.y = self.y * (float(self.lat)-float(display_LAT_TL)) * -1
         else:

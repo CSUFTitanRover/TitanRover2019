@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
@@ -46,7 +47,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.21.37"
+version = "05.26.2019.23.07"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -111,6 +112,7 @@ class Nav_Text():
         self.screen.blit(self.high_score_image, self.high_score_rect)
     def update(self):
         high_score = float(yaw)
+        high_score = round(high_score,1)
         high_score_str = "{:,}".format(high_score)
         high_score_str = Append_Cardinal_Information(high_score_str)
         self.high_score_image = self.font.render(high_score_str, True,
@@ -134,23 +136,23 @@ def Add_LAT_LON():
 def Append_Cardinal_Information(data):
     function_name = "Append_Cardinal_Information()"
     numerical_data = float(data)
-    data = data + "* "
+    data = data + u"\u00B0" +" "
     if(numerical_data > 270):
-        data = data + "NW"
+        data = data + "North West"
     elif(numerical_data == 270):
-        data = data + "W"
+        data = data + "West"
     elif(numerical_data > 180):
-        data = data + "SW"
+        data = data + "South West"
     elif(numerical_data == 180):
-        data = data + "S"
+        data = data + "South"
     elif(numerical_data > 90):
-        data = data + "SE"
+        data = data + "South East"
     elif(numerical_data == 90):
-        data = data + "E"
+        data = data + "East"
     elif(numerical_data > 0):
-        data = data + "NE"
+        data = data + "North East"
     elif(numerical_data == 0):
-        data = data + "N"
+        data = data + "North"
     return data
 
 def Attempt_Coordinate_Send():
@@ -268,7 +270,7 @@ def Check_Keydown_Events(event):
         Process_Destination()
         new_destination_type = ""
     elif event.key == pygame.K_d:
-        new_destination += "*"
+        new_destination += u"\u00B0"
         new_destination_type += "deg"
         print("Check_Keydown_Events(): new_destination_type: ",
               new_destination_type)
@@ -320,8 +322,9 @@ def Convert_Coordinates():
     Log_It_V2(function_name,"INFO","Input Type:"+new_destination_type+"Input Value:"+new_destination)
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
+        new_destination = new_destination[:-1]
     elif (new_destination_type == "degmin"):
-        d = new_destination.split("*")
+        d = new_destination.split(u"\u00B0")
         m = d[1]
         d = d[0]
         m = m[:-1]
@@ -331,7 +334,7 @@ def Convert_Coordinates():
         new_destination = DD
     elif (new_destination_type == "degminsec"):
         d = new_destination
-        d = d.split("*")
+        d = d.split(u"\u00B0")
         m = d[1]
         d = d[0]
         m = m.split("\'")
