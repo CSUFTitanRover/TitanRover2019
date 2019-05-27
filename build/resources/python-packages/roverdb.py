@@ -33,7 +33,11 @@ class Database():
 
     # Opens all db files and cursor attachments
     def open_db(self):
-        self._conn = sqlite3.connect(self._dbname)
+        import sys, subprocess
+        rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
+        dbpath = rootDir + '/build/resources/python-packages/'
+        print dbpath
+        self._conn = sqlite3.connect(dbpath + self._dbname)
         self._cur = self._conn.cursor()
         # Let rows be of dict/tuple type
         #self._conn.row_factory = sqlite3.Row
@@ -105,8 +109,14 @@ if __name__ == '__main__':
     if not dbexist:
         db = Database()
         db.insertMap(map,50.47643, -117.23244,'primary', -3.44)
+        db.insertMap(map,50.47643, -117.23244,'primary', -2.44)
+        db.insertMap(map,50.47643, -117.23244,'primary', -.44)
+        db.insertMap(map,50.47643, -117.23244,'primary', -223.44)
+        db.insertMap(map,50.47643, -117.23244,'primary', -33.44)
+        db.insertMap(map,50.47643, -117.23244,'primary', -56.44)
+        db.insertMap(map,50.47643, -117.23244,'primary', -78.44)
         print(db.updateMapAccel(50.47643, -117.23244, 5.0))
     else:
         db = Database()
-        print(db.getLatLonValue(5))
+        #print(db.getLatLonValue(5))
         pass
