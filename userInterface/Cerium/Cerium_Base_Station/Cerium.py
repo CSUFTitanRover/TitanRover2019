@@ -49,7 +49,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.27.2019.14.07"
+version = "05.27.2019.15.19"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.

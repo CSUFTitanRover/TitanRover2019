@@ -63,8 +63,7 @@ def new_socket():
     print "new_socket(): LON: ",LON
     print "new_socket(): TYPE: ",TYPE
     db.insertHint("hints",LAT,LON)
-
-    #conn.send(data)
+    conn.send(data)
 
     conn.close()
     return

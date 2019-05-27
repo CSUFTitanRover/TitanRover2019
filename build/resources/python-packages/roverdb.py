@@ -57,9 +57,9 @@ class Database():
         self._conn = sqlite3.connect(dbpath + self._dbname)
         self._cur = self._conn.cursor()
 
-    def clear_table(self,tablename):
+    def clear_sprial(self):
         self.open_db()
-        self._cur.execute('''DELETE FROM ''' + tablename)
+        self._cur.execute('''DELETE FROM spiral''')
         self.close_db()
 
     def close_db(self):
