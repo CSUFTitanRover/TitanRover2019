@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import pygame
 
 class Text():
@@ -5,7 +7,6 @@ class Text():
         self.update(NEW_TEXT)
         self.screen.blit(self.generated_text_image,self.generated_text_rect)
     def update(self, NEW_TEXT):
-        NEW_TEXT = str(NEW_TEXT)
         self.generated_text_image = self.font.render(NEW_TEXT,True,self.color_text,self.color_background)
         self.generated_text_rect = self.generated_text_image.get_rect()
         if self.LEFT:

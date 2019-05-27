@@ -48,7 +48,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.23.45"
+version = "05.27.2019.00.12"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -84,27 +84,6 @@ class Nav_Background_Image(Sprite):
         self.rect.centerx = 0
         self.rect.centery = 0
         self.screen.blit(image, rect)
-
-# Object for displaying the new destination coordinates users can type into
-# at the bottom of the screen.
-class Nav_Destination():
-    global new_destination
-    def blitme(self):
-        self.update()
-        self.screen.blit(self.high_score_image, self.high_score_rect)
-    def update(self):
-        high_score_str = new_destination
-        self.high_score_image = self.font.render(high_score_str,
-                                True, self.color_text, color_background)
-        self.high_score_rect = self.high_score_image.get_rect()
-        self.high_score_rect.left = map_width
-        self.high_score_rect.bottom = self.screen_rect.bottom
-    def __init__(self, screen):
-        self.screen = screen
-        self.screen_rect = screen.get_rect()
-        self.color_text = color_text
-        self.font = pygame.font.SysFont(None, 30)
-        self.update()
 
 # Object for displaying rover's current heading at the top of the screen.
 class Nav_Text():
@@ -389,10 +368,9 @@ def Launch_Application():
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
     GNSS_SUBSCRIBTION.start()
     nav_arrow = Nav_Arrow(screen)
-    nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
     nav_text = Nav_Text(screen)
-    test = Text.Text(screen,"YES",color_text,color_background,30,0,None,50,None)
+    nav_destination = Text.Text(screen,new_destination,color_text,color_background,30,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
@@ -401,9 +379,8 @@ def Launch_Application():
         nav_bkgd.blitme() # Always blit the background first
         LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
-        nav_destination.blitme()
+        nav_destination.blitme(new_destination)
         nav_text.blitme()
-        test.blitme("TEST")
         pygame.display.flip()
 
 def Log_It(level,message):
