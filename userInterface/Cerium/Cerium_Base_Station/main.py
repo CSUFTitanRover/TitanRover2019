@@ -44,7 +44,7 @@ socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.18.31"
+version = "05.26.2019.18.45"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
