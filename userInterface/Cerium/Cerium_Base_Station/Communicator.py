@@ -62,8 +62,8 @@ def new_socket():
     print "new_socket(): LAT: ",LAT
     print "new_socket(): LON: ",LON
     print "new_socket(): TYPE: ",TYPE
-    #db.insertMap("map",LAT,LON,TYPE)
     db.insertHint("hints",LAT,LON)
+
     #conn.send(data)
 
     conn.close()

@@ -6,7 +6,6 @@ class Database():
     _conn = None
 
     def __init__(self):
-        #_dbname = str('rover.sqlite3')
         self.create_rover_tables()
 
     def create_rover_tables(self):
@@ -47,8 +46,6 @@ class Database():
             lon      	REAL NOT NULL
             )
             ''')
-
-
         self.close_db()
 
     # Opens all db files and cursor attachments
@@ -59,27 +56,28 @@ class Database():
         print dbpath
         self._conn = sqlite3.connect(dbpath + self._dbname)
         self._cur = self._conn.cursor()
-        # Let rows be of dict/tuple type
-        #self._conn.row_factory = sqlite3.Row
-        #print ("Opened database %s as %r" % (self._dbname, self._conn))
+
+    def clear_table(self,tablename):
+        self.open_db()
+        self._cur.execute('''DELETE FROM ''' + tablename)
+        self.close_db()
 
     def close_db(self):
         self._conn.commit()
         self._conn.close()
 
-    def insertHint(self, table_name, lat = 0, lon = 0, visited = 0):
+    def insertHint(self, tablename, lat = 0, lon = 0, visited = 0):
         self.open_db()
-        self._cur.execute('''INSERT INTO '''+table_name+''' (lat, lon, visited) VALUES(?, ?, ?)''', (lat, lon, visited))
+        self._cur.execute('''INSERT INTO ''' + tablename + ''' (lat, lon, visited) VALUES(?, ?, ?)''', (lat, lon, visited))
         self.close_db()
 
     def insertMap(self, lat = 0, lon = 0, gps_type = 0, accel = 0):
-        #self.open_db()
         if self.getAccelValue(lat, lon) == 0:
             self.open_db()
             self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, ?, ?)''', (lat, lon, gps_type, accel))
             self.close_db()
 
-    # returns the size of table
+    # Returns the size of a given table
     def getTableSize(self, tablename):
         self.open_db()
         total = (self._cur.execute("SELECT COUNT(*) FROM " + tablename).fetchall())[0][0]
@@ -110,7 +108,6 @@ class Database():
             self.close_db()
             return 0, 0
 
-
     def updateMapAccel(self, lat, lon, Accel):
         self.open_db()
         lookup = 'SELECT item_id, lat, lon, acc_data FROM map WHERE lat =' + str(lat) + ' AND lon = ' + str(lon)
@@ -123,7 +120,6 @@ class Database():
         except TypeError as e:
             self.close_db()
             return 0
-
 
 # This class is ment for import design test scripts are below and do not affect imports
 if __name__ == '__main__':
