@@ -86,11 +86,11 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
-2.1) Everything locks if no ROS Master is running
+2.1) No urgent issues.
 
 3) --- NEXT DEVELOPMENTS ---
 
-3.1) Publish to mode topic/Stop publish to mode topic
+3.1) Publish to mode topic.
 
 3.2) Expanded rostopic viewer
 
@@ -103,6 +103,8 @@ browser zoom set to 100%
 4.1) Program will not start if ROS is not running
 
 4.2) Rover icon is blitting even if GNSS topis is not connected.
+
+4.3) Expand coordinate input validation
 
 
 
