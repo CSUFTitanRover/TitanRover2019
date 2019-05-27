@@ -29,7 +29,7 @@ icon_ball = "images/ball.png"
 icon_hint = "images/hint.png"
 landmarks = LandmarkManager()
 LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
-map_width = 1070
+map_width = 1070 # The width of the map area
 mode = "dev" # dev | prod
 new_destination = ""
 new_destination_type = "" # DD | DDM | DMS
@@ -39,14 +39,14 @@ roverLat = None
 roverLon = None
 screen = None
 screen_height = 530
-screen_width = 1270
+screen_width = 1270 # The full window width
 socket_TCP_IP = '192.168.1.237'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.21.15"
+version = "05.26.2019.21.37"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -95,13 +95,13 @@ class Nav_Destination():
         self.high_score_image = self.font.render(high_score_str,
                                 True, self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
-        self.high_score_rect.centerx = self.screen_rect.centerx
+        self.high_score_rect.left = map_width
         self.high_score_rect.bottom = self.screen_rect.bottom
     def __init__(self, screen):
         self.screen = screen
         self.screen_rect = screen.get_rect()
         self.color_text = color_text
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.SysFont(None, 30)
         self.update()
 
 # Object for displaying rover's current heading at the top of the screen.
@@ -116,13 +116,13 @@ class Nav_Text():
         self.high_score_image = self.font.render(high_score_str, True,
                                 self.color_text, color_background)
         self.high_score_rect = self.high_score_image.get_rect()
-        self.high_score_rect.centerx = self.screen_rect.centerx
+        self.high_score_rect.left = map_width
         self.high_score_rect.top = self.high_score_rect.top
     def __init__(self, screen):
         self.screen = screen
         self.screen_rect = screen.get_rect()
         self.color_text = color_text
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.SysFont(None, 30)
         self.update()
 
 def Add_LAT_LON():
