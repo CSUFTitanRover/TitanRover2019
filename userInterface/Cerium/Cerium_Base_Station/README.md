@@ -92,9 +92,7 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
- 2.1) If we try to send and socket is not open, program crashes.
-
-  2.1.1) Never let receiver socket close.
+ 2.1) All urgent issues resolved for now.
 
 3) --- NEXT DEVELOPMENTS ---
 
