@@ -42,9 +42,10 @@ screen_width = 1070
 socket_TCP_IP = '192.168.1.237'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
+status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.26.2019.18.45"
+version = "05.26.2019.19.28"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -161,14 +162,6 @@ def Attempt_Coordinate_Send():
         print "Get_Coordinate_Pair_String() returned", destination
         if destination == "Invalid":
             Log_It_V2("ERROR",function_name,"INVALID COORDINATES")
-        #else:
-        #    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #    s.connect((socket_TCP_IP, socket_TCP_PORT))
-        #    dest_encoded = destination.encode()
-        #    Log_It_V2("INFO",function_name,"SENDING")
-        #    s.send(dest_encoded)
-        #    s.close()
-
         else:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -476,26 +469,25 @@ def Set_Display_Data(ID):
 
 def Subscribe_To_GNSS():
     function_name = "Subscribe_To_GNSS()"
-    connection_status = False
-    if mode == "prod":
-       connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
-    elif mode == "dev":
-       connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
-    if connection_status == False:
-       Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
-    else:
-       Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+    try:
+        rospy.Subscriber("gnss", gps, Callback_GNSS)
+        Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+    except:
+        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
 
 def Subscribe_To_IMU():
     function_name = "Subscribe_To_IMU()"
-    connection_status = False
     if mode == "prod":
-        connection_status = rospy.Subscriber("imu", fimu, Callback_IMU)
+        try:
+            rospy.Subscriber("imu", fimu, Callback_IMU)
+            Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+        except:
+            Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
     elif mode == "dev":
-        connection_status = rospy.Subscriber("imu", imu, Callback_IMU)
-    if connection_status == False:
-        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
-    else:
-        Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+        try:
+            rospy.Subscriber("imu", imu, Callback_IMU)
+            Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+        except:
+            Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
 
 Launch_Application()

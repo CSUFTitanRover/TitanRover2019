@@ -98,6 +98,12 @@ browser zoom set to 100%
 
 3.4) Routinely search for new ball records and add them as landmarks.
 
+4) --- NEEDS FIXING / IMPROVEMENTS ---
+
+4.1) Program will not start if ROS is not running
+
+4.2) Rover icon is blitting even if GNSS topis is not connected.
+
 
 
 ## Problems & Solutions
