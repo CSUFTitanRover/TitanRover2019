@@ -29,6 +29,7 @@ icon_ball = "images/ball.png"
 icon_hint = "images/hint.png"
 landmarks = LandmarkManager()
 LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
+map_width = 1070
 mode = "dev" # dev | prod
 new_destination = ""
 new_destination_type = "" # DD | DDM | DMS
@@ -38,7 +39,7 @@ roverLat = None
 roverLon = None
 screen = None
 screen_height = 530
-screen_width = 1070
+screen_width = 1270
 socket_TCP_IP = '192.168.1.237'
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
@@ -201,13 +202,13 @@ def Calculate_Vehicle_X_Y():
     global vehicle_x
     global vehicle_y
     global screen_height
-    global screen_width
+    global map_width
     global display_LAT_TL
     global display_LON_TL
     global display_LAT_BR
     global display_LON_BR
     if((roverLon != None) and (roverLat != None)):
-        vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
+        vehicle_x = (map_width  / abs(display_LON_TL-display_LON_BR))
         vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
         vehicle_x = vehicle_x * (roverLon-display_LON_TL)
         vehicle_y = vehicle_y * (roverLat-display_LAT_TL) * -1
@@ -393,7 +394,7 @@ def Launch_Application():
         Check_Control_Events()
         Calculate_Display()
         nav_bkgd.blitme() # Always blit the background first
-        LandmarkManager.Blit_Landmarks(landmarks,screen_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
+        LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
         nav_destination.blitme()
         nav_text.blitme()
