@@ -69,7 +69,7 @@ ROS Kinetic or ROS Melodic
 
 4) `export ROS_HOSTNAME="192.168.1.204"` # Connecting machine
 
-5) `python main.py`
+5) `python Cerium.py`
 
 
 

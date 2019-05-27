@@ -22,7 +22,8 @@ class Text():
         self.screen_rect = screen.get_rect()
         self.color_background = COLOR_BACKGROUND
         self.color_text = COLOR_TEXT
-        self.font = pygame.font.SysFont(None, FONT_SIZE)
+        #self.font = pygame.font.SysFont(None, FONT_SIZE)
+        self.font = pygame.font.Font("res/fonts/FreeSansBold.ttf", FONT_SIZE)
         self.LEFT = L
         self.RIGHT = R
         self.TOP = T

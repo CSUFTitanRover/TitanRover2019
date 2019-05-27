@@ -26,9 +26,9 @@ display_LAT_TL = None
 display_LON_TL = None
 display_LAT_BR = None
 display_LON_BR = None
-icon_arrow = "images/vehicle.png"
-icon_ball = "images/ball.png"
-icon_hint = "images/hint.png"
+icon_arrow = "res/images/vehicle.png"
+icon_ball = "res/images/ball.png"
+icon_hint = "res/images/hint.png"
 landmarks = LandmarkManager()
 LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
 map_width = 1070 # The width of the map area
@@ -48,7 +48,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.27.2019.00.12"
+version = "05.27.2019.10.48"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -71,12 +71,12 @@ class Nav_Background_Image(Sprite):
     def __init__(self, screen):
         super(Nav_Background_Image, self).__init__()
         self.screen = screen
-        self.image = pygame.image.load('images/'+display_image+'.png')
+        self.image = pygame.image.load('res/images/'+display_image+'.png')
         self.rect = self.image.get_rect()
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
     def blitme(self):
-        image = pygame.image.load('images/'+display_image+'.png')
+        image = pygame.image.load('res/images/'+display_image+'.png')
         rect = self.image.get_rect()
         rect = image.get_rect(center=rect.center)
         self.centerx = float(self.rect.centerx)
@@ -359,7 +359,7 @@ def Launch_Application():
     global screen
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
+    pygame.display.set_caption('Titan Rover - Cerium Base Station - ' + version)
     Set_Application_Icon()
     status = rospy.init_node('listener', anonymous=True)
     Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
@@ -370,7 +370,7 @@ def Launch_Application():
     nav_arrow = Nav_Arrow(screen)
     nav_bkgd = Nav_Background_Image(screen)
     nav_text = Nav_Text(screen)
-    nav_destination = Text.Text(screen,new_destination,color_text,color_background,30,map_width,None,None,screen.get_rect().bottom)
+    nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
