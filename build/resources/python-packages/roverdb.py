@@ -15,20 +15,40 @@ class Database():
             item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
             lat	        REAL NOT NULL,
             lon      	REAL NOT NULL,
-            type    	TEXT NOT NULL,
             acc_data    REAL NOT NULL
             )
             ''')
 
-        self._cur.execute('''CREATE TABLE IF NOT EXISTS pictures (
+        self._cur.execute('''CREATE TABLE IF NOT EXISTS hints (
             item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
-            pict_name   TEXT NOT NULL,
             lat	        REAL NOT NULL,
             lon      	REAL NOT NULL,
-            head    	REAL NOT NULL,
-            servo_off   REAL NOT NULL
+            visited     INTEGER NOT NULL
             )
             ''')
+
+        self._cur.execute('''CREATE TABLE IF NOT EXISTS crumbs (
+            item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
+            lat	        REAL NOT NULL,
+            lon      	REAL NOT NULL
+            )
+            ''')
+
+        self._cur.execute('''CREATE TABLE IF NOT EXISTS balls (
+            item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
+            lat	        REAL NOT NULL,
+            lon      	REAL NOT NULL
+            )
+            ''')
+
+        self._cur.execute('''CREATE TABLE IF NOT EXISTS spiral (
+            item_id	    INTEGER PRIMARY KEY AUTOINCREMENT,
+            lat	        REAL NOT NULL,
+            lon      	REAL NOT NULL
+            )
+            ''')
+
+
         self.close_db()
 
     # Opens all db files and cursor attachments
@@ -47,13 +67,17 @@ class Database():
         self._conn.commit()
         self._conn.close()
 
-    def insertMap(self, table_name, lat = 0, lon = 0, gps_type = 0, accel = 0):
+    def insertHint(self, table_name, lat = 0, lon = 0, visited = 0):
+        self.open_db()
+        self._cur.execute('''INSERT INTO '''+table_name+''' (lat, lon, visited) VALUES(?, ?, ?)''', (lat, lon, visited))
+        self.close_db()
+
+    def insertMap(self, lat = 0, lon = 0, gps_type = 0, accel = 0):
         #self.open_db()
         if self.getAccelValue(lat, lon) == 0:
             self.open_db()
             self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, ?, ?)''', (lat, lon, gps_type, accel))
             self.close_db()
-
 
     # returns the size of table
     def getTableSize(self, tablename):
