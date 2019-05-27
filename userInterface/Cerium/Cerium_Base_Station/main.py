@@ -386,9 +386,10 @@ def Launch_Application():
     Set_Application_Icon()
     status = rospy.init_node('listener', anonymous=True)
     Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
-    Subscribe_To_IMU() # Start listening to ROS
-    Subscribe_To_GNSS() # Start listening to ROS
-
+    IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU)
+    IMU_SUBSCRIBTION.start()
+    GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
+    GNSS_SUBSCRIBTION.start()
     nav_arrow = Nav_Arrow(screen)
     nav_destination = Nav_Destination(screen)
     nav_bkgd = Nav_Background_Image(screen)
@@ -474,39 +475,24 @@ def Set_Display_Data(ID):
     display_LON_BR = coords.coords_data[BR_LON]
 
 def Subscribe_To_GNSS():
-    # function_name = "Subscribe_To_GNSS()"
-    # connection_status = False
-    # if mode == "prod":
-    #    connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
-    # elif mode == "dev":
-    #    connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
-    # if connection_status == False:
-    #    Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
-    # else:
-    #    Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
-
-    #t = threading.Thread(target=Subscribe_To_ROS_Topic, arg=("gnss",gps,Callback_GNSS))
-    #t.start()
-    pass
+    function_name = "Subscribe_To_GNSS()"
+    connection_status = False
+    if mode == "prod":
+       connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
+    elif mode == "dev":
+       connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
+    if connection_status == False:
+       Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
+    else:
+       Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
 
 def Subscribe_To_IMU():
-    # function_name = "Subscribe_To_IMU()"
-    # connection_status = False
-    # if mode == "prod":
-    #     connection_status = rospy.Subscriber("imu", fimu, Callback_IMU)
-    # elif mode == "dev":
-    #     connection_status = rospy.Subscriber("imu", imu, Callback_IMU)
-    # if connection_status == False:
-    #     Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
-    # else:
-    #     Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
-    t = threading.Thread(target=Subscribe_To_ROS_Topic)
-    t.start()
-
-def Subscribe_To_ROS_Topic():
-    function_name = "Subscribe_To_ROS_Topic()"
+    function_name = "Subscribe_To_IMU()"
     connection_status = False
-    connection_status = rospy.Subscriber("imu",imu,Callback_IMU)
+    if mode == "prod":
+        connection_status = rospy.Subscriber("imu", fimu, Callback_IMU)
+    elif mode == "dev":
+        connection_status = rospy.Subscriber("imu", imu, Callback_IMU)
     if connection_status == False:
         Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
     else:
