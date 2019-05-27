@@ -50,7 +50,7 @@ ROS Kinetic or ROS Melodic
 
 1. `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/`
 
-2. `python listener.py`
+2. `python Communicator.py`
 
 3. If the port is already taken, find the PID and kill it with steps 5 and 6
 
