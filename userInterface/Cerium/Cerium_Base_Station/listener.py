@@ -11,31 +11,38 @@ import socket
 import sys
 import subprocess
 
-
-
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
 from roverdb import Database
 
-
-
 global LAT
 global LON
-
-
+global TYPE
 
 def Split_Coordinates(data):
     global LAT
     global LON
+    global TYPE
     print "Split_Coordinates("+data+")"
     data = data.split(" ")
     print "Split_Coordinates(): data: ",data
-    LAT = float(data[0])
-    LON = float(data[1])
+
+    #LAT = float(data[0])
+    #LON = float(data[1])
+
+    LAT = data[0]
+    LON = data[1]
+    if LAT[len(LAT)-1] == "*":
+        LAT = LAT[:-1]
+    if LON[len(LON)-1] == "*":
+        LON = LON[:-1]
+    LAT = float(LAT)
+    LON = float(LON)
+
+    TYPE = data[2]
     print "Split_Coordinates(): LAT: ",LAT
     print "Split_Coordinates(): LON: ",LON
-
-
+    print "Split_Coordinates(): TYPE: ",TYPE
 
 def new_socket():
     global LAT
@@ -58,7 +65,8 @@ def new_socket():
     data = conn.recv(256)
     print "new_socket(): LAT: ",LAT
     print "new_socket(): LON: ",LON
-    db.insertMap("map",LAT,LON)
+    print "new_socket(): TYPE: ",TYPE
+    db.insertMap("map",LAT,LON,TYPE)
     #conn.send(data)
 
     conn.close()
