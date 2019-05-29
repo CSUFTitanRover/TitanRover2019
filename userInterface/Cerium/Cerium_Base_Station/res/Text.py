@@ -33,9 +33,16 @@ class Text():
 
 class YawText(Text):
     def __init__(self,screen,yaw,COLOR_TEXT,COLOR_BACKGROUND,FONT_SIZE,L,R,T,B):
-        yaw = float(yaw)
-        yaw = round(yaw,1)
-        yaw = "{:,}".format(yaw)
-        yaw = Append_Cardinal_Information(yaw)
-        #yaw = str(yaw)
+        yaw = Process_Raw_Yaw(yaw)
         Text.__init__(self,screen,yaw,COLOR_TEXT,COLOR_BACKGROUND,FONT_SIZE,L,R,T,B)
+    def blitme(self, NEW_TEXT):
+        NEW_TEXT = Process_Raw_Yaw(NEW_TEXT)
+        Text.blitme(self,NEW_TEXT)
+
+
+def Process_Raw_Yaw(Yaw):
+    Yaw = float(Yaw)
+    Yaw = round(Yaw,1)
+    Yaw = "{:,}".format(Yaw)
+    Yaw = Append_Cardinal_Information(Yaw)
+    return Yaw

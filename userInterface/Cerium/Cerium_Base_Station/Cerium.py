@@ -49,7 +49,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.27.2019.15.19"
+version = "05.27.2019.15.38"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -85,28 +85,6 @@ class Nav_Background_Image(Sprite):
         self.rect.centerx = 0
         self.rect.centery = 0
         self.screen.blit(image, rect)
-
-# Object for displaying rover's current heading at the top of the screen.
-class Nav_Text():
-    def blitme(self):
-        self.update()
-        self.screen.blit(self.high_score_image, self.high_score_rect)
-    def update(self):
-        high_score = float(yaw)
-        high_score = round(high_score,1)
-        high_score_str = "{:,}".format(high_score)
-        high_score_str = Append_Cardinal_Information(high_score_str)
-        self.high_score_image = self.font.render(high_score_str, True,
-                                self.color_text, color_background)
-        self.high_score_rect = self.high_score_image.get_rect()
-        self.high_score_rect.left = map_width
-        self.high_score_rect.top = self.high_score_rect.top
-    def __init__(self, screen):
-        self.screen = screen
-        self.screen_rect = screen.get_rect()
-        self.color_text = color_text
-        self.font = pygame.font.SysFont(None, 30)
-        self.update()
 
 def Add_LAT_LON():
     global new_destination
@@ -346,8 +324,7 @@ def Launch_Application():
     GNSS_SUBSCRIBTION.start()
     nav_arrow = Nav_Arrow(screen)
     nav_bkgd = Nav_Background_Image(screen)
-    nav_text = Nav_Text(screen)
-    #nav_text_2 = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
+    nav_text = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
     nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
@@ -358,8 +335,7 @@ def Launch_Application():
         LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
         nav_destination.blitme(new_destination)
-        #nav_text_2.blitme(yaw)
-        nav_text.blitme()
+        nav_text.blitme(yaw)
         pygame.display.flip()
 
 def Log_It(level,message):
