@@ -1,20 +1,29 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
+from fake_sensor_test.msg import imu
 from finalimu.msg import fimu
 from gnss.msg import gps
-from fake_sensor_test.msg import imu
-from res.LandmarkManager import LandmarkManager
 from pygame.sprite import Sprite
+from res.funcs import AppendCardinalInformation
+from res.funcs import SafeConnect
+from res.funcs import SetModeAndIP
+from res.obj.LandmarkManager import LandmarkManager
+from res.obj.Menu import Menu
 from std_msgs.msg import String
-import res.coords as coords
 import pygame
+import res.coords as coords
+import res.obj.Text as Text
+import res.obj.Image as Image
+import res.obj.Menu as Menu
 import rospy
 import socket
 import sqlite3
 import sys
+import threading
 
 color_background = (0,0,0)
 color_text = (255, 255, 255)
@@ -23,12 +32,13 @@ display_LAT_TL = None
 display_LON_TL = None
 display_LAT_BR = None
 display_LON_BR = None
-icon_arrow = "images/vehicle.png"
-icon_ball = "images/ball.png"
-icon_hint = "images/hint.png"
+icon_arrow = "res/images/vehicle.png"
+icon_ball = "res/images/ball.png"
+icon_hint = "res/images/hint.png"
 landmarks = LandmarkManager()
 LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
-mode = "dev" # dev | prod
+map_width = 1070 # The width of the map area
+mode = None
 new_destination = ""
 new_destination_type = "" # DD | DDM | DMS
 new_destination_LatLon = "LAT" # LAT | LON
@@ -37,13 +47,14 @@ roverLat = None
 roverLon = None
 screen = None
 screen_height = 530
-screen_width = 1070
-socket_TCP_IP = '192.168.1.237'
+screen_width = 1270 # The full window width
+socket_TCP_IP = None # Vehicle IP (for socket connection) TODO Give meaningful name
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
+status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.25.2019.18.14"
+version = "05.29.2019.13.49"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -61,94 +72,9 @@ class Nav_Arrow(Sprite):
         self.rect.centery = vehicle_y
         self.screen.blit(image, rect)
 
-# Object for displaying the map.
-class Nav_Background_Image(Sprite):
-    def __init__(self, screen):
-        super(Nav_Background_Image, self).__init__()
-        self.screen = screen
-        self.image = pygame.image.load('images/'+display_image+'.png')
-        self.rect = self.image.get_rect()
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
-    def blitme(self):
-        image = pygame.image.load('images/'+display_image+'.png')
-        rect = self.image.get_rect()
-        rect = image.get_rect(center=rect.center)
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
-        self.rect.centerx = 0
-        self.rect.centery = 0
-        self.screen.blit(image, rect)
-
-# Object for displaying the new destination coordinates users can type into
-# at the bottom of the screen.
-class Nav_Destination():
-    global new_destination
-    def blitme(self):
-        self.update()
-        self.screen.blit(self.high_score_image, self.high_score_rect)
-    def update(self):
-        high_score_str = new_destination
-        self.high_score_image = self.font.render(high_score_str,
-                                True, self.color_text, color_background)
-        self.high_score_rect = self.high_score_image.get_rect()
-        self.high_score_rect.centerx = self.screen_rect.centerx
-        self.high_score_rect.bottom = self.screen_rect.bottom
-    def __init__(self, screen):
-        self.screen = screen
-        self.screen_rect = screen.get_rect()
-        self.color_text = color_text
-        self.font = pygame.font.SysFont(None, 48)
-        self.update()
-
-# Object for displaying rover's current heading at the top of the screen.
-class Nav_Text():
-    def blitme(self):
-        self.update()
-        self.screen.blit(self.high_score_image, self.high_score_rect)
-    def update(self):
-        high_score = float(yaw)
-        high_score_str = "{:,}".format(high_score)
-        high_score_str = Append_Cardinal_Information(high_score_str)
-        self.high_score_image = self.font.render(high_score_str, True,
-                                self.color_text, color_background)
-        self.high_score_rect = self.high_score_image.get_rect()
-        self.high_score_rect.centerx = self.screen_rect.centerx
-        self.high_score_rect.top = self.high_score_rect.top
-    def __init__(self, screen):
-        self.screen = screen
-        self.screen_rect = screen.get_rect()
-        self.color_text = color_text
-        self.font = pygame.font.SysFont(None, 48)
-        self.update()
-
 def Add_LAT_LON():
     global new_destination
     new_destination = new_destination_LatLon + " "
-
-# Takes numerical vehicle heading value and appends a degree symbol and a
-# a cardinal direction abbreviation.
-def Append_Cardinal_Information(data):
-    function_name = "Append_Cardinal_Information()"
-    numerical_data = float(data)
-    data = data + "* "
-    if(numerical_data > 270):
-        data = data + "NW"
-    elif(numerical_data == 270):
-        data = data + "W"
-    elif(numerical_data > 180):
-        data = data + "SW"
-    elif(numerical_data == 180):
-        data = data + "S"
-    elif(numerical_data > 90):
-        data = data + "SE"
-    elif(numerical_data == 90):
-        data = data + "E"
-    elif(numerical_data > 0):
-        data = data + "NE"
-    elif(numerical_data == 0):
-        data = data + "N"
-    return data
 
 def Attempt_Coordinate_Send():
     function_name = "Attempt_Coordinate_Send()"
@@ -156,13 +82,23 @@ def Attempt_Coordinate_Send():
     if len(new_destination_set) == 2:
         Log_It_V2("INFO",function_name,"READY TO SEND")
         print("Attempt_Coordinate_Send(): Ready to send")
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((socket_TCP_IP, socket_TCP_PORT))
         destination = Get_Coordinate_Pair_String()
-        dest_encoded = destination.encode()
-        Log_It_V2("INFO",function_name,"SENDING")
-        s.send(dest_encoded)
-        s.close()
+        print "Get_Coordinate_Pair_String() returned", destination
+        if destination == "Invalid":
+            Log_It_V2("ERROR",function_name,"INVALID COORDINATES")
+        else:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # If connection doesn't pickup within 1 seconds, kill the call
+                s.settimeout(1)
+                s.connect((socket_TCP_IP, socket_TCP_PORT))
+                dest_encoded = destination.encode()
+                Log_It_V2("INFO",function_name,"SENDING")
+                s.send(dest_encoded)
+                s.close()
+            except:
+                Log_It_V2("ERROR",function_name,"SEND FAILED")
+
         Clear_Destination_Set()
     else:
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
@@ -189,13 +125,13 @@ def Calculate_Vehicle_X_Y():
     global vehicle_x
     global vehicle_y
     global screen_height
-    global screen_width
+    global map_width
     global display_LAT_TL
     global display_LON_TL
     global display_LAT_BR
     global display_LON_BR
     if((roverLon != None) and (roverLat != None)):
-        vehicle_x = (screen_width  / abs(display_LON_TL-display_LON_BR))
+        vehicle_x = (map_width  / abs(display_LON_TL-display_LON_BR))
         vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
         vehicle_x = vehicle_x * (roverLon-display_LON_TL)
         vehicle_y = vehicle_y * (roverLat-display_LAT_TL) * -1
@@ -255,7 +191,7 @@ def Check_Keydown_Events(event):
         Process_Destination()
         new_destination_type = ""
     elif event.key == pygame.K_d:
-        new_destination += "*"
+        new_destination += u"\u00B0"
         new_destination_type += "deg"
         print("Check_Keydown_Events(): new_destination_type: ",
               new_destination_type)
@@ -304,11 +240,12 @@ def Convert_Coordinates():
     global new_destination_type
     print("Convert_Coordinates(): Input Type:  ", new_destination_type) # TODO Remove upon verifying Log_It_V2
     print("Convert_Coordinates(): Input Value: ", new_destination) # TODO Remove upon verifying Log_It_V2
-    Log_It_V2(function_name,"Input Type:",new_destination_type,"Input Value:",new_destination)
+    Log_It_V2(function_name,"INFO","Input Type:"+new_destination_type+"Input Value:"+new_destination)
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
+        new_destination = new_destination[:-1]
     elif (new_destination_type == "degmin"):
-        d = new_destination.split("*")
+        d = new_destination.split(u"\u00B0")
         m = d[1]
         d = d[0]
         m = m[:-1]
@@ -318,7 +255,7 @@ def Convert_Coordinates():
         new_destination = DD
     elif (new_destination_type == "degminsec"):
         d = new_destination
-        d = d.split("*")
+        d = d.split(u"\u00B0")
         m = d[1]
         d = d[0]
         m = m.split("\'")
@@ -345,40 +282,52 @@ def Flip_LAT_LON():
 
 def Get_Coordinate_Pair_String():
     global new_destination_set
-    candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
-    LandmarkManager.Add_Landmark(landmarks,new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
+    if new_destination_set[0] == "Invalid" or new_destination_set[1] == "Invalid":
+        return "Invalid"
+    else:
+        candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
+        LandmarkManager.Add_Landmark(landmarks,new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
     print("Get_Coordinate_Pair_String(): candidate: ",candidate)
     return candidate
 
 # Application entry point
 def Launch_Application():
     func_name = "Launch_Application()"
-    Set_Display_Data("A") # TODO Remove this, should no longer be necessary
+    instance_config = SetModeAndIP.SetModeAndIP()
+    mode = instance_config[0]
+    socket_TCP_IP = instance_config[1]
+    #Set_Display_Data("A") # TODO Remove this, should no longer be necessary
     global landmarks
     global new_destination
     global new_destination_LatLon
     global screen
     pygame.init()
-    status = rospy.init_node('listener', anonymous=True)
-    Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
-    Subscribe_To_IMU() # Start listening to ROS
-    Subscribe_To_GNSS() # Start listening to ROS
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption('Titan Rover - Cerium Base - ' + version)
+    pygame.display.set_caption('Titan Rover - Cerium Base Station - ' + version)
+    Set_Application_Icon()
+    # Attempt to connect to roscore
+    status = SafeConnect.SafeConnect()
+    Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
+    IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU)
+    IMU_SUBSCRIBTION.start()
+    GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
+    GNSS_SUBSCRIBTION.start()
+    menu = Menu.Menu(screen,map_width)
     nav_arrow = Nav_Arrow(screen)
-    nav_destination = Nav_Destination(screen)
-    nav_bkgd = Nav_Background_Image(screen)
-    nav_text = Nav_Text(screen)
+    nav_bkgd = Image.Image(screen, "B")
+    nav_text = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
+    nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
         Check_Control_Events()
         Calculate_Display()
         nav_bkgd.blitme() # Always blit the background first
-        LandmarkManager.Blit_Landmarks(landmarks,screen_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
+        LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
-        nav_destination.blitme()
-        nav_text.blitme()
+        nav_destination.blitme(new_destination)
+        nav_text.blitme(yaw)
+        menu.blitme()
         pygame.display.flip()
 
 def Log_It(level,message):
@@ -393,10 +342,13 @@ def Log_It(level,message):
 def Log_It_V2(request_level,function,message):
     if LOG_LEVEL == "ALL":
         print function,message
+        return
     elif LOG_LEVEL == "INFO" and request_level == "INFO":
         print function,message
+        return
     elif LOG_LEVEL == "ERROR" and request_level == "ERROR":
         print function,"ERROR:",message
+        return
 
 # Re-append LAT/LON
 def Process_Destination():
@@ -421,6 +373,15 @@ def Remove_LAT_LON():
     new_destination = new_destination[1]
     print("Remove_LAT_LON(): new_destination: ",new_destination)
 
+def Set_Application_Icon():
+    function_name = "Set_Application_Icon()"
+    try:
+        icon = pygame.image.load(icon_arrow)
+        pygame.display.set_icon(icon)
+        Log_It_V2("INFO",function_name,"Set application icon")
+    except:
+        Log_It_V2("ERROR",function_name,"Cannot set application icon")
+
 def Set_Display_Data(ID):
     global display_image
     global display_LAT_TL
@@ -439,26 +400,25 @@ def Set_Display_Data(ID):
 
 def Subscribe_To_GNSS():
     function_name = "Subscribe_To_GNSS()"
-    connection_status = False
-    if mode == "prod":
-        connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
-    elif mode == "dev":
-        connection_status = rospy.Subscriber("gnss", gps, Callback_GNSS)
-    if connection_status == False:
-        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
-    else:
+    try:
+        rospy.Subscriber("gnss", gps, Callback_GNSS)
         Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+    except:
+        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
 
 def Subscribe_To_IMU():
     function_name = "Subscribe_To_IMU()"
-    connection_status = False
     if mode == "prod":
-        connection_status = rospy.Subscriber("imu", fimu, Callback_IMU)
+        try:
+            rospy.Subscriber("imu", fimu, Callback_IMU)
+            Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+        except:
+            Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
     elif mode == "dev":
-        connection_status = rospy.Subscriber("imu", imu, Callback_IMU)
-    if connection_status == False:
-        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
-    else:
-        Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+        try:
+            rospy.Subscriber("imu", imu, Callback_IMU)
+            Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
+        except:
+            Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
 
 Launch_Application()

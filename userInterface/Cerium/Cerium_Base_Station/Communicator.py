@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 
-
-
 # Feinzimer, David. dfeinzimer@csu.fullerton.edu
 # Updated 3/14/19
-
-
 
 import socket
 import sys
@@ -26,8 +22,19 @@ def Split_Coordinates(data):
     print "Split_Coordinates("+data+")"
     data = data.split(" ")
     print "Split_Coordinates(): data: ",data
-    LAT = float(data[0])
-    LON = float(data[1])
+
+    #LAT = float(data[0])
+    #LON = float(data[1])
+
+    LAT = data[0]
+    LON = data[1]
+    if LAT[len(LAT)-1] == "*":
+        LAT = LAT[:-1]
+    if LON[len(LON)-1] == "*":
+        LON = LON[:-1]
+    LAT = float(LAT)
+    LON = float(LON)
+
     TYPE = data[2]
     print "Split_Coordinates(): LAT: ",LAT
     print "Split_Coordinates(): LON: ",LON
@@ -55,8 +62,8 @@ def new_socket():
     print "new_socket(): LAT: ",LAT
     print "new_socket(): LON: ",LON
     print "new_socket(): TYPE: ",TYPE
-    db.insertMap("map",LAT,LON,TYPE)
-    #conn.send(data)
+    db.insertHint("hints",LAT,LON)
+    conn.send(data)
 
     conn.close()
     return
