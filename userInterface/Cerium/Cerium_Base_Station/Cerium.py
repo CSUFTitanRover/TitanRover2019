@@ -9,6 +9,7 @@ from finalimu.msg import fimu
 from gnss.msg import gps
 from fake_sensor_test.msg import imu
 from res.LandmarkManager import LandmarkManager
+from res.Menu import Menu
 from pygame.sprite import Sprite
 from std_msgs.msg import String
 import res.coords as coords
@@ -49,7 +50,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.27.2019.15.38"
+version = "05.28.2019.20.14"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.

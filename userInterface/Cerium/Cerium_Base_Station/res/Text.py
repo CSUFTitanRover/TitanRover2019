@@ -39,7 +39,6 @@ class YawText(Text):
         NEW_TEXT = Process_Raw_Yaw(NEW_TEXT)
         Text.blitme(self,NEW_TEXT)
 
-
 def Process_Raw_Yaw(Yaw):
     Yaw = float(Yaw)
     Yaw = round(Yaw,1)
