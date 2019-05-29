@@ -16,6 +16,7 @@ from std_msgs.msg import String
 import pygame
 import res.coords as coords
 import res.obj.Text as Text
+import res.obj.Image as Image
 import rospy
 import socket
 import sqlite3
@@ -51,7 +52,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.29.2019.07.25"
+version = "05.29.2019.07.38"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -67,25 +68,6 @@ class Nav_Arrow(Sprite):
         rect = image.get_rect(center=self.rect.center)
         self.rect.centerx = vehicle_x
         self.rect.centery = vehicle_y
-        self.screen.blit(image, rect)
-
-# Object for displaying the map.
-class Nav_Background_Image(Sprite):
-    def __init__(self, screen):
-        super(Nav_Background_Image, self).__init__()
-        self.screen = screen
-        self.image = pygame.image.load('res/images/'+display_image+'.png')
-        self.rect = self.image.get_rect()
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
-    def blitme(self):
-        image = pygame.image.load('res/images/'+display_image+'.png')
-        rect = self.image.get_rect()
-        rect = image.get_rect(center=rect.center)
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
-        self.rect.centerx = 0
-        self.rect.centery = 0
         self.screen.blit(image, rect)
 
 def Add_LAT_LON():
@@ -326,7 +308,7 @@ def Launch_Application():
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
     GNSS_SUBSCRIBTION.start()
     nav_arrow = Nav_Arrow(screen)
-    nav_bkgd = Nav_Background_Image(screen)
+    nav_bkgd = Image.Image(screen, "B")
     nav_text = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
     nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
