@@ -90,27 +90,33 @@ browser zoom set to 100%
 
 3) --- NEXT DEVELOPMENTS ---
 
-3.1) Publish to mode topic.
+3.1) Set mode and rover ip on boot
 
-3.2) Publish 0s to joystick topic.
+3.2) Add additional site maps.
 
-3.3) Delete last entered hint.
+3.6) ------ Menu System ------
 
-3.2) Expanded rostopic viewer
+3.6.a) --------- Delete last entered hint.
 
-3.3) Decide on final database file path.
+3.6.b) --------- Publish to mode topic.
 
-3.4) Routinely search for new ball records and add them as landmarks.
+3.6.c) --------- STOP function (Publish 0s to joystick topic)
 
-3.5) dev/prod switch
+3.6.b) --------- rostopic view
+
+3.6.c) --------- dev/prod switch
+
+3.6.d) --------- vehicle ip setter
+
+3.7) Routinely search for new ball records and add them as landmarks.
 
 4) --- NEEDS FIXING / IMPROVEMENTS ---
 
-4.1) Program will not start if ROS is not running
+4.1) ------ Add messages when waiting for roscore to start
 
-4.2) Rover icon is blitting even if GNSS topic is not connected.
+4.2) ------ Rover icon is blitting even if GNSS topic is not connected.
 
-4.3) Expand coordinate input validation
+4.3) ------ Expand coordinate input validation
 
 
 
