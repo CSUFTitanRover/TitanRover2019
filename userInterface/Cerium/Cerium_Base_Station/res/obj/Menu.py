@@ -11,5 +11,5 @@ class Menu():
         self.fuck_button.blitme()
         self.stop_button.blitme()
     def build_buttons(self):
-        self.fuck_button = MenuButton.MenuButton(self.screen,(255,0,0), self.start_x, 50)
-        self.stop_button = MenuButton.MenuButton(self.screen,(255,255,0), self.start_x, 10)
+        self.fuck_button = MenuButton.MenuButton(self.screen,(255,0,0), self.start_x+100, 480, 100, 50, "FUCK")
+        self.stop_button = MenuButton.MenuButton(self.screen,(255,255,0), self.start_x, 480, 100, 50, "STOP")
