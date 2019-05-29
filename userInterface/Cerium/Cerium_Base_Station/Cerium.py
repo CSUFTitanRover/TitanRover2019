@@ -18,6 +18,7 @@ import pygame
 import res.coords as coords
 import res.obj.Text as Text
 import res.obj.Image as Image
+import res.obj.Menu as Menu
 import rospy
 import socket
 import sqlite3
@@ -37,11 +38,7 @@ icon_hint = "res/images/hint.png"
 landmarks = LandmarkManager()
 LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
 map_width = 1070 # The width of the map area
-
-#FIXING
-#mode = "dev" # dev | prod
 mode = None
-
 new_destination = ""
 new_destination_type = "" # DD | DDM | DMS
 new_destination_LatLon = "LAT" # LAT | LON
@@ -51,11 +48,7 @@ roverLon = None
 screen = None
 screen_height = 530
 screen_width = 1270 # The full window width
-
-#FIXING
-#socket_TCP_IP = '192.168.1.237'
-socket_TCP_IP = None
-
+socket_TCP_IP = None # Vehicle IP (for socket connection) TODO Give meaningful name
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
@@ -303,7 +296,7 @@ def Launch_Application():
     instance_config = SetModeAndIP.SetModeAndIP()
     mode = instance_config[0]
     socket_TCP_IP = instance_config[1]
-    Set_Display_Data("A") # TODO Remove this, should no longer be necessary
+    #Set_Display_Data("A") # TODO Remove this, should no longer be necessary
     global landmarks
     global new_destination
     global new_destination_LatLon
@@ -319,6 +312,7 @@ def Launch_Application():
     IMU_SUBSCRIBTION.start()
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
     GNSS_SUBSCRIBTION.start()
+    menu = Menu.Menu(screen,map_width)
     nav_arrow = Nav_Arrow(screen)
     nav_bkgd = Image.Image(screen, "B")
     nav_text = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
@@ -333,6 +327,7 @@ def Launch_Application():
         nav_arrow.blitme()
         nav_destination.blitme(new_destination)
         nav_text.blitme(yaw)
+        menu.blitme()
         pygame.display.flip()
 
 def Log_It(level,message):

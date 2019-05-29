@@ -1,13 +1,15 @@
-# coding=utf-8
-
 import pygame
+import res.obj.MenuButton as MenuButton
 
 class Menu():
-    def blitme(self):
-        self.update()
-        #self.screen.blit()
-    def update(self):
-        pass
-    def __init__(self, screen):
+    # start_x = The x value that no objects should appear to the left of
+    def __init__(self, screen, start_x):
         self.screen = screen
-        self.screen_rect = screen.get_rect()
+        self.start_x = start_x # No objects appear to the left of this
+        self.build_buttons()
+    def blitme(self):
+        self.fuck_button.blitme()
+        self.stop_button.blitme()
+    def build_buttons(self):
+        self.fuck_button = MenuButton.MenuButton(self.screen,(255,0,0), self.start_x, 50)
+        self.stop_button = MenuButton.MenuButton(self.screen,(255,255,0), self.start_x, 10)

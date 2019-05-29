@@ -81,7 +81,7 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
-2.1) Absolute paths
+2.1) STOP button and "FUDGE button"
 
 3) --- NEXT DEVELOPMENTS ---
 
