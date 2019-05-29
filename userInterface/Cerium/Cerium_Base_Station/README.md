@@ -1,11 +1,6 @@
 # Titan Rover - Cerium Base Station
 
 
-## Questions
-
-David Feinzimer `dfeinzimer@csu.fullerton.edu`
-
-
 
 ## Requirements
 
@@ -131,3 +126,9 @@ browser zoom set to 100%
 1.2) Add the following to bottom of the file:
 
 1.3) `source ~/catkin_ws/devel/setup.bash`
+
+
+
+## Questions
+
+David Feinzimer `dfeinzimer@csu.fullerton.edu`
