@@ -61,7 +61,7 @@ ROS Kinetic or ROS Melodic
 
 ### 4) Start the base station interface:
 
-1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station`
+1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/ && python Cerium.py`
 
 2) `export ROS_MASTER_URI="http://192.168.1.2:11311/"` # Vehicle's IP
 
@@ -86,9 +86,11 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
-2.1) No urgent issues.
+2.1) Absolute paths
 
 3) --- NEXT DEVELOPMENTS ---
+
+3.0) On no ros connection add to error message ("hints etc")
 
 3.1) Set mode and rover ip on boot
 
