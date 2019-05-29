@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from Append_Cardinal_Information import Append_Cardinal_Information
+from res.funcs import *
 
 import pygame
 
@@ -43,5 +43,5 @@ def Process_Raw_Yaw(Yaw):
     Yaw = float(Yaw)
     Yaw = round(Yaw,1)
     Yaw = "{:,}".format(Yaw)
-    Yaw = Append_Cardinal_Information(Yaw)
+    Yaw = AppendCardinalInformation.AppendCardinalInformation(Yaw)
     return Yaw

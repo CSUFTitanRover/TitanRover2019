@@ -4,18 +4,18 @@
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
-from res.Append_Cardinal_Information import Append_Cardinal_Information
+from fake_sensor_test.msg import imu
 from finalimu.msg import fimu
 from gnss.msg import gps
-from fake_sensor_test.msg import imu
-from res.funcs import SafeConnect
-from res.LandmarkManager import LandmarkManager
-from res.Menu import Menu
 from pygame.sprite import Sprite
+from res.funcs import AppendCardinalInformation
+from res.funcs import SafeConnect
+from res.obj.LandmarkManager import LandmarkManager
+from res.obj.Menu import Menu
 from std_msgs.msg import String
-import res.coords as coords
-import res.Text as Text
 import pygame
+import res.coords as coords
+import res.obj.Text as Text
 import rospy
 import socket
 import sqlite3
@@ -51,7 +51,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.28.2019.22.43"
+version = "05.29.2019.07.25"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.

@@ -1,7 +1,7 @@
 # Takes numerical vehicle heading value, appends a degree symbol and a
 # a cardinal direction abbreviation.
 
-def Append_Cardinal_Information(data):
+def AppendCardinalInformation(data):
     function_name = "Append_Cardinal_Information()"
     numerical_data = float(data)
     data = data + u"\u00B0" + " "
