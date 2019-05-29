@@ -8,6 +8,7 @@ from res.Append_Cardinal_Information import Append_Cardinal_Information
 from finalimu.msg import fimu
 from gnss.msg import gps
 from fake_sensor_test.msg import imu
+from res.funcs import SafeConnect
 from res.LandmarkManager import LandmarkManager
 from res.Menu import Menu
 from pygame.sprite import Sprite
@@ -50,7 +51,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.28.2019.21.08"
+version = "05.28.2019.22.43"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -317,16 +318,8 @@ def Launch_Application():
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Titan Rover - Cerium Base Station - ' + version)
     Set_Application_Icon()
-    state = False
-    while state == False:
-        try:
-            rospy.get_master().getPid()
-            state = True
-        except:
-            print "No master"
-            state = False
-        if state == True:
-            status = rospy.init_node('listener', anonymous=True)
+    # Attempt to connect to roscore
+    status = SafeConnect.SafeConnect()
     Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
     IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU)
     IMU_SUBSCRIBTION.start()
