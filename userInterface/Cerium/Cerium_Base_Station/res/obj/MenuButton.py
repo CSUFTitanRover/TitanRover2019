@@ -9,7 +9,7 @@ class MenuButton():
         self.height = height
         self.message = message = message
         self.screen = screen
-        self.text = Text.Text(self.screen, self.message, (0,0,0), (0,0,0,color),20,self.bound_left+10,None,self.bound_top+10,None)
+        self.text = Text.Text(self.screen, self.message, (0,0,0), (0,0,0,color),20,self.bound_left+20,None,self.bound_top+16,None)
         self.width = width
     def blitme(self):
         rect = pygame.Rect(self.bound_left, self.bound_top, self.width, self.height)

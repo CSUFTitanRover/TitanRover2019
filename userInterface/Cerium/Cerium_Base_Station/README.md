@@ -56,15 +56,13 @@ ROS Kinetic or ROS Melodic
 
 ### 4) Start the base station interface:
 
-1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/ && python Cerium.py`
+1) `export ROS_MASTER_URI="http://192.168.1.2:11311/"` # Vehicle's IP
 
-2) `export ROS_MASTER_URI="http://192.168.1.2:11311/"` # Vehicle's IP
+2) `export ROS_IP="192.168.1.204"` # Connecting machine
 
-3) `export ROS_IP="192.168.1.204"` # Connecting machine
+3) `export ROS_HOSTNAME="192.168.1.204"` # Connecting machine
 
-4) `export ROS_HOSTNAME="192.168.1.204"` # Connecting machine
-
-5) `python Cerium.py`
+4) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/ && python Cerium.py`
 
 
 

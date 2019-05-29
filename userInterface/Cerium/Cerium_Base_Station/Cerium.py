@@ -54,7 +54,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.29.2019.13.49"
+version = "05.29.2019.16.28"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -315,7 +315,11 @@ def Launch_Application():
     menu = Menu.Menu(screen,map_width)
     nav_arrow = Nav_Arrow(screen)
     nav_bkgd = Image.Image(screen, "B")
-    nav_text = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
+
+    # fixing
+    #nav_text = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
+
+
     nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
@@ -326,8 +330,11 @@ def Launch_Application():
         LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
         nav_destination.blitme(new_destination)
-        nav_text.blitme(yaw)
-        menu.blitme()
+
+        # fixing
+        #nav_text.blitme(yaw)
+
+        menu.blitme(yaw)
         pygame.display.flip()
 
 def Log_It(level,message):
