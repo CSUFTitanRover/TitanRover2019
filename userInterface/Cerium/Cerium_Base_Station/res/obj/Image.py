@@ -6,5 +6,4 @@ class Image():
         self.image = pygame.image.load('res/images/'+image+'.png')
         self.rect = self.image.get_rect()
     def blitme(self):
-        rect = self.image.get_rect()
         self.screen.blit(self.image, self.rect)

@@ -10,6 +10,7 @@ from gnss.msg import gps
 from pygame.sprite import Sprite
 from res.funcs import AppendCardinalInformation
 from res.funcs import SafeConnect
+from res.funcs import SetModeAndIP
 from res.obj.LandmarkManager import LandmarkManager
 from res.obj.Menu import Menu
 from std_msgs.msg import String
@@ -36,7 +37,11 @@ icon_hint = "res/images/hint.png"
 landmarks = LandmarkManager()
 LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
 map_width = 1070 # The width of the map area
-mode = "dev" # dev | prod
+
+#FIXING
+#mode = "dev" # dev | prod
+mode = None
+
 new_destination = ""
 new_destination_type = "" # DD | DDM | DMS
 new_destination_LatLon = "LAT" # LAT | LON
@@ -46,13 +51,17 @@ roverLon = None
 screen = None
 screen_height = 530
 screen_width = 1270 # The full window width
-socket_TCP_IP = '192.168.1.237'
+
+#FIXING
+#socket_TCP_IP = '192.168.1.237'
+socket_TCP_IP = None
+
 socket_TCP_PORT = 9600
 socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.29.2019.07.38"
+version = "05.29.2019.09.13"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -291,6 +300,9 @@ def Get_Coordinate_Pair_String():
 # Application entry point
 def Launch_Application():
     func_name = "Launch_Application()"
+    instance_config = SetModeAndIP.SetModeAndIP()
+    mode = instance_config[0]
+    socket_TCP_IP = instance_config[1]
     Set_Display_Data("A") # TODO Remove this, should no longer be necessary
     global landmarks
     global new_destination
