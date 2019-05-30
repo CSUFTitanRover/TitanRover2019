@@ -71,6 +71,10 @@ browser zoom set to 100%
 
 2.2) Connect buttons to publishers.
 
+2.3) Ensure correct conversions.
+
+2.4) Hab tiles
+
 3) --- NEXT DEVELOPMENTS ---
 
 3.1) On no ros connection add to error message ("hints etc")

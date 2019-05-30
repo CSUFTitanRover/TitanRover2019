@@ -15,7 +15,17 @@ class Landmark(object):
         self.yaw = 0 # Used for landmarks of type VEHICLE
     def blitme(self):
         self.image = pygame.transform.rotate(self.image, self.yaw * -1)
-        self.rect = image.get_rect(center=self.rect.center)
+        self.rect = self.image.get_rect(center=self.rect.center)
+
+        # fixing, debugging, TODO remove
+        print "error"
+        print "lat", self.lat, type(self.lat)
+        print "lon", self.lon, type(self.lon)
+        print "x", self.x, type(self.x)
+        print "y", self.y, type(self.y)
+        print "id", self.id, type(self.id)
+        print "type", self.type, type(self.type)
+
         self.rect.centerx = self.x
         self.rect.centery = self.y
         self.screen.blit(self.image, self.rect)
@@ -23,9 +33,9 @@ class Landmark(object):
         return self.lat, self.lon
     def GetXY(self):
         return self.x, self.y
-    def SetLatLon(lat, lon):
+    def SetLatLon(self, lat, lon):
         self.lat = lat
         self.lon = lon
-    def SetXY(x, y):
+    def SetXY(self, x, y):
         self.x = x
         self.y = y

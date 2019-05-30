@@ -5,6 +5,7 @@ import rospy
 
 def SafeConnect():
     try:
+        print "Cerium is connecting to ROS, please wait."
         rospy.get_master().getPid()
         # If an exception was not thrown, establish a connection.
         status = rospy.init_node('listener', anonymous=True)

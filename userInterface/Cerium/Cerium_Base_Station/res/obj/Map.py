@@ -1,7 +1,8 @@
 from Image import Image
 from Landmark import Landmark
+import res.coords as coords
 
-icon_arrow = "../images/vehicle.png"
+icon_arrow = "res/images/vehicle.png"
 
 class Map(object):
     def __init__(self, screen):
@@ -11,17 +12,21 @@ class Map(object):
         self.lon_br = None
         self.lon_tl = None
         self.map_height = None
+        self.map_id = None
         self.map_image = None
         self.map_width = None
         self.screen = screen
-        self.vehicle = AddLandmark(0,0,"VEHICLE",icon_arrow,self.screen)
+        self.vehicle = self.AddLandmark(50,50,"VEHICLE",icon_arrow,self.screen)
     def AddLandmark(self,lat,lon,type,image,screen):
         landmark = Landmark(lat,lon,len(self.landmarks),type,image,screen)
         self.landmarks.append(landmark)
         return landmark
     def blitme(self, vehicle_lat, vehicle_lon):
-        # Calculate the correct map image
-        self.UpdateMapImage(vehicle_lat, vehicle_lon)
+        self.map_id = self.CalculateCorrectMap(vehicle_lat, vehicle_lon)
+        # Set the correct map image
+        self.UpdateMapImage()
+        # Set the correct map boundaries
+        self.UpdateMapBoundaries()
         # Calculate the correct position for each landmark
         self.UpdateMapLandmarks()
         # Now blit the map
@@ -29,21 +34,32 @@ class Map(object):
         # Finally blit all landmarks
         for landmark in self.landmarks:
             landmark.blitme()
-    def CalculateCorrectMapImage(self, vehicle_lat, vehicle_lon):
-        function_name = "CalculateCorrectMapImage()"
+    def CalculateCorrectMap(self, vehicle_lat, vehicle_lon):
+        function_name = "CalculateCorrectMap()"
         if vehicle_lat and vehicle_lon:
             for location in coords.coords_list:
-                if (roverLat <= coords.coords_data[location+"_TL_LAT"] and
-                    roverLat >= coords.coords_data[location+"_BR_LAT"]):
-                    if (roverLon <= coords.coords_data[location+"_BR_LON"] and
-                        roverLon >= coords.coords_data[location+"_TL_LON"]):
-                        print function_name, "found correct map image"
+                if (vehicle_lat <= coords.coords_data[location+"_TL_LAT"] and
+                    vehicle_lat >= coords.coords_data[location+"_BR_LAT"]):
+                    if (vehicle_lon <= coords.coords_data[location+"_BR_LON"] and
+                        vehicle_lon >= coords.coords_data[location+"_TL_LON"]):
+                        print function_name, "found a correct map image"
+        else:
+            # Return the default background
+            print function_name, "Found no match, falling back to default"
+            return "_"
+    def UpdateMapBoundaries(self):
+        function_name = "UpdateMapBoundaries()"
+        self.lat_br = coords.coords_data[self.map_id + "_BR_LAT"]
+        self.lat_tl = coords.coords_data[self.map_id + "_TL_LAT"]
+        self.lon_br = coords.coords_data[self.map_id + "_BR_LON"]
+        self.lon_tl = coords.coords_data[self.map_id + "_TL_LON"]
     def UpdateMapLandmarks(self):
         function_name = "UpdateMapLandmarks()"
         for landmark in self.landmarks:
             landmark_lat, landmark_lon = landmark.GetLatLon()
             if landmark_lat != None and landmark_lon != None:
                 if self.lat_tl and self.lat_br and self.lon_tl and self.lon_br:
+                    print function_name, "FOUND LAT LON", landmark_lat, landmark_lon
                     x = (self.map_width  / abs(self.lon_tl-self.lon_br))
                     y = (self.map_height / abs(self.lat_tl-self.lat_br))
                     #if self.lat[len(self.lat)-1] == u"\u00B0":
@@ -53,13 +69,13 @@ class Map(object):
                     x = x * (float(landmark_lon)-float(self.lon_tl))
                     y = y * (float(landmark_lat)-float(self.lat_tl)) * -1
                     landmark.SetXY(x, y)
+                else:
+                    print function_name, "ERROR: maps lat/lon not set"
+                    landmark.SetXY(0, 0)
             else:
-                print function_name,"ERROR: lat and/or lon empty"
+                print function_name, "ERROR: lat and/or lon empty"
+                landmark.SetXY(0, 0)
     def GetAllLandmarks(self):
         return self.landmarks
-    def UpdateMapImage(self, vehicle_lat, vehicle_lon):
-        if vehicle_lat and vehicle_lon:
-            map_id = self.CalculateCorrectMapImage(vehicle_lat, vehicle_lon)
-        else:
-            self.map_id = "logo_large"
+    def UpdateMapImage(self):
         self.map_image = Image(self.screen, self.map_id)

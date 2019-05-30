@@ -12,7 +12,6 @@ def SetModeAndIP():
         ip = '192.168.1.2'
     else:
         ip = AutoGrabIP()
-    print "Mode:", mode
     print "Database IP:", ip
     return mode, ip
 
