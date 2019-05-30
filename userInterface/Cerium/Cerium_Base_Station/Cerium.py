@@ -104,19 +104,18 @@ def Attempt_Coordinate_Send():
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
 
 # Determines which map tile to display
-def Calculate_Display():
+def Calculate_Display(roverLat, roverLon):
     function_name = "Calculate_Display()"
-    global roverLat
-    global roverLon
-    result = "_"
-    for x in coords.coords_list:
-        if (roverLat <= coords.coords_data[x+"_TL_LAT"] and
-            roverLat >= coords.coords_data[x+"_BR_LAT"]):
-            if (roverLon <= coords.coords_data[x+"_BR_LON"] and
-                roverLon >= coords.coords_data[x+"_TL_LON"]):
-                result = x
-                Set_Display_Data(result)
-                return
+    result = None
+    if roverLat and roverLon:
+        for x in coords.coords_list:
+            if (roverLat <= coords.coords_data[x+"_TL_LAT"] and
+                roverLat >= coords.coords_data[x+"_BR_LAT"]):
+                if (roverLon <= coords.coords_data[x+"_BR_LON"] and
+                    roverLon >= coords.coords_data[x+"_TL_LON"]):
+                    result = x
+                    Set_Display_Data(result)
+                    return
 
 def Calculate_Vehicle_X_Y():
     function_name = "Calculate_Vehicle_X_Y()"
@@ -302,6 +301,8 @@ def Launch_Application():
     global landmarks
     global new_destination
     global new_destination_LatLon
+    global roverLat
+    global roverLon
     global screen
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -316,26 +317,17 @@ def Launch_Application():
     GNSS_SUBSCRIBTION.start()
     menu = Menu.Menu(screen,map_width)
     nav_arrow = Nav_Arrow(screen)
-    nav_bkgd = Image.Image(screen, "B")
-
-    # fixing
-    #nav_text = Text.YawText(screen,yaw,color_text,color_background,20,map_width,None,screen.get_rect().top,None)
-
-
+    nav_bkgd = Image.Image(screen, "logo_large")
     nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
         Check_Control_Events(menu)
-        Calculate_Display()
+        Calculate_Display(roverLat, roverLon)
         nav_bkgd.blitme() # Always blit the background first
         LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
         nav_destination.blitme(new_destination)
-
-        # fixing
-        #nav_text.blitme(yaw)
-
         menu.blitme(yaw)
         pygame.display.flip()
 
