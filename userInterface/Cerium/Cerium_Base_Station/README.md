@@ -25,38 +25,30 @@ ROS Kinetic or ROS Melodic
 
 ### 2) [OPTION A] If the desired mode is production, start the onboard IMU and GNSS
 
-1) `cd ~/catkin_ws/src/finalimu/src/`
+1) `cd ~/catkin_ws/src/finalimu/src/ && python cal_run_Imu.py`
 
-2) `python cal_run_Imu.py`
-
-3) `cd ~/catkin_ws/src/gnss/src/`
-
-4) `python reach.py`
+2) `cd ~/catkin_ws/src/gnss/src/ && python reach.py`
 
 
 ### 2) [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
 
-1) `cd ~/catkin_ws/src/fake_sensor_test/launch`
-
-2) `roslaunch fake.launch`
+1) `cd ~/catkin_ws/src/fake_sensor_test/launch && roslaunch fake.launch`
 
 
 ### 3) Start the onboard communication interface (development or production mode):
 
-1. `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/`
+1. `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/ && python Communicator.py`
 
-2. `python Communicator.py`
+2. If the port is already taken, find the PID and kill it with steps 3 and 4
 
-3. If the port is already taken, find the PID and kill it with steps 5 and 6
+3. `sudo lsof -i:9600`
 
-4. `sudo lsof -i:9600`
-
-5. `sudo kill <PID>`
+4. `sudo kill <PID>`
 
 
 ### 4) Start the base station interface:
 
-1) `export ROS_MASTER_URI="http://192.168.1.2:11311/"` # Vehicle's IP
+1) `export ROS_MASTER_URI="http://192.168.1.78:11311/"` # Vehicle's IP
 
 2) `export ROS_IP="192.168.1.204"` # Connecting machine
 
@@ -79,7 +71,9 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
-2.1) Connect buttons to publishers.
+2.1) Map manager
+
+2.2) Connect buttons to publishers.
 
 3) --- NEXT DEVELOPMENTS ---
 

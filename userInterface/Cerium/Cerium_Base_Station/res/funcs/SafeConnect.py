@@ -14,7 +14,6 @@ def SafeConnect():
         print "Please check the roscore configuration."
         exit()
 
-# Fixing
 # def SafeConnect():
 #     state = False
 #     while state == False:

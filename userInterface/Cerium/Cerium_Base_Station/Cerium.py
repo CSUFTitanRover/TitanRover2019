@@ -25,6 +25,7 @@ import sqlite3
 import sys
 import threading
 
+app_title = "Titan Rover - Cerium Base Station"
 color_background = (0,0,0)
 color_text = (255, 255, 255)
 display_image = None
@@ -36,7 +37,7 @@ icon_arrow = "res/images/vehicle.png"
 icon_ball = "res/images/ball.png"
 icon_hint = "res/images/hint.png"
 landmarks = LandmarkManager()
-LOG_LEVEL = "ERROR" # ALL | INFO | ERROR
+LOG_LEVEL = "ALL" # ALL | INFO | ERROR
 map_width = 1070 # The width of the map area
 mode = None
 new_destination = ""
@@ -54,7 +55,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.29.2019.21.10"
+version = "05.29.2019.21.34"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -147,8 +148,6 @@ def Callback_GNSS(data):
     if mode == "dev":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-    Log_It_V2("INFO",function_name,str(roverLat))
-    Log_It_V2("INFO",function_name,str(roverLon))
     Calculate_Vehicle_X_Y()
 
 def Callback_IMU(data):
@@ -158,7 +157,6 @@ def Callback_IMU(data):
         yaw = data.yaw.yaw
     if mode == "dev":
         yaw = data.yaw
-    Log_It_V2("INFO",function_name,str(yaw))
 
 # Respond to keypress and mouse events.
 def Check_Control_Events(menu):
@@ -297,28 +295,29 @@ def Launch_Application():
     instance_config = SetModeAndIP.SetModeAndIP()
     mode = instance_config[0]
     socket_TCP_IP = instance_config[1]
-    #Set_Display_Data("A") # TODO Remove this, should no longer be necessary
     global landmarks
+    global mode
     global new_destination
     global new_destination_LatLon
     global roverLat
     global roverLon
     global screen
+    global status
+    global yaw
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption('Titan Rover - Cerium Base Station - ' + version)
+    pygame.display.set_caption(app_title + ' - ' + version)
     Set_Application_Icon()
     # Attempt to connect to roscore
     status = SafeConnect.SafeConnect()
-    Log_It_V2("INFO",func_name,"ROS Status:"+str(status))
-    IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU)
+    print "ROS Status: " + str(status)
+    IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU,args=(mode,))
     IMU_SUBSCRIBTION.start()
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
     GNSS_SUBSCRIBTION.start()
-    menu = Menu.Menu(screen,map_width)
+    menu = Menu.Menu(screen, map_width, app_title)
     nav_arrow = Nav_Arrow(screen)
     nav_bkgd = Image.Image(screen, "logo_large")
-    nav_destination = Text.Text(screen,new_destination,color_text,color_background,20,map_width,None,None,screen.get_rect().bottom)
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
@@ -327,8 +326,7 @@ def Launch_Application():
         nav_bkgd.blitme() # Always blit the background first
         LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
         nav_arrow.blitme()
-        nav_destination.blitme(new_destination)
-        menu.blitme(yaw)
+        menu.blitme(yaw, new_destination)
         pygame.display.flip()
 
 def Log_It(level,message):
@@ -403,23 +401,20 @@ def Subscribe_To_GNSS():
     function_name = "Subscribe_To_GNSS()"
     try:
         rospy.Subscriber("gnss", gps, Callback_GNSS)
-        Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
     except:
-        Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
+        print function_name, "SUBSCRIPTION FAILURE"
 
-def Subscribe_To_IMU():
-    function_name = "Subscribe_To_IMU()"
+def Subscribe_To_IMU(mode):
+    function_name = "Subscribe_To_IMU("+mode+")"
     if mode == "prod":
         try:
             rospy.Subscriber("imu", fimu, Callback_IMU)
-            Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
         except:
-            Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
+            print function_name, "prod SUBSCRIPTION FAILURE"
     elif mode == "dev":
         try:
             rospy.Subscriber("imu", imu, Callback_IMU)
-            Log_It_V2("INFO",function_name,"SUBSCRIPTION SUCCESS")
         except:
-            Log_It_V2("ERROR",function_name,"SUBSCRIPTION FAILURE")
+            print function_name, "dev SUBSCRIPTION FAILURE"
 
 Launch_Application()
