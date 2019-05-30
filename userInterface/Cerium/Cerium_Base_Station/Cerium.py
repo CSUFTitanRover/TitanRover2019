@@ -11,7 +11,7 @@ from pygame.sprite import Sprite
 from res.funcs import AppendCardinalInformation
 from res.funcs import SafeConnect
 from res.funcs import SetModeAndIP
-from res.obj.LandmarkManager import LandmarkManager
+from res.obj.Map import Map
 from res.obj.Menu import Menu
 from std_msgs.msg import String
 import pygame
@@ -36,8 +36,6 @@ display_LON_BR = None
 icon_arrow = "res/images/vehicle.png"
 icon_ball = "res/images/ball.png"
 icon_hint = "res/images/hint.png"
-landmarks = LandmarkManager()
-LOG_LEVEL = "ALL" # ALL | INFO | ERROR
 map_width = 1070 # The width of the map area
 mode = None
 new_destination = ""
@@ -81,12 +79,11 @@ def Attempt_Coordinate_Send():
     function_name = "Attempt_Coordinate_Send()"
     global new_destination_set
     if len(new_destination_set) == 2:
-        Log_It_V2("INFO",function_name,"READY TO SEND")
         print("Attempt_Coordinate_Send(): Ready to send")
         destination = Get_Coordinate_Pair_String()
         print "Get_Coordinate_Pair_String() returned", destination
         if destination == "Invalid":
-            Log_It_V2("ERROR",function_name,"INVALID COORDINATES")
+            print "ERROR", function_name, "INVALID COORDINATES"
         else:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -94,29 +91,15 @@ def Attempt_Coordinate_Send():
                 s.settimeout(1)
                 s.connect((socket_TCP_IP, socket_TCP_PORT))
                 dest_encoded = destination.encode()
-                Log_It_V2("INFO",function_name,"SENDING")
+                print "INFO", function_name, "SENDING"
                 s.send(dest_encoded)
                 s.close()
             except:
-                Log_It_V2("ERROR",function_name,"SEND FAILED")
+                print "ERROR", function_name, "SEND FAILED"
 
         Clear_Destination_Set()
     else:
         print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
-
-# Determines which map tile to display
-def Calculate_Display(roverLat, roverLon):
-    function_name = "Calculate_Display()"
-    result = None
-    if roverLat and roverLon:
-        for x in coords.coords_list:
-            if (roverLat <= coords.coords_data[x+"_TL_LAT"] and
-                roverLat >= coords.coords_data[x+"_BR_LAT"]):
-                if (roverLon <= coords.coords_data[x+"_BR_LON"] and
-                    roverLon >= coords.coords_data[x+"_TL_LON"]):
-                    result = x
-                    Set_Display_Data(result)
-                    return
 
 def Calculate_Vehicle_X_Y():
     function_name = "Calculate_Vehicle_X_Y()"
@@ -237,9 +220,9 @@ def Convert_Coordinates():
     function_name = "Convert_Coordinates()"
     global new_destination
     global new_destination_type
-    print("Convert_Coordinates(): Input Type:  ", new_destination_type) # TODO Remove upon verifying Log_It_V2
-    print("Convert_Coordinates(): Input Value: ", new_destination) # TODO Remove upon verifying Log_It_V2
-    Log_It_V2(function_name,"INFO","Input Type:"+new_destination_type+"Input Value:"+new_destination)
+    print "Convert_Coordinates(): Input Type:  ", new_destination_type
+    print "Convert_Coordinates(): Input Value: ", new_destination
+    print function_name, "INFO", "Input Type:" + new_destination_type + "Input Value:" + new_destination
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
         new_destination = new_destination[:-1]
@@ -310,44 +293,19 @@ def Launch_Application():
     Set_Application_Icon()
     # Attempt to connect to roscore
     status = SafeConnect.SafeConnect()
-    print "ROS Status: " + str(status)
     IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU,args=(mode,))
     IMU_SUBSCRIBTION.start()
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
     GNSS_SUBSCRIBTION.start()
+    map = Map(screen)
     menu = Menu.Menu(screen, map_width, app_title)
-    nav_arrow = Nav_Arrow(screen)
-    nav_bkgd = Image.Image(screen, "logo_large")
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
         Check_Control_Events(menu)
-        Calculate_Display(roverLat, roverLon)
-        nav_bkgd.blitme() # Always blit the background first
-        LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
-        nav_arrow.blitme()
+        map.blitme(roverLat, roverLon)
         menu.blitme(yaw, new_destination)
         pygame.display.flip()
-
-def Log_It(level,message):
-    print "Log_It() is deprecated, please call Log_It_V2()"
-    if LOG_LEVEL == "ALL":
-        print message
-    elif LOG_LEVEL == "INFO" and level == "INFO":
-        print message
-    elif LOG_LEVEL == "ERROR" and level == "ERROR":
-        print "ERROR:",message
-
-def Log_It_V2(request_level,function,message):
-    if LOG_LEVEL == "ALL":
-        print function,message
-        return
-    elif LOG_LEVEL == "INFO" and request_level == "INFO":
-        print function,message
-        return
-    elif LOG_LEVEL == "ERROR" and request_level == "ERROR":
-        print function,"ERROR:",message
-        return
 
 # Re-append LAT/LON
 def Process_Destination():
@@ -377,25 +335,9 @@ def Set_Application_Icon():
     try:
         icon = pygame.image.load(icon_arrow)
         pygame.display.set_icon(icon)
-        Log_It_V2("INFO",function_name,"Set application icon")
+        print "INFO",function_name,"Set application icon"
     except:
-        Log_It_V2("ERROR",function_name,"Cannot set application icon")
-
-def Set_Display_Data(ID):
-    global display_image
-    global display_LAT_TL
-    global display_LON_TL
-    global display_LAT_BR
-    global display_LON_BR
-    TL_LAT = ID + "_TL_LAT"
-    TL_LON = ID + "_TL_LON"
-    BR_LAT = ID + "_BR_LAT"
-    BR_LON = ID + "_BR_LON"
-    display_image = ID
-    display_LAT_TL = coords.coords_data[TL_LAT]
-    display_LON_TL = coords.coords_data[TL_LON]
-    display_LAT_BR = coords.coords_data[BR_LAT]
-    display_LON_BR = coords.coords_data[BR_LON]
+        print "ERROR",function_name,"Cannot set application icon"
 
 def Subscribe_To_GNSS():
     function_name = "Subscribe_To_GNSS()"
