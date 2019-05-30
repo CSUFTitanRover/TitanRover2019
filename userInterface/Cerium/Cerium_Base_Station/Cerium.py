@@ -162,7 +162,7 @@ def Callback_IMU(data):
     Log_It_V2("INFO",function_name,str(yaw))
 
 # Respond to keypress and mouse events.
-def Check_Control_Events():
+def Check_Control_Events(menu):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -171,7 +171,9 @@ def Check_Control_Events():
         elif event.type == pygame.KEYUP:
             Check_Keyup_Events(event)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
+            x, y = pygame.mouse.get_pos()
+            result = menu.CheckForClickMatch(x, y) # result  = "F#!K" | "STOP" | None
+            if result: print result
 
 def Check_Keydown_Events(event):
     global new_destination
@@ -324,7 +326,7 @@ def Launch_Application():
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
-        Check_Control_Events()
+        Check_Control_Events(menu)
         Calculate_Display()
         nav_bkgd.blitme() # Always blit the background first
         LandmarkManager.Blit_Landmarks(landmarks,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)

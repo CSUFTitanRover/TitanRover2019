@@ -12,6 +12,9 @@ class MenuButton():
         self.text = Text.Text(self.screen, self.message, (0,0,0), (0,0,0,color),20,self.bound_left+20,None,self.bound_top+16,None)
         self.width = width
     def blitme(self):
-        rect = pygame.Rect(self.bound_left, self.bound_top, self.width, self.height)
-        pygame.draw.rect(self.screen, self.color, rect, 0)
+        self.rect = pygame.Rect(self.bound_left, self.bound_top, self.width, self.height)
+        pygame.draw.rect(self.screen, self.color, self.rect, 0)
         self.text.blitme(self.message)
+    def ValidateClick(self, x, y):
+        result = self.rect.collidepoint(x, y)
+        if result: return self.message
