@@ -53,7 +53,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.29.2019.21.34"
+version = "05.30.2019.10.20"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -79,7 +79,7 @@ def Attempt_Coordinate_Send():
     function_name = "Attempt_Coordinate_Send()"
     global new_destination_set
     if len(new_destination_set) == 2:
-        print("Attempt_Coordinate_Send(): Ready to send")
+        print "Attempt_Coordinate_Send(): Ready to send"
         destination = Get_Coordinate_Pair_String()
         print "Get_Coordinate_Pair_String() returned", destination
         if destination == "Invalid":
@@ -99,7 +99,7 @@ def Attempt_Coordinate_Send():
 
         Clear_Destination_Set()
     else:
-        print("Attempt_Coordinate_Send(): Not ready: LAT & LON required")
+        print "Attempt_Coordinate_Send(): Not ready: LAT & LON required"
 
 def Calculate_Vehicle_X_Y():
     function_name = "Calculate_Vehicle_X_Y()"
@@ -156,6 +156,7 @@ def Check_Control_Events(menu):
             if result: print result
 
 def Check_Keydown_Events(event):
+    function_name = "Check_Keydown_Events()"
     global new_destination
     global new_destination_type
     global new_destination_LatLon
@@ -175,18 +176,15 @@ def Check_Keydown_Events(event):
     elif event.key == pygame.K_d:
         new_destination += u"\u00B0"
         new_destination_type += "deg"
-        print("Check_Keydown_Events(): new_destination_type: ",
-              new_destination_type)
+        print function_name, "new_destination_type:", new_destination_type
     elif event.key == pygame.K_m:
         new_destination += "\'"
         new_destination_type += "min"
-        print("Check_Keydown_Events(): new_destination_type: ",
-              new_destination_type)
+        print function_name, "new_destination_type:", new_destination_type
     elif event.key == pygame.K_s:
         new_destination += "\""
         new_destination_type += "sec"
-        print("Check_Keydown_Events(): new_destination_type: ",
-              new_destination_type)
+        print function_name, "new_destination_type:", new_destination_type
     elif event.key == pygame.K_0:
         new_destination += "0"
     elif event.key == pygame.K_1:
@@ -222,7 +220,6 @@ def Convert_Coordinates():
     global new_destination_type
     print "Convert_Coordinates(): Input Type:  ", new_destination_type
     print "Convert_Coordinates(): Input Value: ", new_destination
-    print function_name, "INFO", "Input Type:" + new_destination_type + "Input Value:" + new_destination
     if (new_destination_type == "deg"):
         new_destination_type = "DD Decimal Degrees"
         new_destination = new_destination[:-1]
@@ -250,8 +247,8 @@ def Convert_Coordinates():
     else:
         new_destination_type = "Invalid"
         new_destination = "Invalid"
-    print("Convert_Coordinates(): Output Type:  ", new_destination_type)
-    print("Convert_Coordinates(): Output Value: ", new_destination)
+    print function_name, "Output Type:", new_destination_type
+    print function_name, "Output Value:", new_destination
 
 def Flip_LAT_LON():
     global new_destination_LatLon
@@ -263,22 +260,21 @@ def Flip_LAT_LON():
         print("Flip_LAT_LON(): new_destination_LatLon set to LAT")
 
 def Get_Coordinate_Pair_String():
+    function_name = "Get_Coordinate_Pair_String()"
+    global map
     global new_destination_set
     if new_destination_set[0] == "Invalid" or new_destination_set[1] == "Invalid":
         return "Invalid"
     else:
         candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
-        LandmarkManager.Add_Landmark(landmarks,new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
-    print("Get_Coordinate_Pair_String(): candidate: ",candidate)
+        map.AddLandmark(new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
+    print function_name, "candidate:", candidate
     return candidate
 
 # Application entry point
 def Launch_Application():
     func_name = "Launch_Application()"
-    instance_config = SetModeAndIP.SetModeAndIP()
-    mode = instance_config[0]
-    socket_TCP_IP = instance_config[1]
-    global landmarks
+    global map
     global mode
     global new_destination
     global new_destination_LatLon
@@ -287,12 +283,16 @@ def Launch_Application():
     global screen
     global status
     global yaw
+    instance_config = SetModeAndIP.SetModeAndIP()
+    mode = instance_config[0]
+    socket_TCP_IP = instance_config[1]
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption(app_title + ' - ' + version)
     Set_Application_Icon()
     # Attempt to connect to roscore
     status = SafeConnect.SafeConnect()
+    # Subscribe to imu and gnss topics
     IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU,args=(mode,))
     IMU_SUBSCRIBTION.start()
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
@@ -322,20 +322,19 @@ def Queue_Coordinate():
     global new_destination
     global new_destination_set
     new_destination_set.append(new_destination)
-    print("Queue_Coordinate(): new_destination_set: ",new_destination_set)
+    print "Queue_Coordinate(): new_destination_set: ",new_destination_set
 
 def Remove_LAT_LON():
     global new_destination
     new_destination = new_destination.split(" ")
     new_destination = new_destination[1]
-    print("Remove_LAT_LON(): new_destination: ",new_destination)
+    print "Remove_LAT_LON(): new_destination: ",new_destination
 
 def Set_Application_Icon():
     function_name = "Set_Application_Icon()"
     try:
         icon = pygame.image.load(icon_arrow)
         pygame.display.set_icon(icon)
-        print "INFO",function_name,"Set application icon"
     except:
         print "ERROR",function_name,"Cannot set application icon"
 
