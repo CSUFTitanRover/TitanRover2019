@@ -54,7 +54,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.30.2019.20.08"
+version = "05.30.2019.20.28"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -132,6 +132,7 @@ def Callback_GNSS(data):
     if mode == "dev":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
+    map.GetVehicle().SetLatLon(roverLat, roverLon)
 
 def Callback_IMU(data):
     function_name = "Callback_IMU()"

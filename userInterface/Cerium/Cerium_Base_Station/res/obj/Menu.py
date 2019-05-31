@@ -29,7 +29,7 @@ class Menu():
     def build_info_displays(self): # Things that display values
         self.nav_destination = Text.Text(self.screen,"",color_text,color_background,20,self.start_x,None,450,None)
         self.nav_text = Text.YawText(self.screen,str(0),color_text,color_background,20,self.start_x,None,self.screen.get_rect().top+50,None) # Shows the yaw value
-        self.app_title = Text.Text(self.screen,self.app_title_str,color_text,color_background,20,self.start_x,None,self.screen.get_rect().top,None)
+        self.app_title = Text.Text(self.screen,self.app_title_str,color_text,color_background,12,self.start_x,None,self.screen.get_rect().top,None)
     def CheckForClickMatch(self, x, y):
         for button in self.buttons:
             result = button.ValidateClick(x, y)

@@ -16,7 +16,7 @@ class Map(object):
         self.map_image = None
         self.map_width = map_width
         self.screen = screen
-        self.vehicle = self.AddLandmark(33.882410,-117.884610,"VEHICLE",icon_arrow,self.screen)
+        self.vehicle = self.AddLandmark(0,0,"VEHICLE",icon_arrow,self.screen)
     def AddLandmark(self,lat,lon,type,image,screen):
         landmark = Landmark(lat,lon,len(self.landmarks),type,image,screen)
         self.landmarks.append(landmark)

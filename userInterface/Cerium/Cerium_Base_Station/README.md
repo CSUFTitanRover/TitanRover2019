@@ -73,37 +73,33 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
-2.1) Map manager
+2.1) Connect buttons to publishers.
 
-2.2) Connect buttons to publishers.
+2.2) Ensure correct HINT conversions for all coord formats.
 
-2.3) Ensure correct conversions.
+2.3) Add map tiles for HAB site
 
-2.4) Hab tiles
+2.4) Enhance gnss and imu fake data for better testing
 
 3) --- NEXT DEVELOPMENTS ---
 
-3.1) On no ros connection add to error message ("hints etc")
+3.1) ------ Menu System ------
 
-3.2) Add additional site maps.
+3.1.a) --------- Delete last entered hint.
 
-3.3) ------ Menu System ------
+3.1.b) --------- Publish to mode topic.
 
-3.3.a) --------- Delete last entered hint.
+3.1.c) --------- rostopic view
 
-3.3.b) --------- Publish to mode topic.
-
-3.3.c) --------- rostopic view
-
-3.7) Routinely search for new ball records and add them as landmarks.
+3.2) Routinely search for new ball records and add them as landmarks.
 
 4) --- NEEDS FIXING / IMPROVEMENTS ---
 
-4.2) ------ Rover icon is blitting even if GNSS topic is not connected.
+4.1) ------ Rover icon is blitting even if GNSS topic is not connected.
 
-4.3) ------ Enhance coordinate input validation
+4.2) ------ Enhance coordinate input validation
 
-
+4.3) ------ On no ROS connection enhance error message
 
 ## Problems & Solutions
 
