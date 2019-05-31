@@ -4,9 +4,10 @@
 # David Feinzimer  - dfeinzimer@csu.fullerton.edu
 # Anette Ulrichsen - amulrichsen@csu.fullerton.edu
 
-from fake_sensor_test.msg import imu
-from finalimu.msg import fimu
-from gnss.msg import gps
+from fake_sensor_test.msg import imu as dev_imu
+from fake_sensor_test.msg import gps as dev_gps
+from finalimu.msg import fimu as prod_imu
+from gnss.msg import gps as prod_gps
 from pygame.sprite import Sprite
 from res.funcs import AppendCardinalInformation
 from res.funcs import SafeConnect
@@ -53,7 +54,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.30.2019.11.25"
+version = "05.30.2019.17.59"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -125,6 +126,7 @@ def Callback_GNSS(data):
     function_name = "Callback_GNSS()"
     global roverLat
     global roverLon
+    print function_name, data
     if mode == "prod":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
@@ -136,6 +138,7 @@ def Callback_GNSS(data):
 def Callback_IMU(data):
     function_name = "Callback_IMU()"
     global yaw
+    print function_name, yaw
     if mode == "prod":
         yaw = data.yaw.yaw
     if mode == "dev":
@@ -295,7 +298,7 @@ def Launch_Application():
     # Subscribe to imu and gnss topics
     IMU_SUBSCRIBTION = threading.Thread(target=Subscribe_To_IMU,args=(mode,))
     IMU_SUBSCRIBTION.start()
-    GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS)
+    GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS,args=(mode,))
     GNSS_SUBSCRIBTION.start()
     map = Map(screen)
     menu = Menu.Menu(screen, map_width, app_title)
@@ -338,23 +341,29 @@ def Set_Application_Icon():
     except:
         print "ERROR",function_name,"Cannot set application icon"
 
-def Subscribe_To_GNSS():
-    function_name = "Subscribe_To_GNSS()"
-    try:
-        rospy.Subscriber("gnss", gps, Callback_GNSS)
-    except:
-        print function_name, "SUBSCRIPTION FAILURE"
+def Subscribe_To_GNSS(mode):
+    function_name = "Subscribe_To_GNSS("+mode+")"
+    if mode == "prod":
+        try:
+            rospy.Subscriber("gnss", prod_gps, Callback_GNSS)
+        except:
+            print function_name, "SUBSCRIPTION FAILURE"
+    elif mode == "dev":
+        try:
+            rospy.Subscriber("gnss", dev_gps, Callback_GNSS)
+        except:
+            print function_name, "SUBSCRIPTION FAILURE"
 
 def Subscribe_To_IMU(mode):
     function_name = "Subscribe_To_IMU("+mode+")"
     if mode == "prod":
         try:
-            rospy.Subscriber("imu", fimu, Callback_IMU)
+            rospy.Subscriber("imu", prod_imu, Callback_IMU)
         except:
             print function_name, "prod SUBSCRIPTION FAILURE"
     elif mode == "dev":
         try:
-            rospy.Subscriber("imu", imu, Callback_IMU)
+            rospy.Subscriber("imu", dev_imu, Callback_IMU)
         except:
             print function_name, "dev SUBSCRIPTION FAILURE"
 

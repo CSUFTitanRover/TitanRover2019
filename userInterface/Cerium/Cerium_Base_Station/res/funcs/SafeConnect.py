@@ -9,6 +9,7 @@ def SafeConnect():
         rospy.get_master().getPid()
         # If an exception was not thrown, establish a connection.
         status = rospy.init_node('listener', anonymous=True)
+        print "Cerium is connected to ROS!"
         return status
     except:
         print "Cerium cannot start due to a roscore issue."

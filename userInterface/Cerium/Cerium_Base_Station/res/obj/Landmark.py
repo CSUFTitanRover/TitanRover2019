@@ -16,16 +16,6 @@ class Landmark(object):
     def blitme(self):
         self.image = pygame.transform.rotate(self.image, self.yaw * -1)
         self.rect = self.image.get_rect(center=self.rect.center)
-
-        # fixing, debugging, TODO remove
-        print "error"
-        print "lat", self.lat, type(self.lat)
-        print "lon", self.lon, type(self.lon)
-        print "x", self.x, type(self.x)
-        print "y", self.y, type(self.y)
-        print "id", self.id, type(self.id)
-        print "type", self.type, type(self.type)
-
         self.rect.centerx = self.x
         self.rect.centery = self.y
         self.screen.blit(self.image, self.rect)

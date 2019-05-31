@@ -45,7 +45,6 @@ class Map(object):
                         print function_name, "found a correct map image"
         else:
             # Return the default background
-            print function_name, "Found no match, falling back to default"
             return "_"
     def UpdateMapBoundaries(self):
         function_name = "UpdateMapBoundaries()"
@@ -70,10 +69,10 @@ class Map(object):
                     y = y * (float(landmark_lat)-float(self.lat_tl)) * -1
                     landmark.SetXY(x, y)
                 else:
-                    print function_name, "ERROR: maps lat/lon not set"
+                    # print function_name, "ERROR: maps lat/lon not set" FIXING
                     landmark.SetXY(0, 0)
             else:
-                print function_name, "ERROR: lat and/or lon empty"
+                # print function_name, "ERROR: lat and/or lon empty" FIXING
                 landmark.SetXY(0, 0)
     def GetAllLandmarks(self):
         return self.landmarks
