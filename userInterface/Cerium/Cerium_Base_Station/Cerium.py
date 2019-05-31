@@ -8,6 +8,7 @@ from fake_sensor_test.msg import imu as dev_imu
 from fake_sensor_test.msg import gps as dev_gps
 from finalimu.msg import fimu as prod_imu
 from gnss.msg import gps as prod_gps
+from mobility.msg import driver_Status
 from pygame.sprite import Sprite
 from res.funcs import AppendCardinalInformation
 from res.funcs import SafeConnect
@@ -54,7 +55,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.30.2019.20.40"
+version = "05.30.2019.22.30"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -155,7 +156,11 @@ def Check_Control_Events(menu):
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
             result = menu.CheckForClickMatch(x, y) # result  = "F#!K" | "STOP" | None
-            if result: print result
+            if result:
+                if result == "F#!K":
+                    PublishStop("HARD")
+                elif result == "STOP":
+                    PublishStop("SOFT")
 
 def Check_Keydown_Events(event):
     function_name = "Check_Keydown_Events()"
@@ -214,7 +219,7 @@ def Check_Keyup_Events(event):
 def Clear_Destination_Set():
     global new_destination_set
     del new_destination_set[:]
-    print("Clear_Destination_Set(): new_destination_set: ",new_destination_set)
+    print "Clear_Destination_Set(): new_destination_set:", new_destination_set
 
 def Convert_Coordinates():
     function_name = "Convert_Coordinates()"
@@ -309,6 +314,21 @@ def Launch_Application():
         menu.blitme(yaw, new_destination)
         pygame.display.flip()
 
+# def Prep_Pub_To_MODE(mode):
+#     global pub
+#     function_name = "Prep_Pub_To_MODE("+mode+")"
+#     if mode == "prod":
+#         try:
+#             pub = rospy.Publisher("driver_Status", driver_Status, queue_size=10)
+#             return pub
+#         except:
+#             print function_name, "FAILURE"
+#     elif mode == "dev":
+#         try:
+#             rospy.Publisher("driver_Status", driver_Status, queue_size=10)
+#         except:
+#             print function_name, "FAILURE"
+
 # Re-append LAT/LON
 def Process_Destination():
     global new_destination
@@ -319,6 +339,12 @@ def Process_Destination():
     Attempt_Coordinate_Send() # Try to send the coordinates to vehicle
     Flip_LAT_LON() # Flip LAT for LON or vice versa
     Add_LAT_LON()
+
+def PublishStop(level): # param = "HARD" | "SOFT"
+    function_name = "PublishStop("+level+")"
+    pub = rospy.Publisher("driver_Status", driver_Status, queue_size=10)
+    pub.publish(autoActive=False)
+
 
 def Queue_Coordinate():
     global new_destination

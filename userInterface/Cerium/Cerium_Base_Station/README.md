@@ -73,13 +73,11 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
-2.1) Connect buttons to publishers.
+2.1) Ensure correct HINT conversions for all coord formats.
 
-2.2) Ensure correct HINT conversions for all coord formats.
+2.2) Add map tiles for HAB site
 
-2.3) Add map tiles for HAB site
-
-2.4) Enhance gnss and imu fake data for better testing
+2.3) Enhance gnss and imu fake data for better testing
 
 3) --- NEXT DEVELOPMENTS ---
 

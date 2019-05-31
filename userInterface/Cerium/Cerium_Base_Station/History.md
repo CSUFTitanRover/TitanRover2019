@@ -1,3 +1,4 @@
+05.30.2019.22.30       Stop button publishing
 05.30.2019.20.40       Improved menu titling
 05.30.2019.20.28       Vehicle location dynamic plotting, improved app title
 05.30.2019.20.08       Nav arrow with dynamic yaw
