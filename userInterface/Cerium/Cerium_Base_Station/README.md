@@ -2,7 +2,7 @@
 
 
 
-## Requirements
+## Requirements ----------------------------------------------------------------
 
 Python 2.x
 
@@ -12,28 +12,25 @@ ROS Kinetic or ROS Melodic
 
 
 
-## Usage
+## Usage -----------------------------------------------------------------------
 
 ### 1) Make sure the onboard and base station software is up to date:
 
-1) On both machines, perform the following command:
+1.1) On both machines, perform the following command:
 
-2) `cd ~/TitanRover2019/ && git pull`
-
-
-
-### 2) [OPTION A] If the desired mode is production, start the onboard IMU and GNSS
-
-1) `cd ~/catkin_ws/src/finalimu/src/ && python cal_run_Imu.py`
-
-2) `cd ~/catkin_ws/src/gnss/src/ && python reach.py`
+1.2) `cd ~/TitanRover2019/ && git pull`
 
 
+### 2.a) [OPTION A] If the desired mode is production, start the onboard IMU and GNSS
 
-### 2) [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
+2.a.1) `cd ~/catkin_ws/src/finalimu/src/ && python cal_run_Imu.py`
 
-1) `cd ~/catkin_ws/src/fake_sensor_test/launch && roslaunch fake.launch`
+2.a.2) `cd ~/catkin_ws/src/gnss/src/ && python reach.py`
 
+
+### 2.b) [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
+
+2.b.1) `cd ~/catkin_ws/src/fake_sensor_test/launch && roslaunch fake.launch`
 
 
 ### 3) Start the onboard communication interface (development or production mode):
@@ -45,7 +42,6 @@ ROS Kinetic or ROS Melodic
 3.3) `sudo lsof -i:9600`
 
 3.4) `sudo kill <PID>`
-
 
 
 ### 4) Start the base station interface:
@@ -60,57 +56,61 @@ ROS Kinetic or ROS Melodic
 
 
 
-## Important Technical Notes
+## Important Technical Notes ---------------------------------------------------
 
-1) Socket connections are currently killed if a connection fails after 1 second.
+5) Socket connections are currently killed if a connection fails after 1 second.
 
 
 
-## Engineering / Design Notes
+## Engineering / Design Notes --------------------------------------------------
 
-1) For Google Maps screenshots we're using the largest 100 zoom level with
+6) For Google Maps screenshots we're using the largest 100 zoom level with
 browser zoom set to 100%
 
-2) --- URGENT ISSUES ---
+7) --- URGENT ISSUES ---
 
-2.1) Fix socket or send over ROS
+7.1) Find why map images did not blit
 
-2.2) Ensure correct HINT conversions for all coord formats.
+7.2) Fix socket or send over ROS
 
-3) --- NEXT DEVELOPMENTS ---
+7.2) Ensure correct HINT conversions for all coord formats.
 
-3.1) ------ Menu System ------
+8) --- NEXT DEVELOPMENTS ---
 
-3.1.a) --------- Delete last entered hint.
+8.1) ------ Menu System ------
 
-3.1.c) --------- Show gnss data
+8.1.a) --------- Show more gnss and imu data.
 
-3.1.b) --------- Publish to mode topic.
+8.1.b) --------- Delete last entered hint.
 
-3.2) Routinely search for new ball records and add them as landmarks.
+3.1.c) --------- Publish to mode topic.
 
-4) --- NEEDS FIXING / IMPROVEMENTS ---
+8.2) Routinely search for new ball records and add them as landmarks.
 
-4.1) ------ Rover icon is blitting even if GNSS topic is not connected.
+9) --- NEEDS FIXING / IMPROVEMENTS ---
 
-4.2) ------ Enhance coordinate input validation
+9.1) ------ Rover icon is blitting even if GNSS topic is not connected.
 
-4.3) ------ On no ROS connection enhance error message
+9.2) ------ Enhance coordinate input validation
 
-4.4) ------ Enhance gnss and imu fake data for better testing
+9.3) ------ On no ROS connection enhance error message
 
-## Problems & Solutions
-
-1) Message import errors?
-
-1.1) `sudo nano ~/.bashrc`
-
-1.2) Add the following to bottom of the file:
-
-1.3) `source ~/catkin_ws/devel/setup.bash`
+9.4) ------ Enhance gnss and imu fake data for better testing
 
 
 
-## Questions
+## Problems & Solutions --------------------------------------------------------
+
+10) Message import errors?
+
+10.1) `sudo nano ~/.bashrc`
+
+10.2) Add the following to bottom of the file:
+
+10.3) `source ~/catkin_ws/devel/setup.bash`
+
+
+
+## Questions -------------------------------------------------------------------
 
 David Feinzimer `dfeinzimer@csu.fullerton.edu`
