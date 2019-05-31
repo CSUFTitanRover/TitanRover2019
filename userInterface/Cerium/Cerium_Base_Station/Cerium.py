@@ -55,23 +55,8 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.30.2019.22.30"
+version = "05.31.2019.17.59"
 yaw = 0
-
-# Object for displaying the heading arrow on the map.
-class Nav_Arrow(Sprite):
-    def __init__(self, screen):
-        super(Nav_Arrow, self).__init__()
-        self.screen = screen
-        self.image = pygame.image.load(icon_arrow)
-        self.rect = self.image.get_rect()
-    def blitme(self):
-        image = self.image
-        image = pygame.transform.rotate(image, yaw * -1)
-        rect = image.get_rect(center=self.rect.center)
-        self.rect.centerx = vehicle_x
-        self.rect.centery = vehicle_y
-        self.screen.blit(image, rect)
 
 def Add_LAT_LON():
     global new_destination
