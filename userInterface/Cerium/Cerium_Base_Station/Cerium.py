@@ -54,7 +54,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.30.2019.19.28"
+version = "05.30.2019.20.08"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -140,6 +140,7 @@ def Callback_IMU(data):
         yaw = data.yaw.yaw
     if mode == "dev":
         yaw = data.yaw
+    map.GetVehicle().SetYaw(yaw)
 
 # Respond to keypress and mouse events.
 def Check_Control_Events(menu):

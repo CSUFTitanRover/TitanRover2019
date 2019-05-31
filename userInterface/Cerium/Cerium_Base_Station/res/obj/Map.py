@@ -75,5 +75,7 @@ class Map(object):
                 landmark.SetXY(0, 0)
     def GetAllLandmarks(self):
         return self.landmarks
+    def GetVehicle(self):
+        return self.vehicle
     def UpdateMapImage(self):
         self.map_image = Image(self.screen, self.map_id)
