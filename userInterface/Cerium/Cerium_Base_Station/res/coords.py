@@ -6,6 +6,7 @@ coords_data = {
     "D_DESC":"Engineering Lot",
     "E_DESC":"Duke\'s Campground (Lower)",
     "F_DESC":"Duke\'s Campground (Upper)",
+    "0_DESC":"MDRS (Hab)",
     "__TL_LAT":0,
     "__TL_LON":0,
     "__BR_LAT":0,
@@ -34,5 +35,9 @@ coords_data = {
     "F_TL_LON":-110.709922,
     "F_BR_LAT":38.375195,
     "F_BR_LON":-110.706477,
+    "0_TL_LAT":38.408233,
+    "0_TL_LON":-110.794642,
+    "0_BR_LAT":38.406001,
+    "0_BR_LON":-110.788859
 }
-coords_list = ["_","A","B","C","D","E","F"]
+coords_list = ["_","A","B","C","D","E","F","0"]
