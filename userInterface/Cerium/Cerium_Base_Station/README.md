@@ -73,7 +73,9 @@ browser zoom set to 100%
 
 2) --- URGENT ISSUES ---
 
-2.1) Ensure correct HINT conversions for all coord formats.
+2.1) Fix socket or send over ROS
+
+2.2) Ensure correct HINT conversions for all coord formats.
 
 3) --- NEXT DEVELOPMENTS ---
 
@@ -81,9 +83,9 @@ browser zoom set to 100%
 
 3.1.a) --------- Delete last entered hint.
 
-3.1.b) --------- Publish to mode topic.
+3.1.c) --------- Show gnss data
 
-3.1.c) --------- rostopic view
+3.1.b) --------- Publish to mode topic.
 
 3.2) Routinely search for new ball records and add them as landmarks.
 

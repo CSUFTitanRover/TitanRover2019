@@ -127,20 +127,23 @@ def Callback_GNSS(data):
     function_name = "Callback_GNSS()"
     global roverLat
     global roverLon
-    if mode == "prod":
-        roverLat = float(data.roverLat)
-        roverLon = float(data.roverLon)
-    if mode == "dev":
-        roverLat = float(data.roverLat)
-        roverLon = float(data.roverLon)
+    # if mode == "prod":
+    #     roverLat = float(data.roverLat)
+    #     roverLon = float(data.roverLon)
+    # if mode == "dev":
+    #     roverLat = float(data.roverLat)
+    #     roverLon = float(data.roverLon)
+    roverLat = float(data.roverLat)
+    roverLon = float(data.roverLon)
     map.GetVehicle().SetLatLon(roverLat, roverLon)
 
 def Callback_IMU(data):
     function_name = "Callback_IMU()"
+    global mode
     global yaw
     if mode == "prod":
         yaw = data.yaw.yaw
-    if mode == "dev":
+    elif mode == "dev":
         yaw = data.yaw
     map.GetVehicle().SetYaw(yaw)
 
