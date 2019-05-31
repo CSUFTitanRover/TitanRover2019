@@ -54,7 +54,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.30.2019.17.59"
+version = "05.30.2019.19.18"
 yaw = 0
 
 # Object for displaying the heading arrow on the map.
@@ -126,19 +126,16 @@ def Callback_GNSS(data):
     function_name = "Callback_GNSS()"
     global roverLat
     global roverLon
-    print function_name, data
     if mode == "prod":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
     if mode == "dev":
         roverLat = float(data.roverLat)
         roverLon = float(data.roverLon)
-    Calculate_Vehicle_X_Y()
 
 def Callback_IMU(data):
     function_name = "Callback_IMU()"
     global yaw
-    print function_name, yaw
     if mode == "prod":
         yaw = data.yaw.yaw
     if mode == "dev":
@@ -300,7 +297,7 @@ def Launch_Application():
     IMU_SUBSCRIBTION.start()
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS,args=(mode,))
     GNSS_SUBSCRIBTION.start()
-    map = Map(screen)
+    map = Map(screen,screen_height,map_width)
     menu = Menu.Menu(screen, map_width, app_title)
     new_destination = new_destination_LatLon + " "
     while True:

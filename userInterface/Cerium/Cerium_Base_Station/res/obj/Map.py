@@ -5,16 +5,16 @@ import res.coords as coords
 icon_arrow = "res/images/vehicle.png"
 
 class Map(object):
-    def __init__(self, screen):
+    def __init__(self, screen, map_height, map_width):
         self.landmarks = []
         self.lat_br = None
         self.lat_tl = None
         self.lon_br = None
         self.lon_tl = None
-        self.map_height = None
+        self.map_height = map_height
         self.map_id = None
         self.map_image = None
-        self.map_width = None
+        self.map_width = map_width
         self.screen = screen
         self.vehicle = self.AddLandmark(50,50,"VEHICLE",icon_arrow,self.screen)
     def AddLandmark(self,lat,lon,type,image,screen):
@@ -42,7 +42,7 @@ class Map(object):
                     vehicle_lat >= coords.coords_data[location+"_BR_LAT"]):
                     if (vehicle_lon <= coords.coords_data[location+"_BR_LON"] and
                         vehicle_lon >= coords.coords_data[location+"_TL_LON"]):
-                        print function_name, "found a correct map image"
+                        return location
         else:
             # Return the default background
             return "_"
@@ -58,7 +58,6 @@ class Map(object):
             landmark_lat, landmark_lon = landmark.GetLatLon()
             if landmark_lat != None and landmark_lon != None:
                 if self.lat_tl and self.lat_br and self.lon_tl and self.lon_br:
-                    print function_name, "FOUND LAT LON", landmark_lat, landmark_lon
                     x = (self.map_width  / abs(self.lon_tl-self.lon_br))
                     y = (self.map_height / abs(self.lat_tl-self.lat_br))
                     #if self.lat[len(self.lat)-1] == u"\u00B0":
