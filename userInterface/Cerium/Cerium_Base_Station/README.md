@@ -75,10 +75,6 @@ browser zoom set to 100%
 
 2.1) Ensure correct HINT conversions for all coord formats.
 
-2.2) Add map tiles for HAB site
-
-2.3) Enhance gnss and imu fake data for better testing
-
 3) --- NEXT DEVELOPMENTS ---
 
 3.1) ------ Menu System ------
@@ -98,6 +94,8 @@ browser zoom set to 100%
 4.2) ------ Enhance coordinate input validation
 
 4.3) ------ On no ROS connection enhance error message
+
+4.4) ------ Enhance gnss and imu fake data for better testing
 
 ## Problems & Solutions
 
