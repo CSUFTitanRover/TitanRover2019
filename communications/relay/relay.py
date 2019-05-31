@@ -18,7 +18,7 @@ for pin in mode_pin:
     GPIO.output(pin, 0)
 GPIO.setup(aux_pin, GPIO.IN)
 
-rf_uart = serial.Serial('/dev/ttyAMA0', 19200, timeout=1.0)
+rf_uart = serial.Serial('/dev/serial0', 19200, timeout=1.0)
 GPIO.output(mode_pin[0], 0)                    #if the extra pins on the ttl usb are connected to m0 & m1 on the ebyte module
 GPIO.output(mode_pin[1], 0)                    #then these two lines will send low logic to both which puts the module in transmit mode 0
 
@@ -101,11 +101,11 @@ def getRF():
 def getSock():
     try:
         while True:
-            data, addr = s.recvfrom(128) # buffer size is 1024 bytes
+            data, addr = s.recvfrom(128)
             if data:
                 return data
     except Exception as e:
-        print("Error in getSock()")
+        print("ERROR")
         print(e)
 
 def request_gps():
@@ -120,30 +120,31 @@ def request_gps():
     except Exception as e:
         print(e)
 
+if __name__ == '__main__':
 
 
-#receive from socket, send over uart to rf module
-host = "192.168.1.168"
-port = 8888  # Make sure it's within the > 1024 $$ <65535 range
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 26)
-s.settimeout(5.0) #set timeout to 10 seconds if no data is received over the
-#socket in 10 seconds then socket times out and request gps
-s.bind((host, port))
+    #receive from socket, send over uart to rf module
+    host = "192.168.1.168"
+    port = 8888  # Make sure it's within the > 1024 $$ <65535 range
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 26)
+    s.settimeout(5.0) #set timeout to 10 seconds if no data is received over the
+    #socket in 10 seconds then socket times out and request gps
+    s.bind((host, port))
 
 
-while True:
-#    try:
-        print("receiving")
-        buf = getSock() #get mobility command from socket (from multijoy)
-        if buf: #if data received without timeout
-            print(unpack('2i18b', buf))
-            print("sending")
-            putRF(0b00, buf) #send op code 00 for mobility and the data received
-            print(len(buf))
-        else: #if timeout send op_code 0b01 requesting gps then listen for response
-            location = request_gps()
-            print (location)
+    while True:
+    #    try:
+            print("receiving")
+            buf = getSock() #get mobility command from socket (from multijoy)
+            if buf: #if data received without timeout
+                print(buf)
+                print("sending")
+                putRF(0b00, buf) #send op code 00 for mobility and the data received
+                print(len(buf))
+            #else: #if timeout send op_code 0b01 requesting gps then listen for response
+            #    location = request_gps()
+            #    print (location)
 
-    
+        
