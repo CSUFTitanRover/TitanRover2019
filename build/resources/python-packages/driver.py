@@ -9,17 +9,16 @@
 #         the Rover will drive to this point.
 #         Give a heading, the Rover will rotate in place to face this direction.
 ######################################################################################
-import time, sys, math, rospy
+import time
+import sys
+import math
 import numpy as np # remove if no longer needed
 from decimal import Decimal
-#from pysaber import DriveEsc
+import rospy
+from pysaber import DriveEsc
 from gnss.msg import gps
 from finalimu.msg import fimu
-from multijoy.msg import MultiJoy
-from sensor_msgs.msg import Joy
-from mobility.msg import Status, driver_Status
-#wheels = DriveEsc(128, "mixed")
-from time import time
+wheels = DriveEsc(128, "mixed")
 
 MINFORWARDSPEED = 20
 MAXFORWARDSPEED = 30
@@ -30,24 +29,6 @@ HEADINGTHRESHOLD = 15 # In degrees
 class Driver:
 
     def __init__(self):
-
-        #init nodes
-        rospy.init_node('driver', anonymous=True)
-
-        #init Subscribers
-        rospy.Subscriber("imu", fimu, self.setHeading)            
-        rospy.Subscriber("imu", fimu, self.calculatePitch)
-        rospy.Subscriber("gnss", gps, self.setGps)
-        rospy.Subscriber("driver_Status", driver_Status, self.update_driver_Status)
-
-        #create publisher and message to publish
-        self.driver_pub = rospy.Publisher('/multijoy', MultiJoy, queue_size=1)   #publisher for multijoy
-        self.telecommand = Multijoy()
-        self.t_joy = Joy() #joy to add to Multijoy
-        self.autoActive = False
-        self.goto_coord = (0.0, 0.0)
-
-
 
         '''
         # Tailored to Runt Rover
@@ -74,11 +55,7 @@ class Driver:
         self.__motor1 = 0
         self.__motor2 = 0
         self.__pitch = 0
-
-
-    def update_driver_Status(self, status):
-        self.autoActive = status.autoActive
-        self.goto_coord = (status.goto_lat, status.goto_lon)
+        rospy.init_node('listener', anonymous=True)
 
     def calculateGps(self, origin, heading, distance):
         '''
@@ -252,25 +229,13 @@ class Driver:
         Returns:
         '''
         try:
-            self.telecommand.header.stamp.secs = int(time())             #set multijoy timestamp
-            self.telecommand.header.stamp.nsecs = time() - int(time())
-            self.telecommand.source = 3
-            self.telecommand.njoys = 1
-            self.t_joy.header = self.telecommand.header   #copy multijoy timestamp
-            self.t_joy.axes.append(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2)        #only set the motors for driving
-            self.t_joy.axes.append(int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2))
-            for i in range(4):          #all other values set to 0
-                self.t_joy.axes.append(0)
-            for i in range(18):
-                self.t_joy.buttons.append(0)
-            self.telecommand.joys.append(t_joy)
-            self.driver_pub.publish(telecommand)
+            rospy.Subscriber("imu", fimu, self.calculatePitch)
             
-            #print(self.__pitch, int(self.__motor1 + self.__pitch * self.__motor1 / 50), int(self.__motor2 + self.__pitch * self.__motor2 / 50))
-            #wheels.driveBoth(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2 , int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2)
-            except(KeyboardInterrupt, SystemExit):
-                rospy.signal_shutdown("scheduled")
-                raise
+            print(self.__pitch, int(self.__motor1 + self.__pitch * self.__motor1 / 50), int(self.__motor2 + self.__pitch * self.__motor2 / 50))
+            wheels.driveBoth(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2 , int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2)
+        except(KeyboardInterrupt, SystemExit):
+            rospy.signal_shutdown("scheduled")
+            raise
 
     def setGps(self, data):
         '''
@@ -362,10 +327,7 @@ class Driver:
             if not self.__clockwise:
                 motor2 = -ROTATESPEED
             motor1 = 0
-            if self.autoActive:
-                self.sendMotors()
-            else:
-                break
+            self.sendMotors()
             time.sleep(0.04)
             self.setHeading()
             self.setHeadingDifference()
@@ -389,6 +351,8 @@ class Driver:
             print("Only float/int allowed - exiting goTo") #raise TypeError("Only floats allowed as tuple values")
             return
         self.__nextWaypoint = point
+        rospy.Subscriber("gnss", gps, self.setGps)
+        rospy.Subscriber("imu", fimu, self.setHeading)
         self.setDistance()
         print(self.__heading, self.__gps)
         while self.__distance > TARGETTHRESHOLD:
@@ -403,10 +367,13 @@ class Driver:
             #else:
             #    rotateToHeading(self.__targetHeading)
 
+            self.sendMotors()
             print("------------------------------------------------")
             print("destWaypoint: ", self.__nextWaypoint, "\ncurrentGPS: ", self.__gps, "\ndist(cm): ", self.__distance, "\ncurrentHeading: ", self.__heading, "\ntargetHeading: ", self.__targetHeading, "\nmotor1: ", self.__motor1, "\nmotor2: ", self.__motor2, "\nclockwise: ", self.__clockwise, "\nheadingDiff: ", self.__headingDifference, "\ntime: ", int(time.time()), "\n")    
             print("------------------------------------------------")
             time.sleep(0.04)
+            rospy.Subscriber("gnss", gps, self.setGps)
+            rospy.Subscriber("imu", fimu, self.setHeading)            
             #print(self.__heading, self.__gps)
             self.setDistance()
 
