@@ -4,13 +4,10 @@ def SetModeAndIP():
     mode = None
     ip = None
     good = False
-
-    # while not good:
-    #     mode = raw_input("Mode (\"dev\" or \"prod\"): ")
-    #     if mode == "dev" or mode == "prod":
-    #         good = True
-    mode = "prod"
-
+    while not good:
+        mode = raw_input("Mode (\"dev\" or \"prod\"): ")
+        if mode == "dev" or mode == "prod":
+            good = True
     if mode == "prod":
         ip = '192.168.1.2'
     else:

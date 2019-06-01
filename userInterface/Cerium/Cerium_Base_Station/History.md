@@ -1,3 +1,4 @@
+05.31.2019.19.49       Removes Calculate_Vehicle_X_Y() method. Removes deprecated Callback_GNSS() method logic. Adds test coordinates in all formats to README.
 05.31.2019.17.58       Removes Nav_Arrow class. Patches error on no image passed to Image class. Default mode = "prod".
 05.30.2019.22.30       Stop button publishing
 05.30.2019.20.40       Improved menu titling

@@ -55,7 +55,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.31.2019.17.59"
+version = "05.31.2019.19.49"
 yaw = 0
 
 def Add_LAT_LON():
@@ -88,36 +88,10 @@ def Attempt_Coordinate_Send():
     else:
         print "Attempt_Coordinate_Send(): Not ready: LAT & LON required"
 
-def Calculate_Vehicle_X_Y():
-    function_name = "Calculate_Vehicle_X_Y()"
-    global roverLat
-    global roverLon
-    global vehicle_x
-    global vehicle_y
-    global screen_height
-    global map_width
-    global display_LAT_TL
-    global display_LON_TL
-    global display_LAT_BR
-    global display_LON_BR
-    if((roverLon != None) and (roverLat != None)):
-        vehicle_x = (map_width  / abs(display_LON_TL-display_LON_BR))
-        vehicle_y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
-        vehicle_x = vehicle_x * (roverLon-display_LON_TL)
-        vehicle_y = vehicle_y * (roverLat-display_LAT_TL) * -1
-    else:
-        print function_name,"roverLon and/or roverLat empty"
-
 def Callback_GNSS(data):
     function_name = "Callback_GNSS()"
     global roverLat
     global roverLon
-    # if mode == "prod":
-    #     roverLat = float(data.roverLat)
-    #     roverLon = float(data.roverLon)
-    # if mode == "dev":
-    #     roverLat = float(data.roverLat)
-    #     roverLon = float(data.roverLon)
     roverLat = float(data.roverLat)
     roverLon = float(data.roverLon)
     map.GetVehicle().SetLatLon(roverLat, roverLon)
@@ -262,7 +236,7 @@ def Get_Coordinate_Pair_String():
         return "Invalid"
     else:
         candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
-        map.AddLandmark(new_destination_set[0], new_destination_set[1],"HINT",icon_hint,screen)
+        map.AddLandmark(new_destination_set[0], new_destination_set[1], "HINT", icon_hint, screen)
     print function_name, "candidate:", candidate
     return candidate
 
