@@ -55,7 +55,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.31.2019.21.39"
+version = "05.31.2019.21.52"
 yaw = 0
 
 def Add_LAT_LON():
@@ -293,21 +293,6 @@ def Launch_Application():
         menu.blitme(yaw, new_destination)
         pygame.display.flip()
 
-# def Prep_Pub_To_MODE(mode):
-#     global pub
-#     function_name = "Prep_Pub_To_MODE("+mode+")"
-#     if mode == "prod":
-#         try:
-#             pub = rospy.Publisher("driver_Status", driver_Status, queue_size=10)
-#             return pub
-#         except:
-#             print function_name, "FAILURE"
-#     elif mode == "dev":
-#         try:
-#             rospy.Publisher("driver_Status", driver_Status, queue_size=10)
-#         except:
-#             print function_name, "FAILURE"
-
 # Re-append LAT/LON
 def Process_Destination():
     global new_destination
@@ -334,7 +319,10 @@ def Queue_Coordinate():
 def Remove_LAT_LON():
     global new_destination
     new_destination = new_destination.split(" ")
-    new_destination = new_destination[1] + new_destination[2]
+    if len(new_destination) == 3: # Type was dm or dms
+        new_destination = new_destination[1] + new_destination[2]
+    if len(new_destination) == 2: # Type was dd
+        new_destination = new_destination[1]
 
 def Set_Application_Icon():
     function_name = "Set_Application_Icon()"
