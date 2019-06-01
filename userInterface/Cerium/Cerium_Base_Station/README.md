@@ -32,7 +32,7 @@ ROS Kinetic or ROS Melodic
 
 7) --- URGENT ISSUES ---
 
-7.3) Add map tiles (most detailed first).
+None
 
 8) --- NEXT DEVELOPMENTS ---
 
@@ -91,6 +91,15 @@ Duke's Facilities
 ----DMS 38°22'31.764" N, 110°42'29.514" W
 
 
+Duke's Campground
+
+---- 38°22'33.458" N, 110°42'31.052" W
+
+---- 38°22'33.489" N, 110°42'31.845" W
+
+---- 38°22'33.893" N, 110°42'31.405" W
+
+---- 38°22'33.362" N, 110°42'31.533" W
 
 ## Deploying -------------------------------------------------------------------
 
