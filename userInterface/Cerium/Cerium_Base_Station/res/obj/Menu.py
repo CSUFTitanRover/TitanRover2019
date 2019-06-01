@@ -22,8 +22,8 @@ class Menu():
         self.icon = pygame.transform.scale(self.icon,(50,50))
         self.screen.blit(self.icon, (self.start_x + 5, 5))
         self.display_value_yaw.blitme(yaw)
-        self.display_value_hint.blitme(new_destination)
-        self.yaw_title.blitme(self.str_display_title_yaw)
+        self.new_hint.blitme(new_destination)
+        self.yaw_title.blitme("Current Yaw:")
         self.display_value_hint.blitme(self.str_display_title_hint)
         self.title_display.blitme(self.str_display_title_app)
         for button in self.buttons:
@@ -38,7 +38,7 @@ class Menu():
         buttons.append(self.stop_button)
         return buttons
     def build_info_displays(self): # Things that display values
-        self.new_hint = Text.Text(self.screen,"",color_text,color_background,20,self.start_x,None,450,None)
+        self.new_hint = Text.Text(self.screen,"",color_text,color_background,18,self.start_x,None,445,None)
         self.display_value_yaw = Text.YawText(self.screen,str(0),color_text,color_background,20,self.start_x,None,self.screen.get_rect().top+75,None) # Shows the yaw value
         self.title_display = Text.Text(self.screen,self.str_display_title_app,color_text,color_background,30,self.start_x+65,None,self.screen.get_rect().top+10,None)
         self.yaw_title = Text.Text(self.screen,self.str_display_title_yaw,color_text,color_background,15,self.start_x,None,self.screen.get_rect().top+50,None)
