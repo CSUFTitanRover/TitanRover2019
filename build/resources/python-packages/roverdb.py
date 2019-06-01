@@ -71,10 +71,10 @@ class Database():
         self._cur.execute('''INSERT INTO ''' + tablename + ''' (lat, lon, visited) VALUES(?, ?, ?)''', (lat, lon, visited))
         self.close_db()
 
-    def insertMap(self, lat = 0, lon = 0, gps_type = 0, accel = 0):
+    def insertMap(self, lat = 0, lon = 0, accel = 0):
         if self.getAccelValue(lat, lon) == 0:
             self.open_db()
-            self._cur.execute('''INSERT INTO map (lat, lon, type, acc_data) VALUES(?, ?, ?, ?)''', (lat, lon, gps_type, accel))
+            self._cur.execute('''INSERT INTO map (lat, lon, acc_data) VALUES(?, ?, ?)''', (lat, lon, accel))
             self.close_db()
 
     # Returns the size of a given table
