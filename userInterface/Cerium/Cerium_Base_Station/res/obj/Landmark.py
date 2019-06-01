@@ -8,29 +8,27 @@ class Landmark(object):
         self.rect = self.image.get_rect()
         self.lat = lat
         self.lon = lon
-        self.id = id
+        self.id = id # int, auto assigned
         self.type = type # BALL | HINT | VEHICLE
-        self.x = None
-        self.y = None
-        self.yaw = 0
-    def blitme(self,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR):
-        self.Calculate_Landmark_X_Y(map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR)
+        self.x = None # x coordinate (for blitting)
+        self.y = None # y coordinate (for blitting)
+        self.yaw = 0 # Used for landmarks of type VEHICLE
+    def blitme(self):
         image = self.image
         image = pygame.transform.rotate(image, self.yaw * -1)
         rect = image.get_rect(center=self.rect.center)
         self.rect.centerx = self.x
         self.rect.centery = self.y
         self.screen.blit(image, rect)
-    def Calculate_Landmark_X_Y(self,map_width,screen_height,display_LAT_TL,display_LON_TL,display_LAT_BR,display_LON_BR):
-        function_name = "Calculate_Landmark_X_Y()"
-        if((self.lat != None) and (self.lon != None)):
-            self.x = (map_width  / abs(display_LON_TL-display_LON_BR))
-            self.y = (screen_height / abs(display_LAT_TL-display_LAT_BR))
-            #if self.lat[len(self.lat)-1] == u"\u00B0":
-            #    self.lat = self.lat[:-1]
-            #if self.lon[len(self.lon)-1] == u"\u00B0":
-            #    self.lon = self.lon[:-1]
-            self.x = self.x * (float(self.lon)-float(display_LON_TL))
-            self.y = self.y * (float(self.lat)-float(display_LAT_TL)) * -1
-        else:
-            print function_name,"ERROR: lat and/or lon empty"
+    def GetLatLon(self):
+        return self.lat, self.lon
+    def GetXY(self):
+        return self.x, self.y
+    def SetLatLon(self, lat, lon):
+        self.lat = lat
+        self.lon = lon
+    def SetXY(self, x, y):
+        self.x = x
+        self.y = y
+    def SetYaw(self, new_yaw):
+        self.yaw = new_yaw

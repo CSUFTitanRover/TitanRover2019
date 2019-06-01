@@ -1,10 +1,17 @@
 coords_data = {
+    "__DESC":"No location",
     "A_DESC":"E-21",
     "B_DESC":"Campus Drive",
     "C_DESC":"Intramural Fields",
     "D_DESC":"Engineering Lot",
     "E_DESC":"Duke\'s Campground (Lower)",
     "F_DESC":"Duke\'s Campground (Upper)",
+    "G_DESC":"Hanksville, Utah",
+    "0_DESC":"MDRS (Hab)",
+    "__TL_LAT":0,
+    "__TL_LON":0,
+    "__BR_LAT":0,
+    "__BR_LON":0,
     "A_TL_LAT":33.882568,
     "A_TL_LON":-117.884696,
     "A_BR_LAT":33.881175,
@@ -29,5 +36,13 @@ coords_data = {
     "F_TL_LON":-110.709922,
     "F_BR_LAT":38.375195,
     "F_BR_LON":-110.706477,
+    "G_TL_LAT":38.374819,
+    "G_TL_LON":-110.709321,
+    "G_BR_LAT":38.372541,
+    "G_BR_LON":-110.703420,
+    "0_TL_LAT":38.408233,
+    "0_TL_LON":-110.794642,
+    "0_BR_LAT":38.406001,
+    "0_BR_LON":-110.788859
 }
-coords_list = ["A","B","C","D","E","F"]
+coords_list = ["_","A","B","C","D","E","F", "G", "0"]

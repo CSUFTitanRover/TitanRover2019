@@ -4,19 +4,26 @@ import threading #, keyboard
 import sys, time, signal, socket, rospy
 from math import floor
 import math
-from gnss.msg import gps
-#from sensor_msgs.msg import LaserScan
-#from finalimu.msg import fimu
-from fake_sensor_test.msg import gps
-from fake_sensor_test.msg import imu
+test = True
+
+if not test:
+    from finalimu.msg import fimu as imu
+    from mode.msg import mode as mode
+    from gnss.msg import gps
+    #from sensor_msgs.msg import LaserScan
+
+else:
+    from fake_sensor_test.msg import imu
+    from fake_sensor_test.msg import gps
 
 rootDir = subprocess.check_output('locate TitanRover2019 | head -1', shell=True).strip().decode('utf-8')
 sys.path.insert(0, rootDir + '/build/resources/python-packages')
-from driver import Driver as myDriver
+#from driver import Driver as myDriver
 from roverdb import Database
+db = Database()
 
 __gps = (0.00, 0.00)
-__nextWaypoint = (0.00, 0.00)
+__nextWaypoint = (0.00, 0.00, "")
 __distance = 0.0
 
 ######################################################################################
@@ -88,18 +95,34 @@ class Job(threading.Thread):
     def update_acceleration(self, data):
         global acceleration
         #acceleration = data.accel
-        acceleration = data.yaw.pitch
-         
+        acceleration = data.pitch
+    
+    def addball(data):
+        ball_position = data.lat, data.log
+        if ball_position[0] != "0":
+            pathfile = open("pathfile.txt", "w")
+            pathfile.write(str(ball_position[0]) + ', ' + str(ball_position[1]) + ', ball\n')
+            print('Closing pathfile.txt')
+            pathfile.close()
+            rospy.init_node('talker', anonymous=True)
+            rospy.Publisher("/ballupdate", ballup, queue_size = 1)
+            ball = ballup()
+            ball_position = "0", "0"
+            ball.publish()
+
     def run(self):
-        global curr_pos
+        global curr_pos, test
         print('Thread #%s started' % self.ident)
  
         while not self.shutdown_flag.is_set():            
-            #rospy.Subscriber("gnss", gps, self.callback)
-            #rospy.Subscriber("imu", fimu, update_acceleration)
-            rospy.Subscriber("gnss", gps, self.callback)
-            rospy.Subscriber("imu", imu, self.update_acceleration)
-            time.sleep(0.5)
+            if not test:
+                rospy.Subscriber("gnss", gps, self.callback)
+                rospy.Subscriber("imu", fimu, update_acceleration)
+                time.sleep(0.5)
+            else:
+                rospy.Subscriber("gnss", gps, self.callback)
+                rospy.Subscriber("imu", imu, self.update_acceleration)
+                time.sleep(0.5)
  
         print('Thread #%s stopped' % self.ident)
 
@@ -116,9 +139,16 @@ def service_shutdown(signum, frame):
 def start_scouting(sf):
     print("Scouting has begun")
     rospy.init_node('listener', anonymous=True)
-    #rospy.Subscriber("mode", mobility, mode_update)
-    rospy.Subscriber("imu", fimu, update_acceleration)
-    rospy.Subscriber("gnss", gps_position, store_info)
+    if not test: 
+        rospy.Subscriber("mode", mobility, mode_update)
+        rospy.Subscriber("imu", fimu, update_acceleration)
+        rospy.Subscriber("gnss", gps, store_info)
+        rospy.Subscriber("???????", ???????, addball)
+    else:
+        from fake_sensor_test.msg import imu
+        from fake_sensor_test.msg import gps
+
+
     signal.signal(signal.SIGTERM, service_shutdown)
     signal.signal(signal.SIGINT, service_shutdown)
     print('Starting main program')
@@ -146,7 +176,7 @@ def mode_update(data):
     mode_info = data.data
 
 def parse_map_file():
-    global __gps, __nextWaypoint
+    global __gps, __nextWaypoint, db
     pathfile = open("pathfile.txt", "w")
     print('Parsing the Scout file')
     #erase dup and 5 dec
@@ -156,17 +186,18 @@ def parse_map_file():
         while True: #not EOFError:
             location = f.readline()
             location = location.split(", ")
-            __gps = float(location[0]), float(location[1])
+            __gps = float(location[0]), float(location[1] , location[2])
             __gps = __nextWaypoint =  (floor(__gps[0] * 10 ** 5)/(10 ** 5) , floor(__gps[1] * 10 ** 5)/(10 ** 5))
-            pathfile.write(str(__gps[0]) + ', ' + str(__gps[1]) + '\n')
+            pathfile.write(str(__gps[0]) + ', ' + str(__gps[1]) + __gps[2])
+            #db.insertMap(__nextWaypoint[0], __nextWaypoint[1])
             setDistance()
-            while __distance < 300: #and not EOFError:  #distance in cm
+            while __distance < 300 and : #and not EOFError:  #distance in cm
                 location = f.readline()
                 location = location.split(", ")
-                __nextWaypoint = float(location[0]), float(location[1])
-                __nextWaypoint =  (floor(__nextWaypoint[0] * 10 ** 5)/(10 ** 5) , floor(__nextWaypoint[1] * 10 ** 5)/(10 ** 5))
+                __nextWaypoint = float(location[0]), float(location[1], location[2])
+                __nextWaypoint =  (floor(__nextWaypoint[0] * 10 ** 5)/(10 ** 5) , floor(__nextWaypoint[1] * 10 ** 5)/(10 ** 5) , location[2])
                 setDistance()
-
+            
             #write __gps to db
         #write __nextWaypoint to db
     except:
@@ -205,7 +236,6 @@ def ballMotherFucker():
 
 
 if __name__ == '__main__':
-    db = Database()
     if sys.argv[1] == 'scout':
         #gps_data = threading.Thread(target= connect)
         #gps_data.start()
