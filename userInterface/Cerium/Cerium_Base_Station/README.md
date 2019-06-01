@@ -69,11 +69,13 @@ browser zoom set to 100%
 
 7) --- URGENT ISSUES ---
 
-7.1) Find why map images did not blit
+7.1) Find why map images did not blit. Ensure correct HINT conversions for all coord formats.
 
 7.2) Fix socket or send over ROS
 
-7.2) Ensure correct HINT conversions for all coord formats.
+7.3) Routinely search for new ball records and add them as landmarks.
+
+7.3) Add compass.
 
 8) --- NEXT DEVELOPMENTS ---
 
@@ -84,8 +86,6 @@ browser zoom set to 100%
 8.1.b) --------- Delete last entered hint.
 
 3.1.c) --------- Publish to mode topic.
-
-8.2) Routinely search for new ball records and add them as landmarks.
 
 9) --- NEEDS FIXING / IMPROVEMENTS ---
 
@@ -121,16 +121,16 @@ David Feinzimer `dfeinzimer@csu.fullerton.edu`
 
 ECS Bathroom Courtyard
 
-----DD 33.881966, -117.882964
+----DD 33.881966°, -117.882964°
 
-----DDM 33°52.918', 117°52.9778'
+----DDM 33°52.918' N, 117°52.9778' W
 
-----DMS 33°52'55.08", 117°52'58.668"
+----DMS 33°52'55.08" N, 117°52'58.668" W
 
 Duke's Facilities
 
 ----DD 38.375490°, -110.708199°
 
-----DDM 38°22.5294' ,110°42.4919'
+----DDM 38°22.5294' N, 110°42.4919' W
 
-----DMS 38°22'31.764", 110°42'29.514"
+----DMS 38°22'31.764" N, 110°42'29.514" W

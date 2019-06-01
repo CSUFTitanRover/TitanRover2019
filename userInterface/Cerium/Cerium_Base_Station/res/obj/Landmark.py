@@ -20,6 +20,7 @@ class Landmark(object):
         self.rect.centerx = self.x
         self.rect.centery = self.y
         self.screen.blit(image, rect)
+        print "BLITTED", self.type, self.id, "at", self.x, self.y
     def GetLatLon(self):
         return self.lat, self.lon
     def GetXY(self):

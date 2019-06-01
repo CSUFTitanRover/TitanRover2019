@@ -55,7 +55,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.31.2019.19.49"
+version = "05.31.2019.21.39"
 yaw = 0
 
 def Add_LAT_LON():
@@ -174,6 +174,14 @@ def Check_Keydown_Events(event):
         new_destination += "8"
     elif event.key == pygame.K_9:
         new_destination += "9"
+    elif event.key == pygame.K_UP:
+        new_destination += " N"
+    elif event.key == pygame.K_DOWN:
+        new_destination += " S"
+    elif event.key == pygame.K_LEFT:
+        new_destination += " W"
+    elif event.key == pygame.K_RIGHT:
+        new_destination += " E"
 
 def Check_Keyup_Events(event):
     pass
@@ -195,12 +203,16 @@ def Convert_Coordinates():
     elif (new_destination_type == "degmin"):
         d = new_destination.split(u"\u00B0")
         m = d[1]
+        card = m.split("\'")
+        m = card[0]
+        card = card[1]
         d = d[0]
-        m = m[:-1]
         m = float(m) / 60
         DD = float(d) + m
         new_destination_type = "DD Decimal Degrees"
         new_destination = DD
+        if card == "W" or card == "S":
+            new_destination = new_destination * -1
     elif (new_destination_type == "degminsec"):
         d = new_destination
         d = d.split(u"\u00B0")
@@ -208,11 +220,15 @@ def Convert_Coordinates():
         d = d[0]
         m = m.split("\'")
         s = m[1]
-        s = s[:-1]
         m = m[0]
+        card = s.split("\"")
+        s = card[0]
+        card = card[1]
         DD = float(d) + float(m)/60 + float(s)/3600
         new_destination_type = "DD Decimal Degrees"
         new_destination = DD
+        if card == "W" or card == "S":
+            new_destination = new_destination * -1
     else:
         new_destination_type = "Invalid"
         new_destination = "Invalid"
@@ -236,7 +252,8 @@ def Get_Coordinate_Pair_String():
         return "Invalid"
     else:
         candidate = str(new_destination_set[0])+" "+str(new_destination_set[1])+" "+"HINT"
-        map.AddLandmark(new_destination_set[0], new_destination_set[1], "HINT", icon_hint, screen)
+        result = map.AddLandmark(new_destination_set[0], new_destination_set[1], "HINT", icon_hint, screen)
+        print "RESULT", result
     print function_name, "candidate:", candidate
     return candidate
 
@@ -317,8 +334,7 @@ def Queue_Coordinate():
 def Remove_LAT_LON():
     global new_destination
     new_destination = new_destination.split(" ")
-    new_destination = new_destination[1]
-    print "Remove_LAT_LON(): new_destination: ",new_destination
+    new_destination = new_destination[1] + new_destination[2]
 
 def Set_Application_Icon():
     function_name = "Set_Application_Icon()"
