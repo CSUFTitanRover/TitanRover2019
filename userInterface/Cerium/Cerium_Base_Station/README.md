@@ -32,8 +32,6 @@ ROS Kinetic or ROS Melodic
 
 7) --- URGENT ISSUES ---
 
-7.2) Add compass.
-
 7.3) Add map tiles (most detailed first).
 
 8) --- NEXT DEVELOPMENTS ---
