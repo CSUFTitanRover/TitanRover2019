@@ -1,11 +1,14 @@
 from Image import Image
 from Landmark import Landmark
+import pygame
 import res.coords as coords
 
 icon_arrow = "res/images/vehicle.png"
+icon_compass = "res/images/compass.png"
 
 class Map(object):
     def __init__(self, screen, map_height, map_width):
+        self.compass = pygame.image.load(icon_compass)
         self.landmarks = []
         self.lat_br = None
         self.lat_tl = None
@@ -34,6 +37,8 @@ class Map(object):
         # Finally blit all landmarks
         for landmark in self.landmarks:
             landmark.blitme()
+        self.compass = pygame.transform.scale(self.compass,(150,150))
+        self.screen.blit(self.compass, (0,0))
     def CalculateCorrectMap(self, vehicle_lat, vehicle_lon):
         function_name = "CalculateCorrectMap()"
         if vehicle_lat and vehicle_lon:

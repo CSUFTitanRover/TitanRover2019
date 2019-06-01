@@ -22,7 +22,6 @@ import res.obj.Text as Text
 import res.obj.Image as Image
 import res.obj.Menu as Menu
 import rospy
-import socket
 import sqlite3
 import sys
 import threading
@@ -55,7 +54,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "06.01.2019.00.05"
+version = "06.01.2019.01.07"
 yaw = 0
 
 def Add_LAT_LON():

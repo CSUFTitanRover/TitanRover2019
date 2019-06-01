@@ -14,68 +14,27 @@ ROS Kinetic or ROS Melodic
 
 ## Usage -----------------------------------------------------------------------
 
-### 1) Make sure the onboard and base station software is up to date:
+### 1) If the desired mode is dev, start the simulated IMU and GNSS publisher:
 
-1.1) On both machines, perform the following command:
-
-1.2) `cd ~/TitanRover2019/ && git pull`
-
-
-### 2.a) [OPTION A] If the desired mode is production, start the onboard IMU and GNSS
-
-2.a.1) `cd ~/catkin_ws/src/finalimu/src/ && python cal_run_Imu.py`
-
-2.a.2) `cd ~/catkin_ws/src/gnss/src/ && python reach.py`
-
-
-### 2.b) [OPTION B] If the desired mode is development, start the simulated IMU and GNSS publisher:
-
-2.b.1) `cd ~/catkin_ws/src/fake_sensor_test/launch && roslaunch fake.launch`
-
-
-### 3) Start the onboard communication interface (development or production mode):
-
-3.1) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/ && python Communicator.py`
-
-3.2) If the port is already taken, find the PID and kill it with steps 3 and 4
-
-3.3) `sudo lsof -i:9600`
-
-3.4) `sudo kill <PID>`
-
-
-### 4) Start the base station interface:
-
-4.1) `export ROS_MASTER_URI="http://192.168.1.78:11311/"`
-
-4.1) `export ROS_IP="192.168.1.78"` # Connecting machine
-
-4.2) `export ROS_HOSTNAME="192.168.1.78"` # Connecting machine
-
-4.3) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/ && python Cerium.py`
+1.a) `cd ~/catkin_ws/src/fake_sensor_test/launch && roslaunch fake.launch`
 
 
 
-## Important Technical Notes ---------------------------------------------------
+### 2) Start the base station interface:
 
-5) Socket connections are currently killed if a connection fails after 1 second.
+2.1) `export ROS_MASTER_URI="http://<MASTER'S_IP>:11311/"`
+
+2.2) `cd ~/TitanRover2019/userInterface/Cerium/Cerium_Base_Station/ && python Cerium.py`
 
 
 
 ## Engineering / Design Notes --------------------------------------------------
 
-6) For Google Maps screenshots we're using the largest 100 zoom level with
-browser zoom set to 100%
-
 7) --- URGENT ISSUES ---
 
-7.1) Blit confirmed balls
+7.2) Add compass.
 
-7.2) Remove/silence communicator from rover launch.
-
-7.3) Add compass.
-
-7.4) Add map tiles (most detailed first).
+7.3) Add map tiles (most detailed first).
 
 8) --- NEXT DEVELOPMENTS ---
 
@@ -100,6 +59,8 @@ browser zoom set to 100%
 9.5) ------ Database hint submission over ros or socket working.
 
 9.6) ------ Enhance gnss and imu fake data for better testing
+
+
 
 ## Problems & Solutions --------------------------------------------------------
 
