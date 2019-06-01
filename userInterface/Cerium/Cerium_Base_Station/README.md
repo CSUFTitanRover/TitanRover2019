@@ -69,13 +69,13 @@ browser zoom set to 100%
 
 7) --- URGENT ISSUES ---
 
-7.1) Find why map images did not blit. Ensure correct HINT conversions for all coord formats.
+7.1) Blit confirmed balls
 
-7.2) Fix socket or send over ROS
-
-7.3) Routinely search for new ball records and add them as landmarks.
+7.2) Remove/silence communicator from rover launch.
 
 7.3) Add compass.
+
+7.4) Add map tiles (most detailed first).
 
 8) --- NEXT DEVELOPMENTS ---
 
@@ -95,9 +95,11 @@ browser zoom set to 100%
 
 9.3) ------ On no ROS connection enhance error message
 
-9.4) ------ Enhance gnss and imu fake data for better testing
+9.4) ------ Routinely search for new ball records in /tball and add them as landmarks.
 
+9.5) ------ Database hint submission over ros or socket working.
 
+9.6) ------ Enhance gnss and imu fake data for better testing
 
 ## Problems & Solutions --------------------------------------------------------
 
@@ -108,12 +110,6 @@ browser zoom set to 100%
 10.2) Add the following to bottom of the file:
 
 10.3) `source ~/catkin_ws/devel/setup.bash`
-
-
-
-## Questions -------------------------------------------------------------------
-
-David Feinzimer `dfeinzimer@csu.fullerton.edu`
 
 
 
@@ -134,3 +130,17 @@ Duke's Facilities
 ----DDM 38°22.5294' N, 110°42.4919' W
 
 ----DMS 38°22'31.764" N, 110°42'29.514" W
+
+
+
+## Deploying -------------------------------------------------------------------
+
+Upload rover `cd ~/TitanRover2019/userInterface/Cerium && scp -r ./Cerium_Base_Station/ nvidia@192.168.1.2:/home/nvidia/TitanRover2019/userInterface/Cerium/`
+
+Upload base `cd ~/TitanRover2019/userInterface/Cerium && scp -r ./Cerium_Base_Station/ roverbase@192.168.1.3:/home/roverbase/TitanRover2019/userInterface/Cerium/`
+
+
+
+## Questions -------------------------------------------------------------------
+
+David Feinzimer `dfeinzimer@csu.fullerton.edu`

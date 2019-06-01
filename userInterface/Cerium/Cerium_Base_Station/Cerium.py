@@ -55,7 +55,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "05.31.2019.21.52"
+version = "06.01.2019.00.05"
 yaw = 0
 
 def Add_LAT_LON():
@@ -117,12 +117,15 @@ def Check_Control_Events(menu):
             Check_Keyup_Events(event)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
-            result = menu.CheckForClickMatch(x, y) # result  = "F#!K" | "STOP" | None
+            result = menu.CheckForClickMatch(x, y) # result  = "E-STOP" | "STOP" | None
             if result:
-                if result == "F#!K":
+                if result == "E-STOP":
                     PublishStop("HARD")
                 elif result == "STOP":
                     PublishStop("SOFT")
+                elif result == "+ BALL":
+                    PublishGeneric("confirmed_ball",str(roverLat)+" "+str(roverLon))
+                    map.AddLandmark(roverLat, roverLon, "BALL", icon_ball, screen)
 
 def Check_Keydown_Events(event):
     function_name = "Check_Keydown_Events()"
@@ -284,7 +287,7 @@ def Launch_Application():
     GNSS_SUBSCRIBTION = threading.Thread(target=Subscribe_To_GNSS,args=(mode,))
     GNSS_SUBSCRIBTION.start()
     map = Map(screen,screen_height,map_width)
-    menu = Menu.Menu(screen, map_width, app_title)
+    menu = Menu.Menu(screen, map_width)
     new_destination = new_destination_LatLon + " "
     while True:
         screen.fill(color_background)
@@ -303,6 +306,12 @@ def Process_Destination():
     Attempt_Coordinate_Send() # Try to send the coordinates to vehicle
     Flip_LAT_LON() # Flip LAT for LON or vice versa
     Add_LAT_LON()
+
+def PublishGeneric(topic, message):
+    function_name = "PublishGeneric("+topic+", "+message+")"
+    pub = rospy.Publisher(topic, String, queue_size=10)
+    pub.publish(message)
+    print function_name
 
 def PublishStop(level): # param = "HARD" | "SOFT"
     function_name = "PublishStop("+level+")"

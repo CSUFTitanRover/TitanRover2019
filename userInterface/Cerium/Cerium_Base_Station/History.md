@@ -1,3 +1,4 @@
+06.01.2019.00.05       Publishes and shows confirmed balls.
 05.31.2019.21.52       Patches dd submission bug 05.31.2019.21.39
 05.31.2019.21.39       Fixes blotting for any coordinate type.
 05.31.2019.19.49       Removes Calculate_Vehicle_X_Y() method. Removes deprecated Callback_GNSS() method logic. Adds test coordinates in all formats to README.
