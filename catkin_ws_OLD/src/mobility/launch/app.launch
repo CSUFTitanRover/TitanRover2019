@@ -1,0 +1,3 @@
+<launch>
+<node pkg="Cerium" type="hostHTTP.sh" name="Cerium_App"/>
+</launch>

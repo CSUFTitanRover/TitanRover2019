@@ -1,0 +1,8 @@
+
+<launch>
+  <node pkg="mobility" type="science.py" name="science"/>
+  <node pkg="mobility" type="pyarm.py" name="pyarm"/>
+  <include file="/home/ubuntu/catkin_ws/src/multijoy/launch/multijoy1.launch"/>
+</launch>
+
+

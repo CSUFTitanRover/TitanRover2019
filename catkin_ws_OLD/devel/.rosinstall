@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/skrapmi/TitanRover2019/catkin_ws/devel/setup.sh
