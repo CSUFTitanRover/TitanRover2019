@@ -21,9 +21,9 @@ from finalimu.msg import fimu
 wheels = DriveEsc(128, "mixed")
 
 MINFORWARDSPEED = 20
-MAXFORWARDSPEED = 20
-TARGETTHRESHOLD = 50  # In cm
-CORRECTIONTHRESHOLD = 4.5  # In degrees
+MAXFORWARDSPEED = 30
+TARGETTHRESHOLD = 40  # In cm
+CORRECTIONTHRESHOLD = 10  # In degrees
 HEADINGTHRESHOLD = 15 # In degrees
 
 class Driver:
@@ -40,9 +40,9 @@ class Driver:
 
         # Tailored to Rover
         self.__angleX = [5, 15, 25]
-        self.__rotateY = [25, 42.5, 60]
-        self.__distanceX = [20, 20]
-        self.__speedY = [20, 20]
+        self.__rotateY = [30, 45, 60]
+        self.__distanceX = [20, 50]
+        self.__speedY = [20, 50]
 
         self.__gps = (0.00, 0.00)
         self.__nextWaypoint = (0.00, 0.00)
@@ -54,6 +54,7 @@ class Driver:
         self.__distance = 0.0
         self.__motor1 = 0
         self.__motor2 = 0
+        self.__pitch = 0
         rospy.init_node('listener', anonymous=True)
 
     def calculateGps(self, origin, heading, distance):
@@ -158,8 +159,8 @@ class Driver:
         Returns:
             Nothing
         '''
-        self.__headingDifference = (self.__targetHeading - self.__heading + 180) % 360 - 180
-        self.__headingDifference = self.__headingDifference + 360 if self.__headingDifference < -180 else self.__headingDifference
+        self.__headingDifference = (self.__targetHeading - self.__heading + 360) % 360
+        #self.__headingDifference = self.__headingDifference + 360 if self.__headingDifference < -180 else self.__headingDifference
         #print("setHeadingDifference ", self.__headingDifference)
 
     def setTargetHeading(self):
@@ -215,6 +216,12 @@ class Driver:
         self.__distance = d * 100000
 	#print("setDistance ", self.__distance)
 
+    def calculatePitch(self, data):
+        if int(data.yaw.pitch) < 0:
+            self.__pitch = abs(data.yaw.pitch)
+        else:
+            self.__pitch = 0
+
     def sendMotors(self):
         '''
         Description:
@@ -222,9 +229,13 @@ class Driver:
         Returns:
         '''
         try:
-            wheels.driveBoth(int(self.__motor1), int(self.__motor2))
-        except:
-            print("Error Sending to PySaber")
+            rospy.Subscriber("imu", fimu, self.calculatePitch)
+            
+            print(self.__pitch, int(self.__motor1 + self.__pitch * self.__motor1 / 50), int(self.__motor2 + self.__pitch * self.__motor2 / 50))
+            wheels.driveBoth(int(self.__motor1 + self.__pitch * self.__motor1 / 60)/2 , int(self.__motor2 + self.__pitch * self.__motor2 / 60)/2)
+        except(KeyboardInterrupt, SystemExit):
+            rospy.signal_shutdown("scheduled")
+            raise
 
     def setGps(self, data):
         '''

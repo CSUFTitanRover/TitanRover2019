@@ -1,0 +1,113 @@
+# main.py -- put your code here!
+from pyb import Pin, Timer, LED, UART, ADC
+import time
+import pyb
+
+p = Pin('X1') # X1 has TIM2, CH1
+q = Pin('X2', Pin.OUT_PP)
+q.low()
+
+tim = Timer(2, freq=1250)
+ch = tim.channel(1, Timer.PWM, pin=p)
+ch.pulse_width_percent(50)
+time.sleep(1)
+ch.pulse_width_percent(0)
+
+'''
+ser = UART(1, 115200)                         # init with given baudrate
+#ser.init(9600, bits=8, parity=None, stop=1) # init with given parameters
+
+# FeedBack Shit HERE
+feed = ADC(Pin('Y12'))
+
+pin1_a = Pin('X12', Pin.IN)
+pin2_b = Pin('X11', Pin.IN)
+pin3_ind = Pin('X22', Pin.IN)
+
+while True:
+    lol = pin1_a.value() # read value, 0-4095
+    lol2 = pin2_b.value() # read value, 0-4095
+
+    ser.write(str(lol) + str(lol2))
+
+    if int(lol) < 10:
+        lol = "000" + str(lol)
+    elif int(lol) < 100:
+        lol = "00" + str(lol)
+    elif int(lol) < 1000:
+        lol = "0" + str(lol)
+    #ser.write(str(lol))
+    time.sleep(.1)
+
+
+ser = UART(1, 9600)                         # init with given baudrate
+
+p = Pin('X1') # X1 has TIM2, CH1
+q = Pin('X2', Pin.OUT_PP)
+#r = Pin('X5', Pin.OUT_PP)
+
+#s = Pin('X3')
+#t = Pin('X4', Pin.OUT_PP)
+q.high()
+#r.low()
+#s.low()
+tim1 = Timer(2, freq=1250)
+ch1 = tim1.channel(1, Timer.PWM, pin=p)
+ch1.pulse_width_percent(50)
+time.sleep(1)
+
+while True:
+    data = ser.read(1)
+    if int(data) is 0:
+        r.low()
+        break
+    elif int(data) is 1:
+        r.high()
+        break
+
+tim1 = Timer(2, freq=1250)
+ch1 = tim1.channel(1, Timer.PWM, pin=p)
+#tim2 = Timer(2, freq=1250)
+#ch2 = tim2.channel(3, Timer.PWM, pin=r)
+ch1.pulse_width_percent(50)
+#ch2.pulse_width_percent(50)
+time.sleep(2)
+ch1.pulse_width_percent(0)
+#ch2.pulse_width_percent(0)
+
+
+ser = UART(1, 9600)                         # init with given baudrate
+#ser.init(9600, bits=8, parity=None, stop=1) # init with given parameters
+
+
+while True:
+    data = ser.read(1)
+    if int(data) > 5:
+        LED(4).toggle()
+    else:
+        LED(3).toggle()
+
+armAction = { 0 : {'pwm' : 'X1', 'dir' : 'X2'},         # low = CW   , high = CCW   //// freq = 1250  (Top)
+              1 : {'pwm' : 'X3', 'dir' : 'X4'},         # low = Down , high = up    //// freq = 1250  (Front)
+              2 : {'pwm' : 'X5', 'dir' : 'X6'},         # low = CW   , high = CCW   //// freq = 1250  (Top)
+              3 : {'pwm' : 'XX', 'dir' : 'XX'}          # low =  , high =     //// freq = 1250
+            }
+
+#for i in range(len(armAction)):
+#    pyb.Pin(armAction[i]['pwm'], pyb.Pin.OUT_PP)
+#    pyb.Pin(armAction[i]['dir'], pyb.Pin.OUT_PP)
+
+p = pyb.Pin('X1', pyb.Pin.OUT_PP)
+q = pyb.Pin('X2', pyb.Pin.OUT_PP)
+#r = pyb.Pin('X3', pyb.Pin.OUT_PP)
+#s = pyb.Pin('X4', pyb.Pin.OUT_PP)
+q.low()
+#q.high()
+
+for i in range(150):
+    p.high()
+    time.sleep_us(1000)
+    p.low()
+    time.sleep_us(1000)
+
+'''

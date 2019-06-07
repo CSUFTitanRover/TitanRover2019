@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find hector_slam_launch)/launch/tutorial.launch"/>
+  <include file="$(find lms1xx)/launch/LMS1xx.launch"/>
+</launch>
+
