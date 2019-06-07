@@ -14,6 +14,7 @@ This rover has been designed to compete in the University Rover Challenge(URC) a
 
 -------
 Primary Programmers:
+
 Anette Ulrichsen        -   amulrichsen@csu.fullerton.edu
 Armon Rahimi            -   armon16@csu.fullerton.edu
 Christopher Weichlein   -   cweichlein@gmail.com
