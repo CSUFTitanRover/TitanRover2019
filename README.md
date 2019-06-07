@@ -2,7 +2,6 @@
      alt="TitanRover icon"
      style="float: center;" />
 
-# TitanRover2019
 ## California State University, Fullerton
 ## TitanRover website: titanrover.com
 --------
@@ -27,3 +26,4 @@ Maria Diaz              -   mardiaz353@csu.fullerton.edu
 Robert Pace IV          -   rpaceiv@csu.fullerton.edu
 Shripal Rawal           -   rawalshreepal000@gmail.com
 Timothy Parks           -   parkstimothyj@csu.fullerton.edu
+=======
