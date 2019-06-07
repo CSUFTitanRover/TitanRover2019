@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <img src="logo.png"
      alt="TitanRover icon"
      style="float: center;" />
@@ -13,9 +12,6 @@ Using ROS as the backbone all communications/commands from the basestation are p
 
 This rover has been designed to compete in the University Rover Challenge(URC) against other universities around the world. Visit the URC website for more information: urc.marssociety.org . 
 
-
-
-
 -------
 Primary Programmers:
 Anette Ulrichsen        -   amulrichsen@csu.fullerton.edu
@@ -27,9 +23,7 @@ Maria Diaz              -   mardiaz353@csu.fullerton.edu
 Robert Pace IV          -   rpaceiv@csu.fullerton.edu
 Shripal Rawal           -   rawalshreepal000@gmail.com
 Timothy Parks           -   parkstimothyj@csu.fullerton.edu
-=======
-<<<<<<< HEAD
-=======
+===============
 rosbridge_suite [![Build Status](https://api.travis-ci.org/RobotWebTools/rosbridge_suite.png)](https://travis-ci.org/RobotWebTools/rosbridge_suite)
 ===============
 
@@ -66,7 +60,3 @@ rosbridge_suite is released with a BSD license. For full terms and conditions, s
 See the [AUTHORS](AUTHORS.md) file for a full list of contributors.
 
 ### Troubleshooting
-
-See the [TROUBLESHOOTING](TROUBLESHOOTING.md) doc for common problems and solutions.
->>>>>>> 13ba8708d779f3f99d8c15ffcfeaa914bc137b73
->>>>>>> 2c4b155e050d09fd245c7a30c8482de61e9f8880
