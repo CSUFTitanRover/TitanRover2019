@@ -1,3 +1,5 @@
+06.01.2019.03.01       Adds remaining map tiles.
+06.01.2019.01.07       Adds navigation compass.
 06.01.2019.00.05       Publishes and shows confirmed balls.
 05.31.2019.21.52       Patches dd submission bug 05.31.2019.21.39
 05.31.2019.21.39       Fixes blotting for any coordinate type.

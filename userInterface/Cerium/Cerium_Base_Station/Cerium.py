@@ -11,6 +11,7 @@ from gnss.msg import gps as prod_gps
 from mobility.msg import driver_Status
 from pygame.sprite import Sprite
 from res.funcs import AppendCardinalInformation
+from res.funcs import PublishGeneric
 from res.funcs import SafeConnect
 from res.funcs import SetModeAndIP
 from res.obj.Map import Map
@@ -54,7 +55,7 @@ socket_BUFFER_SIZE = 256
 status = None # Holds the ROS connection status
 vehicle_x = 0 # x offset of vehicle plotted on map
 vehicle_y = 0 # y offset of vehicle plotted on map
-version = "06.01.2019.01.07"
+version = "06.01.2019.03.01"
 yaw = 0
 
 def Add_LAT_LON():
@@ -123,7 +124,7 @@ def Check_Control_Events(menu):
                 elif result == "STOP":
                     PublishStop("SOFT")
                 elif result == "+ BALL":
-                    PublishGeneric("confirmed_ball",str(roverLat)+" "+str(roverLon))
+                    PublishGeneric.PublishGeneric("confirmed_ball",str(roverLat)+" "+str(roverLon))
                     map.AddLandmark(roverLat, roverLon, "BALL", icon_ball, screen)
 
 def Check_Keydown_Events(event):
@@ -288,6 +289,7 @@ def Launch_Application():
     map = Map(screen,screen_height,map_width)
     menu = Menu.Menu(screen, map_width)
     new_destination = new_destination_LatLon + " "
+    PublishGeneric.PublishGeneric("confirmed_ball",str(0)+" "+str(0)) # Open the confirmed_ball topic
     while True:
         screen.fill(color_background)
         Check_Control_Events(menu)
@@ -306,17 +308,10 @@ def Process_Destination():
     Flip_LAT_LON() # Flip LAT for LON or vice versa
     Add_LAT_LON()
 
-def PublishGeneric(topic, message):
-    function_name = "PublishGeneric("+topic+", "+message+")"
-    pub = rospy.Publisher(topic, String, queue_size=10)
-    pub.publish(message)
-    print function_name
-
 def PublishStop(level): # param = "HARD" | "SOFT"
     function_name = "PublishStop("+level+")"
     pub = rospy.Publisher("driver_Status", driver_Status, queue_size=10)
     pub.publish(autoActive=False)
-
 
 def Queue_Coordinate():
     global new_destination

@@ -38,7 +38,7 @@ class Map(object):
         for landmark in self.landmarks:
             landmark.blitme()
         self.compass = pygame.transform.scale(self.compass,(150,150))
-        self.screen.blit(self.compass, (0,0))
+        self.screen.blit(self.compass, (5, 5))
     def CalculateCorrectMap(self, vehicle_lat, vehicle_lon):
         function_name = "CalculateCorrectMap()"
         if vehicle_lat and vehicle_lon:
