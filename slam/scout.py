@@ -3,6 +3,7 @@ import sys, subprocess, sqlite3
 import threading #, keyboard
 import sys, time, signal, socket, rospy
 from math import floor
+from std_msgs.msg import String
 import math
 test = True
 
@@ -98,17 +99,15 @@ class Job(threading.Thread):
         acceleration = data.pitch
     
     def addball(data):
-        ball_position = data.lat, data.log
+        ball_position = data.split(" ")
         if ball_position[0] != "0":
             pathfile = open("pathfile.txt", "w")
-            pathfile.write(str(ball_position[0]) + ', ' + str(ball_position[1]) + ', ball\n')
+            pathfile.write(ball_position[0] + ', ' + ball_position[1] + ', ball\n')
             print('Closing pathfile.txt')
             pathfile.close()
             rospy.init_node('talker', anonymous=True)
-            rospy.Publisher("/ballupdate", ballup, queue_size = 1)
-            ball = ballup()
-            ball_position = "0", "0"
-            ball.publish()
+            rospy.Publisher("/configmed ball", String, queue_size = 1)
+            ball.publish("0 0")
 
     def run(self):
         global curr_pos, test
@@ -140,10 +139,9 @@ def start_scouting(sf):
     print("Scouting has begun")
     rospy.init_node('listener', anonymous=True)
     if not test: 
-        rospy.Subscriber("mode", mobility, mode_update)
         rospy.Subscriber("imu", fimu, update_acceleration)
         rospy.Subscriber("gnss", gps, store_info)
-        rospy.Subscriber("???????", ???????, addball)
+        rospy.Subscriber("confirmed ball", String, addball)
     else:
         from fake_sensor_test.msg import imu
         from fake_sensor_test.msg import gps
